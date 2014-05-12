@@ -190,9 +190,9 @@ void Sprite3D::onDraw(const cocos2d::Matrix &transform, bool transformUpdated)
     ssize_t indexCount = _model->getIndexCount();
 
     // Draw the surface using VBOs
-    int stride = sizeof(vec3) + sizeof(vec3) + sizeof(vec2);
-    const GLvoid* normalOffset = (const GLvoid*) sizeof(vec3);
-    const GLvoid* texCoordOffset = (const GLvoid*) (2 * sizeof(vec3));
+    int stride = sizeof(Vector3) + sizeof(Vector3) + sizeof(Vector2);
+    const GLvoid* normalOffset = (const GLvoid*) sizeof(Vector3);
+    const GLvoid* texCoordOffset = (const GLvoid*) (2 * sizeof(Vector3));
     GLint position = _attributes.Position;
     //GLint normal = _attributes.Normal;
     GLint texCoord = _attributes.TextureCoord;
@@ -229,8 +229,8 @@ void Sprite3D::onDraw(const cocos2d::Matrix &transform, bool transformUpdated)
         Color4F fOutlineColor(_outlineColor);
         glUniform3f(_uniformsOutline.OutlineColor,fOutlineColor.r,fOutlineColor.g,fOutlineColor.b);
         // Draw the surface using VBOs
-        stride = sizeof(vec3) + sizeof(vec3) + sizeof(vec2);
-        normalOffset = (const GLvoid*) sizeof(vec3);
+        stride = sizeof(Vector3) + sizeof(Vector3) + sizeof(Vector2);
+        normalOffset = (const GLvoid*) sizeof(Vector3);
         position = _attributesOutline.Position;
         GLint normal = _attributesOutline.Normal;
         

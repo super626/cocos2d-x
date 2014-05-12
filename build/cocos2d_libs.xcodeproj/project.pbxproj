@@ -1715,8 +1715,6 @@
 		B26CD3DA192172160013B587 /* Textured.es2.frag.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C8192172160013B587 /* Textured.es2.frag.h */; };
 		B26CD3DB192172160013B587 /* Textured.es2.vert.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C9192172160013B587 /* Textured.es2.vert.h */; };
 		B26CD3DC192172160013B587 /* Textured.es2.vert.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C9192172160013B587 /* Textured.es2.vert.h */; };
-		B26CD3DD192172160013B587 /* Vector.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3CA192172160013B587 /* Vector.h */; };
-		B26CD3DE192172160013B587 /* Vector.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3CA192172160013B587 /* Vector.h */; };
 		B2AF2F9518EBAEAE00C5807C /* MathUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AF2F8218EBAEAE00C5807C /* MathUtil.cpp */; };
 		B2AF2F9618EBAEAE00C5807C /* MathUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AF2F8218EBAEAE00C5807C /* MathUtil.cpp */; };
 		B2AF2F9718EBAEAE00C5807C /* MathUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = B2AF2F8318EBAEAE00C5807C /* MathUtil.h */; };
@@ -2814,7 +2812,6 @@
 		B26CD3C7192172160013B587 /* Sprite3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sprite3D.h; sourceTree = "<group>"; };
 		B26CD3C8192172160013B587 /* Textured.es2.frag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Textured.es2.frag.h; sourceTree = "<group>"; };
 		B26CD3C9192172160013B587 /* Textured.es2.vert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Textured.es2.vert.h; sourceTree = "<group>"; };
-		B26CD3CA192172160013B587 /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector.h; sourceTree = "<group>"; };
 		B2AF2F8218EBAEAE00C5807C /* MathUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathUtil.cpp; sourceTree = "<group>"; };
 		B2AF2F8318EBAEAE00C5807C /* MathUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathUtil.h; sourceTree = "<group>"; };
 		B2AF2F8418EBAEAE00C5807C /* MathUtil.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MathUtil.inl; sourceTree = "<group>"; };
@@ -4927,7 +4924,6 @@
 				B26CD3C7192172160013B587 /* Sprite3D.h */,
 				B26CD3C8192172160013B587 /* Textured.es2.frag.h */,
 				B26CD3C9192172160013B587 /* Textured.es2.vert.h */,
-				B26CD3CA192172160013B587 /* Vector.h */,
 			);
 			name = 3d;
 			path = ../cocos/3d;
@@ -4969,7 +4965,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5034CA39191D591100CE6051 /* ccShader_PositionColorLengthTexture.frag in Headers */,
-				B26CD3DD192172160013B587 /* Vector.h in Headers */,
 				2AC795DF18628723005EC8E1 /* SkeletonBounds.h in Headers */,
 				2AC795E018628723005EC8E1 /* Event.h in Headers */,
 				2AC795E118628723005EC8E1 /* EventData.h in Headers */,
@@ -5472,7 +5467,6 @@
 				46A170FF1807CECB005B8026 /* CCPhysicsContact.h in Headers */,
 				B26CD3D8192172160013B587 /* Sprite3D.h in Headers */,
 				46A171041807CECB005B8026 /* CCPhysicsShape.h in Headers */,
-				B26CD3DE192172160013B587 /* Vector.h in Headers */,
 				500DC95719106300007B91BF /* CCEventCustom.h in Headers */,
 				500DC95319106300007B91BF /* CCEventAcceleration.h in Headers */,
 				B2AF2F9818EBAEAE00C5807C /* MathUtil.h in Headers */,

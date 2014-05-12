@@ -5,14 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "Vector.h"
 #include "cocos2d.h"
-
-//struct Face
-//{
-//    ivec3 face;
-//    ivec3 texi;
-//};
 
 struct FaceVertex
 {

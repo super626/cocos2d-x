@@ -48,7 +48,7 @@ bool ObjMeshParser::parseVertex(std::istream& lineStream, ObjMeshData& meshData)
         return false;
     }
 
-    meshData._vertexLists.push_back(vec3(x,y,z));
+    meshData._vertexLists.push_back(Vector3(x,y,z));
     return true;
 }
 
@@ -68,7 +68,7 @@ bool ObjMeshParser::parseTextureVertex(std::istream& lineStream, ObjMeshData& me
         return false;
     }
     v = 1 - v;
-    meshData._uvVertexLists.push_back(vec2(u,v));
+    meshData._uvVertexLists.push_back(Vector2(u,v));
     if(w != 0.f)
     {
         return false;
@@ -87,7 +87,7 @@ bool ObjMeshParser::parseNormal(std::istream& lineStream, ObjMeshData& meshData)
         return false;
     }
     
-    meshData._normalVertexLists.push_back(vec3(x,y,z));
+    meshData._normalVertexLists.push_back(Vector3(x,y,z));
     return true;
 }
 
@@ -299,16 +299,16 @@ void ObjMeshData::trianglarAndGenerateNormals()
     triangular();
     if( _normalVertexLists.size() != 0 ) return;
     
-    std::vector<std::vector<vec3>> faceVertexNormalList;
+    std::vector<std::vector<Vector3>> faceVertexNormalList;
     faceVertexNormalList.resize(_vertexLists.size());
     
     for (const auto& face : _faceLists)
     {
-        vec3 v1 = _vertexLists[face[0]._vIndex];
-        vec3 v2 = _vertexLists[face[1]._vIndex];
-        vec3 v3 = _vertexLists[face[2]._vIndex];
+        Vector3 v1 = _vertexLists[face[0]._vIndex];
+        Vector3 v2 = _vertexLists[face[1]._vIndex];
+        Vector3 v3 = _vertexLists[face[2]._vIndex];
         
-        vec3 fn = (v2-v1);
+        Vector3 fn = (v2-v1);
         fn.cross(v3-v2);
         fn.normalize();
         faceVertexNormalList[face[0]._vIndex].push_back(fn);
@@ -319,7 +319,7 @@ void ObjMeshData::trianglarAndGenerateNormals()
     _normalVertexLists.resize(faceVertexNormalList.size());
     for (int index = 0; index < _normalVertexLists.size(); ++index)
     {
-        _normalVertexLists[index] = vec3(0,0,0);
+        _normalVertexLists[index] = Vector3(0,0,0);
         for (const auto& facenormal : faceVertexNormalList[index])
         {
             _normalVertexLists[index] += facenormal;
@@ -357,7 +357,7 @@ void ObjMeshData::convertToRenderMesh(RenderMesh &renderMesh)
                 vertex.vertex = _vertexLists[vertexIndex];
                 vertex.normal = _normalVertexLists[normalIndex];
                 if(face[faceVertexIndex]._uvIndex == -1)    //no uv
-                    vertex.uv = vec2(0,0);
+                    vertex.uv = Vector2(0,0);
                 else
                     vertex.uv = _uvVertexLists[uvIndex];
             
