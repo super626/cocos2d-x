@@ -1699,18 +1699,18 @@
 		A07A4CAF1783777C0073F6A7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1551A342158F2AB200E66CFE /* Foundation.framework */; };
 		B26CD3CB192172160013B587 /* Colored.es2.frag.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C1192172160013B587 /* Colored.es2.frag.h */; };
 		B26CD3CC192172160013B587 /* Colored.es2.frag.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C1192172160013B587 /* Colored.es2.frag.h */; };
-		B26CD3CD192172160013B587 /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26CD3C2192172160013B587 /* Mesh.cpp */; };
-		B26CD3CE192172160013B587 /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26CD3C2192172160013B587 /* Mesh.cpp */; };
-		B26CD3CF192172160013B587 /* Mesh.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C3192172160013B587 /* Mesh.h */; };
-		B26CD3D0192172160013B587 /* Mesh.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C3192172160013B587 /* Mesh.h */; };
-		B26CD3D1192172160013B587 /* MeshCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26CD3C4192172160013B587 /* MeshCache.cpp */; };
-		B26CD3D2192172160013B587 /* MeshCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26CD3C4192172160013B587 /* MeshCache.cpp */; };
-		B26CD3D3192172160013B587 /* MeshCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C5192172160013B587 /* MeshCache.h */; };
-		B26CD3D4192172160013B587 /* MeshCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C5192172160013B587 /* MeshCache.h */; };
-		B26CD3D5192172160013B587 /* Sprite3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26CD3C6192172160013B587 /* Sprite3D.cpp */; };
-		B26CD3D6192172160013B587 /* Sprite3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26CD3C6192172160013B587 /* Sprite3D.cpp */; };
-		B26CD3D7192172160013B587 /* Sprite3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C7192172160013B587 /* Sprite3D.h */; };
-		B26CD3D8192172160013B587 /* Sprite3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C7192172160013B587 /* Sprite3D.h */; };
+		B26CD3CD192172160013B587 /* CCMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26CD3C2192172160013B587 /* CCMesh.cpp */; };
+		B26CD3CE192172160013B587 /* CCMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26CD3C2192172160013B587 /* CCMesh.cpp */; };
+		B26CD3CF192172160013B587 /* CCMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C3192172160013B587 /* CCMesh.h */; };
+		B26CD3D0192172160013B587 /* CCMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C3192172160013B587 /* CCMesh.h */; };
+		B26CD3D1192172160013B587 /* CCMeshCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26CD3C4192172160013B587 /* CCMeshCache.cpp */; };
+		B26CD3D2192172160013B587 /* CCMeshCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26CD3C4192172160013B587 /* CCMeshCache.cpp */; };
+		B26CD3D3192172160013B587 /* CCMeshCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C5192172160013B587 /* CCMeshCache.h */; };
+		B26CD3D4192172160013B587 /* CCMeshCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C5192172160013B587 /* CCMeshCache.h */; };
+		B26CD3D5192172160013B587 /* CCSprite3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26CD3C6192172160013B587 /* CCSprite3D.cpp */; };
+		B26CD3D6192172160013B587 /* CCSprite3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26CD3C6192172160013B587 /* CCSprite3D.cpp */; };
+		B26CD3D7192172160013B587 /* CCSprite3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C7192172160013B587 /* CCSprite3D.h */; };
+		B26CD3D8192172160013B587 /* CCSprite3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C7192172160013B587 /* CCSprite3D.h */; };
 		B26CD3D9192172160013B587 /* Textured.es2.frag.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C8192172160013B587 /* Textured.es2.frag.h */; };
 		B26CD3DA192172160013B587 /* Textured.es2.frag.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C8192172160013B587 /* Textured.es2.frag.h */; };
 		B26CD3DB192172160013B587 /* Textured.es2.vert.h in Headers */ = {isa = PBXBuildFile; fileRef = B26CD3C9192172160013B587 /* Textured.es2.vert.h */; };
@@ -2804,12 +2804,12 @@
 		A07A4F9E1783876B0073F6A7 /* libbox2d iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libbox2d iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A07A4FB4178387730073F6A7 /* libCocosDenshion iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libCocosDenshion iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B26CD3C1192172160013B587 /* Colored.es2.frag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Colored.es2.frag.h; sourceTree = "<group>"; };
-		B26CD3C2192172160013B587 /* Mesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Mesh.cpp; sourceTree = "<group>"; };
-		B26CD3C3192172160013B587 /* Mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mesh.h; sourceTree = "<group>"; };
-		B26CD3C4192172160013B587 /* MeshCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MeshCache.cpp; sourceTree = "<group>"; };
-		B26CD3C5192172160013B587 /* MeshCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeshCache.h; sourceTree = "<group>"; };
-		B26CD3C6192172160013B587 /* Sprite3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sprite3D.cpp; sourceTree = "<group>"; };
-		B26CD3C7192172160013B587 /* Sprite3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sprite3D.h; sourceTree = "<group>"; };
+		B26CD3C2192172160013B587 /* CCMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCMesh.cpp; sourceTree = "<group>"; };
+		B26CD3C3192172160013B587 /* CCMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCMesh.h; sourceTree = "<group>"; };
+		B26CD3C4192172160013B587 /* CCMeshCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCMeshCache.cpp; sourceTree = "<group>"; };
+		B26CD3C5192172160013B587 /* CCMeshCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCMeshCache.h; sourceTree = "<group>"; };
+		B26CD3C6192172160013B587 /* CCSprite3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCSprite3D.cpp; sourceTree = "<group>"; };
+		B26CD3C7192172160013B587 /* CCSprite3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCSprite3D.h; sourceTree = "<group>"; };
 		B26CD3C8192172160013B587 /* Textured.es2.frag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Textured.es2.frag.h; sourceTree = "<group>"; };
 		B26CD3C9192172160013B587 /* Textured.es2.vert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Textured.es2.vert.h; sourceTree = "<group>"; };
 		B2AF2F8218EBAEAE00C5807C /* MathUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathUtil.cpp; sourceTree = "<group>"; };
@@ -4916,12 +4916,12 @@
 			isa = PBXGroup;
 			children = (
 				B26CD3C1192172160013B587 /* Colored.es2.frag.h */,
-				B26CD3C2192172160013B587 /* Mesh.cpp */,
-				B26CD3C3192172160013B587 /* Mesh.h */,
-				B26CD3C4192172160013B587 /* MeshCache.cpp */,
-				B26CD3C5192172160013B587 /* MeshCache.h */,
-				B26CD3C6192172160013B587 /* Sprite3D.cpp */,
-				B26CD3C7192172160013B587 /* Sprite3D.h */,
+				B26CD3C2192172160013B587 /* CCMesh.cpp */,
+				B26CD3C3192172160013B587 /* CCMesh.h */,
+				B26CD3C4192172160013B587 /* CCMeshCache.cpp */,
+				B26CD3C5192172160013B587 /* CCMeshCache.h */,
+				B26CD3C6192172160013B587 /* CCSprite3D.cpp */,
+				B26CD3C7192172160013B587 /* CCSprite3D.h */,
 				B26CD3C8192172160013B587 /* Textured.es2.frag.h */,
 				B26CD3C9192172160013B587 /* Textured.es2.vert.h */,
 			);
@@ -5032,7 +5032,7 @@
 				2905FA6C18CF08D100240AA3 /* UIPageView.h in Headers */,
 				50FCEB9518C72017004AD434 /* ButtonReader.h in Headers */,
 				1A57008F180BC5A10088DEC7 /* CCActionTiledGrid.h in Headers */,
-				B26CD3D7192172160013B587 /* Sprite3D.h in Headers */,
+				B26CD3D7192172160013B587 /* CCSprite3D.h in Headers */,
 				1A570093180BC5A10088DEC7 /* CCActionTween.h in Headers */,
 				500DC8C019105D41007B91BF /* CCRenderCommand.h in Headers */,
 				1A57009A180BC5C10088DEC7 /* CCAtlasNode.h in Headers */,
@@ -5166,7 +5166,7 @@
 				1A57034D180BD09B0088DEC7 /* tinyxml2.h in Headers */,
 				1A570356180BD0B00088DEC7 /* ioapi.h in Headers */,
 				500DC99619106300007B91BF /* CCScheduler.h in Headers */,
-				B26CD3CF192172160013B587 /* Mesh.h in Headers */,
+				B26CD3CF192172160013B587 /* CCMesh.h in Headers */,
 				1A57035A180BD0B00088DEC7 /* unzip.h in Headers */,
 				296CAD241915EC8000C64FBF /* CCEventFocus.h in Headers */,
 				500DC98819106300007B91BF /* CCNS.h in Headers */,
@@ -5281,7 +5281,7 @@
 				5034CA45191D591100CE6051 /* ccShader_Label_outline.frag in Headers */,
 				500DC96219106300007B91BF /* CCEventListener.h in Headers */,
 				1A8C59B9180E930E00EF57C3 /* CCColliderDetector.h in Headers */,
-				B26CD3D3192172160013B587 /* MeshCache.h in Headers */,
+				B26CD3D3192172160013B587 /* CCMeshCache.h in Headers */,
 				1A8C59BD180E930E00EF57C3 /* CCComAttribute.h in Headers */,
 				1A8C59C1180E930E00EF57C3 /* CCComAudio.h in Headers */,
 				B2AF2FB118EBBDA100C5807C /* CCMath.h in Headers */,
@@ -5465,7 +5465,7 @@
 				5034CA1A191D591100CE6051 /* ccShaders.h in Headers */,
 				46A1702D1807CBFE005B8026 /* CCCommon.h in Headers */,
 				46A170FF1807CECB005B8026 /* CCPhysicsContact.h in Headers */,
-				B26CD3D8192172160013B587 /* Sprite3D.h in Headers */,
+				B26CD3D8192172160013B587 /* CCSprite3D.h in Headers */,
 				46A171041807CECB005B8026 /* CCPhysicsShape.h in Headers */,
 				500DC95719106300007B91BF /* CCEventCustom.h in Headers */,
 				500DC95319106300007B91BF /* CCEventAcceleration.h in Headers */,
@@ -5582,7 +5582,7 @@
 				50FCEBBE18C72017004AD434 /* TextBMFontReader.h in Headers */,
 				1A5701FE180BCBAD0088DEC7 /* CCMenuItem.h in Headers */,
 				1A570205180BCBD40088DEC7 /* CCClippingNode.h in Headers */,
-				B26CD3D0192172160013B587 /* Mesh.h in Headers */,
+				B26CD3D0192172160013B587 /* CCMesh.h in Headers */,
 				5034CA34191D591100CE6051 /* ccShader_PositionTexture_uColor.frag in Headers */,
 				1A57020B180BCBDF0088DEC7 /* CCMotionStreak.h in Headers */,
 				1A570213180BCBF40088DEC7 /* CCProgressTimer.h in Headers */,
@@ -5735,7 +5735,7 @@
 				1AD71EEA180E26E600808F54 /* spine.h in Headers */,
 				1AAF536D180E3374000584C8 /* HttpClient.h in Headers */,
 				1AAF536F180E3374000584C8 /* HttpRequest.h in Headers */,
-				B26CD3D4192172160013B587 /* MeshCache.h in Headers */,
+				B26CD3D4192172160013B587 /* CCMeshCache.h in Headers */,
 				1AAF5371180E3374000584C8 /* HttpResponse.h in Headers */,
 				1AAF5375180E3374000584C8 /* SocketIO.h in Headers */,
 				1AAF5379180E3374000584C8 /* WebSocket.h in Headers */,
@@ -6255,7 +6255,7 @@
 				B37510731823AC9F00B3BA6A /* CCPhysicsContactInfo_chipmunk.cpp in Sources */,
 				1A5701C7180BCB5A0088DEC7 /* CCLabelTextFormatter.cpp in Sources */,
 				1A5701CB180BCB5A0088DEC7 /* CCLabelTTF.cpp in Sources */,
-				B26CD3CD192172160013B587 /* Mesh.cpp in Sources */,
+				B26CD3CD192172160013B587 /* CCMesh.cpp in Sources */,
 				1A5701DE180BCB8C0088DEC7 /* CCLayer.cpp in Sources */,
 				500DC99819106300007B91BF /* ccTypes.cpp in Sources */,
 				500DC8C419105D41007B91BF /* CCRenderer.cpp in Sources */,
@@ -6297,7 +6297,7 @@
 				1A5702AF180BCDBC0088DEC7 /* ccUTF8.cpp in Sources */,
 				500DC8D519105F7D007B91BF /* CCGeometry.cpp in Sources */,
 				1A5702B5180BCDF40088DEC7 /* CCVertex.cpp in Sources */,
-				B26CD3D5192172160013B587 /* Sprite3D.cpp in Sources */,
+				B26CD3D5192172160013B587 /* CCSprite3D.cpp in Sources */,
 				1A5702C2180BCE2A0088DEC7 /* CCIMEDispatcher.cpp in Sources */,
 				1A5702C8180BCE370088DEC7 /* CCTextFieldTTF.cpp in Sources */,
 				50FCEBAB18C72017004AD434 /* PageViewReader.cpp in Sources */,
@@ -6318,7 +6318,7 @@
 				1A570319180BCF430088DEC7 /* ccCArray.cpp in Sources */,
 				B37510711823AC9F00B3BA6A /* CCPhysicsBodyInfo_chipmunk.cpp in Sources */,
 				1A570324180BCF660088DEC7 /* TGAlib.cpp in Sources */,
-				B26CD3D1192172160013B587 /* MeshCache.cpp in Sources */,
+				B26CD3D1192172160013B587 /* CCMeshCache.cpp in Sources */,
 				1A01C69C18F57BE800EFE3A6 /* CCString.cpp in Sources */,
 				1A57032F180BCFD50088DEC7 /* CCUserDefault.cpp in Sources */,
 				1A570333180BCFD50088DEC7 /* CCUserDefault.mm in Sources */,
@@ -6716,7 +6716,7 @@
 				1A570283180BCC900088DEC7 /* CCSpriteBatchNode.cpp in Sources */,
 				1A570287180BCC900088DEC7 /* CCSpriteFrame.cpp in Sources */,
 				1A57028B180BCC900088DEC7 /* CCSpriteFrameCache.cpp in Sources */,
-				B26CD3D6192172160013B587 /* Sprite3D.cpp in Sources */,
+				B26CD3D6192172160013B587 /* CCSprite3D.cpp in Sources */,
 				1A570293180BCCAB0088DEC7 /* CCAnimation.cpp in Sources */,
 				1A570297180BCCAB0088DEC7 /* CCAnimationCache.cpp in Sources */,
 				50FCEBC418C72017004AD434 /* TextReader.cpp in Sources */,
@@ -6730,7 +6730,7 @@
 				1A5702D4180BCE570088DEC7 /* CCTexture2D.cpp in Sources */,
 				1A5702D8180BCE570088DEC7 /* CCTextureAtlas.cpp in Sources */,
 				1A5702DC180BCE570088DEC7 /* CCTextureCache.cpp in Sources */,
-				B26CD3CE192172160013B587 /* Mesh.cpp in Sources */,
+				B26CD3CE192172160013B587 /* CCMesh.cpp in Sources */,
 				1A5702EB180BCE750088DEC7 /* CCTileMapAtlas.cpp in Sources */,
 				1A5702EF180BCE750088DEC7 /* CCTMXLayer.cpp in Sources */,
 				1A5702F3180BCE750088DEC7 /* CCTMXObjectGroup.cpp in Sources */,
@@ -6851,7 +6851,7 @@
 				2905FA7918CF08D100240AA3 /* UISlider.cpp in Sources */,
 				1A8C59A4180E930E00EF57C3 /* CCArmatureAnimation.cpp in Sources */,
 				1A8C59A8180E930E00EF57C3 /* CCArmatureDataManager.cpp in Sources */,
-				B26CD3D2192172160013B587 /* MeshCache.cpp in Sources */,
+				B26CD3D2192172160013B587 /* CCMeshCache.cpp in Sources */,
 				2905FA8918CF08D100240AA3 /* UITextField.cpp in Sources */,
 				1A8C59AC180E930E00EF57C3 /* CCArmatureDefine.cpp in Sources */,
 				500DC98719106300007B91BF /* CCNS.cpp in Sources */,
