@@ -31,6 +31,7 @@ Controller g_aTestNames[] = {
     // TESTS MUST BE ORDERED ALPHABETICALLY
     //     violators will be prosecuted
     //
+    { "Node: Sprite3d Ahead (delete after test)", [](){  return new Sprite3dTestScene(); }},
     { "A new UI", [](){  return new UITestScene(); }},
 	{ "Accelerometer", []() { return new AccelerometerTestScene(); } },
 	{ "ActionManager", [](){return new ActionManagerTestScene(); } },
