@@ -1,46 +1,35 @@
 
-#ifndef __MESH_CACHE_H_
-#define __MESH_CACHE_H_
+#ifndef __CCMESH_CACHE_H_
+#define __CCMESH_CACHE_H_
 
 #include <string>
 #include <map>
-#include "ccTypes.h"
-
-NS_CC_BEGIN
-
-class Sprite3D;
+#include "cocos2d.h"
 
 class Mesh;
-
 class MeshCache
 {
 public:
+    MeshCache();
     virtual ~MeshCache();
-    
+
     static MeshCache* getInstance();
     static void purgeMeshCache();
-    
-    bool addMesh(const std::string& fileName, Mesh* mesh);
-    Mesh* getMesh(const std::string& fileName);
+
+    Mesh* addMesh(const std::string& fileName);
     void removeMesh(const std::string& fileName);
-    void removeMesh(const Mesh* mesh);
-    
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-    void listenBackToForeground(EventCustom* event);
+    void listenBackToForeground(cocos2d::EventCustom* event);
 #endif
     
 protected:
-    MeshCache();
-    
     static MeshCache* _cacheInstance;
-    std::map<std::string, Mesh*> _cachedMeshes; //cached meshes
+    std::map<std::string, Mesh*> _cachedMeshes;
     
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-    EventListenerCustom* _backToForegroundlistener;
+    cocos2d::EventListenerCustom* _backToForegroundlistener;
 #endif
 };
-
-
-NS_CC_END
 
 #endif // __CCMESH_CACHE_H_

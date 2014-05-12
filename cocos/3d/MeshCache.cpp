@@ -1,14 +1,12 @@
 #include "MeshCache.h"
 #include "Mesh.h"
 #include "cocos2d.h"
-//#include "MeshMaterial.h"
 
-NS_CC_BEGIN
-
-
-typedef std::map<std::string, Mesh*>::iterator MeshMapIter;
+using namespace cocos2d;
 
 MeshCache* MeshCache::_cacheInstance = nullptr;
+
+typedef std::map<std::string, Mesh*>::iterator MeshMapIter;
 
 MeshCache::MeshCache()
 {
@@ -47,46 +45,30 @@ void MeshCache::purgeMeshCache()
     }
 }
 
-bool MeshCache::addMesh(const std::string& fileName, Mesh* mesh)
+Mesh* MeshCache::addMesh(const std::string& fileName)
 {
+    Mesh* ret = nullptr;
     const std::string fullPath = FileUtils::getInstance()->fullPathForFilename(fileName);
-    auto it = _cachedMeshes.find(fullPath);
-    if (it == _cachedMeshes.end())
-    {
-        _cachedMeshes[fullPath] = mesh;
-        return true;
+    MeshMapIter it = _cachedMeshes.find(fullPath);
+    if (it == _cachedMeshes.end()) {
+        ret = new Mesh(fileName);
+        _cachedMeshes.insert(std::make_pair(fullPath, ret));
     }
-    return false;
+    else
+    {
+        ret = it->second;
+    }
+
+    return ret;
 }
 
-Mesh* MeshCache::getMesh(const std::string& fileName)
-{
-    const std::string fullPath = FileUtils::getInstance()->fullPathForFilename(fileName);
-    auto it = _cachedMeshes.find(fullPath);
-    if (it != _cachedMeshes.end())
-        return it->second;
-    
-    return nullptr;
-}
 void MeshCache::removeMesh(const std::string& fileName)
 {
     const std::string fullPath = FileUtils::getInstance()->fullPathForFilename(fileName);
-    auto it = _cachedMeshes.find(fullPath);
+    MeshMapIter it = _cachedMeshes.find(fullPath);
     if (it != _cachedMeshes.end()) {
         CC_SAFE_DELETE(it->second);
         _cachedMeshes.erase(it);
-    }
-}
-
-void MeshCache::removeMesh(const Mesh* mesh)
-{
-    auto it = _cachedMeshes.begin();
-    for (; it != _cachedMeshes.end(); it++) {
-        if (it->second == mesh)
-        {
-            _cachedMeshes.erase(it);
-            return;
-        }
     }
 }
 
@@ -95,11 +77,7 @@ void MeshCache::listenBackToForeground(EventCustom* event)
 {
     for (auto iter = _cachedMeshes.begin(); iter != _cachedMeshes.end(); ++iter) {
         Mesh* mesh = iter->second;
-        mesh->restore();
+        mesh->loadFromFile(iter->first);
     }
-    
-    VertexDeclaration::restoreAllVertexDecl();
 }
 #endif
-
-NS_CC_END

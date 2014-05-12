@@ -1,3 +1,12 @@
+//
+//  SkyboxNode.h
+//  testar1
+//
+//  Created by Pasi Kettunen on 12.12.2012.
+//
+//
+
+
 /*
  *
  * SkyboxNode is free software: you can redistribute it and/or modify
@@ -17,58 +26,72 @@
 
 #include <vector>
 
-#include "ccTypes.h"
-#include "CCNode.h"
+#include "cocos2d.h"
 
-#include "renderer/CCCustomCommand.h"
+#include "Mesh.h"
 
+struct UniformHandles
+{
+    GLuint NormalMatrix;
+    GLuint OutlineWidth;
+    GLuint OutlineColor;
+    GLint DiffuseMaterial;
+    GLint Sampler;
+};
 
-NS_CC_BEGIN
+struct AttributeHandles
+{
+    GLint Position;
+    GLint Normal;
+    GLint TextureCoord;
+};
 
-class MeshMaterial;
-class Mesh;
-class Texture2D;
-class Sprite3DEffect;
-
-class Sprite3D : public Node
+class Sprite3D : public cocos2d::Node
 {
 public:
-    static Sprite3D* create(const std::string &modelPath);
-   
-    MeshMaterial* getMeshMaterial(int idx) { return _partMaterials[idx]; }
-    
-    int           getMeshPartCount() const;
-    
-    
-    Mesh* getMesh() { return _model; }
-    
-    void setEffect(Sprite3DEffect* effect);
-    
+    static Sprite3D* create(const std::string &modelPath, const std::string &texturePath="");
+    void setOutline(float width, cocos2d::Color3B color);
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    void listenBackToForeground(cocos2d::EventCustom* event);
+#endif
 
 protected:
     Sprite3D();
     virtual ~Sprite3D();
-    bool init(const std::string &path);
-    
-    //.mtl file should at the same directory with the same name if exist
-    bool loadFromObj(const std::string& path);
+    bool init(const std::string &modelPath, const std::string &texturePath);
 
-    virtual void draw(Renderer *renderer, const Matrix &transform, bool transformUpdated) override;
+    void setModel(Mesh *model);
+    bool buildProgram(bool textured);
+    void draw(cocos2d::Renderer* renderer, const cocos2d::Matrix &transform, bool transformUpdated);
+    void onDraw(const cocos2d::Matrix &transform, bool transformUpdated);
+    void setTexture(cocos2d::Texture2D* texture);
+    void updateBlendFunc();
+    void setTextureName(const std::string& textureName);
+    void removeTexture();
 
-    void onDraw(const Matrix &transform, bool transformUpdated);
+    // the current rotation offset
+    //float xRot, yRot, zRot;
+    Mesh *_model;
 
-    CustomCommand     _customCommand;
-    Mesh              *_model;
+    cocos2d::BlendFunc _blendFunc;
+    cocos2d::Texture2D *_texture;
+    cocos2d::CustomCommand _customCommand;
     
-    int               _partcount;
-    MeshMaterial**    _partMaterials;
-    
-    Sprite3DEffect*     _effect;
-    
-    std::string       _path;
-    
+    bool _outLine = false;
+    float _outLineWidth;
+    cocos2d::Color3B _outlineColor;
+    cocos2d::GLProgram *_outlineShader;
+    cocos2d::GLProgram *_mainShader;
 
+    UniformHandles _uniforms;
+    UniformHandles _uniformsOutline;
+    AttributeHandles _attributes;
+    AttributeHandles _attributesOutline;
+    
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    cocos2d::EventListenerCustom* _backToForegroundlistener;
+#endif
 };
 
-NS_CC_END
 #endif // __SPRITE3D_H_

@@ -6,219 +6,321 @@
 //
 //
 
-#include "cocos2d.h"
 #include "Sprite3D.h"
 #include "MeshCache.h"
-#include "Mesh.h"
-#include "MeshMaterial.h"
-#include "Sprite3DEffect.h"
 
-#include "ObjLoader.h"
+using namespace cocos2d;
 
-NS_CC_BEGIN
+#define STRINGIFY(A)  #A
+//#include "../Shaders/TexturedLighting.es2.vert.h"
+#include "Textured.es2.vert.h"
+#include "Textured.es2.frag.h"
+#include "Colored.es2.frag.h"
 
-std::map<std::string, std::vector<std::string> > __cachedSpriteTexNames;
-
-Sprite3D* Sprite3D::create(const std::string &modelPath)
+Sprite3D* Sprite3D::create(const std::string &modelPath, const std::string &texturePath)
 {
-    if (modelPath.length() < 4)
-        return nullptr;
-    
-    auto sprite = new Sprite3D;
-    if (sprite->init(modelPath))
-    {
-        sprite->autorelease();
-        return sprite;
+    auto ret = new Sprite3D;
+    if( ret && ret->init(modelPath, texturePath)) {
+        ret->autorelease();
+        return ret;
     }
-    
     return nullptr;
 }
 
-//.mtl file should at the same directory with the same name if exist
-bool Sprite3D::loadFromObj(const std::string& path)
-{
-    std::string fullPath = FileUtils::getInstance()->fullPathForFilename(path);
-    
-    //.mtl file directory
-    std::string dir = "";
-    int last = fullPath.rfind("/");
-    if (last != -1)
-        dir = fullPath.substr(0, last + 1);
-    
-    ObjLoader::shapes_t shapes;
-    std::string errstr = ObjLoader::LoadObj(shapes, fullPath.c_str(), dir.c_str());
-    if (!errstr.empty())
-        return false;
-    
-    //convert to mesh and material
-    std::vector<std::vector<unsigned short> > indices;
-    std::vector<std::string> matnames;
-    for (auto it = shapes.shapes.begin(); it != shapes.shapes.end(); it++) {
-        indices.push_back((*it).mesh.indices);
-        matnames.push_back(dir + (*it).material.diffuse_texname);
-    }
-    _model = Mesh::create(shapes.positions, shapes.normals, shapes.texcoords, indices);
-    
-    _model->retain();
-    if (_model == nullptr)
-        return false;
-    
-    
-
-    _partcount = indices.size();
-    _partMaterials = new MeshMaterial*[_partcount];
-    
-    for (auto it = 0; it != matnames.size(); it++) {
-        auto material = MeshMaterial::create(_model);
-        if (!matnames[it].empty())
-        {
-            material->setTexture(matnames[it]);
-        }
-        _partMaterials[it] = material;
-        material->retain();
-    }
-    
-    //add to cache
-    __cachedSpriteTexNames[fullPath] = matnames;
-    MeshCache::getInstance()->addMesh(fullPath, _model);
-    
-    _path = fullPath;
-
-    return true;
-}
-
-Sprite3D::Sprite3D(): _partMaterials(nullptr), _partcount(0), _model(nullptr), _effect(nullptr)
+Sprite3D::Sprite3D()
+: _texture(nullptr)
+, _model(nullptr)
+, _mainShader(nullptr)
+, _outlineShader(nullptr)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+,_backToForegroundlistener(nullptr)
+#endif
 {
 }
 
 Sprite3D::~Sprite3D()
 {
+    CC_SAFE_RELEASE(_mainShader);
+    CC_SAFE_RELEASE(_outlineShader);
+    CC_SAFE_RELEASE(_texture);
     
-    CC_SAFE_RELEASE_NULL(_model);
-    
-    for(auto i = 0; i < _partcount; i++)
-        CC_SAFE_RELEASE_NULL(_partMaterials[i]);
-
-    CC_SAFE_DELETE_ARRAY(_partMaterials);
-    
-    CC_SAFE_RELEASE_NULL(_effect);
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    Director::getInstance()->getEventDispatcher()->removeEventListener(_backToForegroundlistener);
+#endif
 }
 
-
-bool Sprite3D::init(const std::string &path)
+bool Sprite3D::init(const std::string &modelPath, const std::string &texturePath)
 {
-    for(auto i = 0; i < _partcount; i++)
-        CC_SAFE_RELEASE_NULL(_partMaterials[i]);
-    _partcount = 0;
-    
-    CC_SAFE_DELETE_ARRAY(_partMaterials);
-    CC_SAFE_RELEASE_NULL(_model);
-    
-    //find from the cache
-    Mesh* mesh = MeshCache::getInstance()->getMesh(path);
-    if (mesh)
-    {
-        std::string fullPath = FileUtils::getInstance()->fullPathForFilename(path);
-        _model = mesh;
-        mesh->retain();
-        _partcount = mesh->getMeshPartCount();
-        _partMaterials = new MeshMaterial*[_partcount];
-        
-        auto matnames = __cachedSpriteTexNames[fullPath];
-        for (auto it = 0; it != matnames.size(); it++) {
-            auto material = MeshMaterial::create(_model);
-            if (!matnames[it].empty())
-            {
-                material->setTexture(matnames[it]);
-            }
-            _partMaterials[it] = material;
-            material->retain();
-        }
-        
-        _path = fullPath;
+    auto model = MeshCache::getInstance()->addMesh(modelPath);// new Mesh(modelPath);
+    if( texturePath.size()) {
+        setTextureName(texturePath);
     }
     else
     {
-        //load from file
-        std::string ext = path.substr(path.length() - 4, 4);
-        if (ext == ".obj")
-        {
-            if (!loadFromObj(path))
-                return false;
-        }
-        else
-            return false;
+        buildProgram( _texture->getName() != 0);
     }
+    setModel(model);
     
+    this->updateBlendFunc();
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    // listen the event when app go to foreground
+    _backToForegroundlistener = EventListenerCustom::create(EVENT_COME_TO_FOREGROUND, CC_CALLBACK_1(Sprite3D::listenBackToForeground, this));
+    Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(_backToForegroundlistener, -1);
+#endif
     
     return true;
 }
 
-void Sprite3D::setEffect(Sprite3DEffect* effect)
+void Sprite3D::setModel(Mesh *model)
 {
-    CC_SAFE_RETAIN(effect);
-    CC_SAFE_RELEASE_NULL(_effect);
-    _effect = effect;
-    _effect->init(this);
+    if (model != nullptr && _model != model)
+    {
+        _model = model;
+    }
 }
 
-void Sprite3D::draw(Renderer *renderer, const Matrix &transform, bool transformUpdated)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+void Sprite3D::listenBackToForeground(EventCustom* event)
+{
+    buildProgram(_texture->getName() != 0);
+    if (_outLine && _outLineWidth > 0 && _outlineShader) {
+        _outlineShader->reset();
+        _outlineShader->initWithByteArrays(outLineShader, blackFrag);
+        _outlineShader->bindAttribLocation(GLProgram::ATTRIBUTE_NAME_POSITION, GLProgram::VERTEX_ATTRIB_POSITION);
+        _outlineShader->link();
+        _outlineShader->updateUniforms();
+        _attributesOutline.Position = _outlineShader->getAttribLocation("Position");
+        _attributesOutline.Normal = _outlineShader->getAttribLocation("Normal");
+        _uniformsOutline.NormalMatrix = _outlineShader->getUniformLocation("NormalMatrix");
+        _uniformsOutline.OutlineWidth = _outlineShader->getUniformLocation("OutlineWidth");
+        _uniformsOutline.OutlineColor = _outlineShader->getUniformLocation("OutLineColor");
+    }
+}
+#endif
+
+bool Sprite3D::buildProgram(bool textured)
+{
+    if (!_mainShader) {
+        _mainShader = new GLProgram();
+    }
+    else
+    {
+        _mainShader->reset();
+    }
+
+    // Create the GLSL program.
+    if (textured) {
+        _mainShader->initWithByteArrays(baseVertexShader, baseTexturedFrag);
+    }
+    else
+        _mainShader->initWithByteArrays(baseVertexShader, baseColoredFrag);
+
+    //glUseProgram(_program);
+
+    _mainShader->bindAttribLocation(GLProgram::ATTRIBUTE_NAME_POSITION, GLProgram::VERTEX_ATTRIB_POSITION);
+    _mainShader->bindAttribLocation(GLProgram::ATTRIBUTE_NAME_COLOR, GLProgram::VERTEX_ATTRIB_COLOR);
+    _mainShader->bindAttribLocation(GLProgram::ATTRIBUTE_NAME_TEX_COORD, GLProgram::VERTEX_ATTRIB_TEX_COORDS);
+
+    _mainShader->link();
+    _mainShader->updateUniforms();
+
+    // Extract the handles to attributes and uniforms.
+    _attributes.Position = _mainShader->getAttribLocation("Position");
+    _attributes.Normal = _mainShader->getAttribLocation("Normal");
+
+    _uniforms.DiffuseMaterial = _mainShader->getUniformLocation("DiffuseMaterial");
+    if (textured) {
+        _attributes.TextureCoord = _mainShader->getAttribLocation("TextureCoord");
+        _uniforms.Sampler = _mainShader->getUniformLocation("Sampler");
+    }
+    else {
+        _attributes.TextureCoord = 0;
+        _uniforms.Sampler = 0;
+    }
+
+    _uniforms.NormalMatrix = _mainShader->getUniformLocation("NormalMatrix");
+    return true;
+}
+
+void Sprite3D::draw(Renderer* renderer, const cocos2d::Matrix &transform, bool transformUpdated)
 {
     _customCommand.init(_globalZOrder);
     _customCommand.func = CC_CALLBACK_0(Sprite3D::onDraw, this, transform, transformUpdated);
     Director::getInstance()->getRenderer()->addCommand(&_customCommand);
 }
 
-void Sprite3D::onDraw(const Matrix &transform, bool transformUpdated)
+void Sprite3D::onDraw(const cocos2d::Matrix &transform, bool transformUpdated)
 {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     // ********** Base Draw *************
     
-    Color4F color(getDisplayedColor());
-    color.a = getDisplayedOpacity() / 255.0f;
+    _mainShader->use();
+    _mainShader->setUniformsForBuiltins(transform);
+
+    GL::blendFunc( _blendFunc.src, _blendFunc.dst );
+    Director::getInstance()->loadIdentityMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
     
-    if (_partMaterials && _model)
-    {
-        
-        for (int i = 0; i < _model->getMeshPartCount(); i++) {
-            auto material = getMeshMaterial(i);
-            material->getProgram()->use();
-            material->getProgram()->setUniformsForBuiltins(transform);
-
-            material->setColor(Vector4(color.r, color.g, color.b, color.a));
-            material->bind();
-            
-            MeshPart* meshPart = _model->getMeshPart(i);
-            
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshPart->getIndexBuffer());
-            glDrawElements(meshPart->getPrimitiveType(), meshPart->getIndexCount(), meshPart->getIndexFormat(), 0);
-            
-            material->unbind();
-            
-            //effect draw
-            if (_effect) {
-
-                _effect->getProgram()->use();
-                _effect->getProgram()->setUniformsForBuiltins(transform);
-                
-                _effect->setColor(Vector4(color.r, color.g, color.b, color.a));
-                _effect->bind();
-                
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshPart->getIndexBuffer());
-                glDrawElements(meshPart->getPrimitiveType(), meshPart->getIndexCount(), meshPart->getIndexFormat(), 0);
-                
-                _effect->unbind();
-            }
-            
-            CC_INCREMENT_GL_DRAWN_BATCHES_AND_VERTICES(1, meshPart->getIndexCount());
-        }
-        
+	if (_texture->getName()) {
+        GL::bindTexture2D(_texture->getName());
+        glUniform1i(_uniforms.Sampler, 0);
+        GL::enableVertexAttribs( GL::VERTEX_ATTRIB_FLAG_POS_COLOR_TEX );
+    }
+    else {
+        GL::enableVertexAttribs( GL::VERTEX_ATTRIB_FLAG_POSITION );
     }
     
+    // Set the diffuse color.
+    glUniform3f(_uniforms.DiffuseMaterial,1, 1, 1);
+    
+    // Initialize various state.
+    glEnableVertexAttribArray(_attributes.Position);
+    //glEnableVertexAttribArray(_attributes.Normal);
+    if (_texture->getName())
+        glEnableVertexAttribArray(_attributes.TextureCoord);
+
+    // Set the normal matrix.
+    // It's orthogonal, so its Inverse-Transpose is itself!
+
+    glUniformMatrix4fv(_uniforms.NormalMatrix, 1, 0, &_modelViewTransform.m[0]);
+
+    GLuint verBuf = _model->getVertexBuffer();
+    GLuint indexBuf = _model->getIndexBuffer();
+    ssize_t indexCount = _model->getIndexCount();
+
+    // Draw the surface using VBOs
+    int stride = sizeof(vec3) + sizeof(vec3) + sizeof(vec2);
+    const GLvoid* normalOffset = (const GLvoid*) sizeof(vec3);
+    const GLvoid* texCoordOffset = (const GLvoid*) (2 * sizeof(vec3));
+    GLint position = _attributes.Position;
+    //GLint normal = _attributes.Normal;
+    GLint texCoord = _attributes.TextureCoord;
+
+    glBindBuffer(GL_ARRAY_BUFFER, verBuf);
+    glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, 0);
+    //glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, normalOffset);
+    if (_texture->getName())
+        glVertexAttribPointer(texCoord, 2, GL_FLOAT, GL_FALSE, stride, texCoordOffset);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuf);
+    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_SHORT, 0);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    if(_outLine)
+    {
+        // ******* Outline Draw **********
+        glCullFace(GL_FRONT);
+        _outlineShader->use();
+        _outlineShader->setUniformsForBuiltins(_modelViewTransform);
+        //GL::blendFunc( _blendFunc.src, _blendFunc.dst );
+        Director::getInstance()->loadIdentityMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+        GL::enableVertexAttribs( GL::VERTEX_ATTRIB_FLAG_POSITION );
+        
+        // Initialize various state.
+        glEnableVertexAttribArray(_attributesOutline.Position);
+        glEnableVertexAttribArray(_attributesOutline.Normal);
+        
+        // Set the normal matrix.
+        // It's orthogonal, so its Inverse-Transpose is itself!
+        glUniformMatrix4fv(_uniformsOutline.NormalMatrix, 1, 0, &_modelViewTransform.m[0]);
+        glUniform1f(_uniformsOutline.OutlineWidth, _outLineWidth);
+        Color4F fOutlineColor(_outlineColor);
+        glUniform3f(_uniformsOutline.OutlineColor,fOutlineColor.r,fOutlineColor.g,fOutlineColor.b);
+        // Draw the surface using VBOs
+        stride = sizeof(vec3) + sizeof(vec3) + sizeof(vec2);
+        normalOffset = (const GLvoid*) sizeof(vec3);
+        position = _attributesOutline.Position;
+        GLint normal = _attributesOutline.Normal;
+        
+        glBindBuffer(GL_ARRAY_BUFFER, verBuf);
+        glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, 0);
+        glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, normalOffset);
+        
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuf);
+        glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_SHORT, 0);
+        
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        
+        CC_INCREMENT_GL_DRAWN_BATCHES_AND_VERTICES(1, indexCount);
+        glCullFace(GL_BACK);
+    }
     glDisable(GL_DEPTH_TEST);
+    CC_INCREMENT_GL_DRAWN_BATCHES_AND_VERTICES(1, indexCount);
     
 }
 
+void Sprite3D::setTextureName(const std::string& textureName)
+{
+    auto cache = Director::getInstance()->getTextureCache();
+    Texture2D *tex = cache->addImage(textureName);
+	if( tex ) {
+        this->setTexture(tex);
+    }
+}
 
-NS_CC_END
+void Sprite3D::removeTexture()
+{
+	if( _texture ) {
+        _texture->release();
+        _texture = nullptr;
+
+        this->updateBlendFunc();
+        buildProgram(false);
+	}
+}
+
+#pragma mark Sprite3D - CocosNodeTexture protocol
+
+void Sprite3D::updateBlendFunc()
+{
+	// it is possible to have an untextured sprite
+	if( !_texture || ! _texture->hasPremultipliedAlpha() ) {
+		_blendFunc.src = GL_SRC_ALPHA;
+		_blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
+	} else {
+		_blendFunc.src = CC_BLEND_SRC;
+		_blendFunc.dst = CC_BLEND_DST;
+	}
+}
+
+void Sprite3D::setTexture(Texture2D* texture)
+{
+	CCASSERT( texture , "setTexture expects a Texture2D. Invalid argument");
+    
+	if( _texture != texture ) {
+        if(_texture)
+            _texture->release();
+
+		_texture = texture;
+        _texture->retain();
+        
+        this->updateBlendFunc();
+        buildProgram( _texture->getName() != 0);
+	}
+}
+
+void Sprite3D::setOutline(float width, Color3B color)
+{
+    if(width > 0)
+    {
+        _outLine = true;
+        _outLineWidth = width;
+        _outlineColor = color;
+        if (!_outlineShader) {
+            _outlineShader = new GLProgram();
+        }
+        _outlineShader->initWithByteArrays(outLineShader, blackFrag);
+        _outlineShader->bindAttribLocation(GLProgram::ATTRIBUTE_NAME_POSITION, GLProgram::VERTEX_ATTRIB_POSITION);
+        
+        _outlineShader->link();
+        _outlineShader->updateUniforms();
+        _attributesOutline.Position = _outlineShader->getAttribLocation("Position");
+        _attributesOutline.Normal = _outlineShader->getAttribLocation("Normal");
+        _uniformsOutline.NormalMatrix = _outlineShader->getUniformLocation("NormalMatrix");
+        _uniformsOutline.OutlineWidth = _outlineShader->getUniformLocation("OutlineWidth");
+        _uniformsOutline.OutlineColor = _outlineShader->getUniformLocation("OutLineColor");
+    }
+}
