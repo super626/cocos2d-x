@@ -1,6 +1,6 @@
 #include "CCMeshCache.h"
 #include "CCMesh.h"
-#include "cocos2d.h"
+#include "CCFileUtils.h"
 
 using namespace cocos2d;
 

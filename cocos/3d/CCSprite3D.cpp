@@ -8,6 +8,8 @@
 
 #include "CCSprite3D.h"
 #include "CCMeshCache.h"
+#include "base/CCDirector.h"
+#include "2d/CCTextureCache.h"
 
 using namespace cocos2d;
 
@@ -147,7 +149,7 @@ void Sprite3D::draw(Renderer* renderer, const cocos2d::Matrix &transform, bool t
 {
     _customCommand.init(_globalZOrder);
     _customCommand.func = CC_CALLBACK_0(Sprite3D::onDraw, this, transform, transformUpdated);
-    Director::getInstance()->getRenderer()->addCommand(&_customCommand);
+    renderer->addCommand(&_customCommand);
 }
 
 void Sprite3D::onDraw(const cocos2d::Matrix &transform, bool transformUpdated)

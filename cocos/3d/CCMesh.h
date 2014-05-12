@@ -5,7 +5,8 @@
 #include <string>
 #include <vector>
 
-#include "cocos2d.h"
+#include "math/CCMath.h"
+#include "base/ccTypes.h"
 
 struct FaceVertex
 {

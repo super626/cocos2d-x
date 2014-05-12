@@ -1,12 +1,10 @@
 #include "CCMesh.h"
-
+#include "CCFileUtils.h"
 #include <list>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <cctype>
-
-#include "cocos2d.h"
 
 using namespace std;
 using namespace cocos2d;

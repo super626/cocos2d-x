@@ -4,7 +4,7 @@
 
 #include <string>
 #include <map>
-#include "cocos2d.h"
+#include "math/CCMath.h"
 
 class Mesh;
 class MeshCache

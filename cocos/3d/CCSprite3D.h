@@ -26,9 +26,11 @@
 
 #include <vector>
 
-#include "cocos2d.h"
-
+#include "math/CCMath.h"
 #include "CCMesh.h"
+#include "2d/CCNode.h"
+#include "renderer/CCRenderer.h"
+#include "renderer/CCCustomCommand.h"
 
 struct UniformHandles
 {
