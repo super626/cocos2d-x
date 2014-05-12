@@ -11,7 +11,7 @@
 #include "base/CCDirector.h"
 #include "2d/CCTextureCache.h"
 
-using namespace cocos2d;
+NS_CC_BEGIN
 
 #define STRINGIFY(A)  #A
 //#include "../Shaders/TexturedLighting.es2.vert.h"
@@ -326,3 +326,5 @@ void Sprite3D::setOutline(float width, Color3B color)
         _uniformsOutline.OutlineColor = _outlineShader->getUniformLocation("OutLineColor");
     }
 }
+
+NS_CC_END

@@ -32,6 +32,8 @@
 #include "renderer/CCRenderer.h"
 #include "renderer/CCCustomCommand.h"
 
+NS_CC_BEGIN
+
 struct UniformHandles
 {
     GLuint NormalMatrix;
@@ -97,3 +99,5 @@ protected:
 };
 
 #endif // __SPRITE3D_H_
+
+NS_CC_END

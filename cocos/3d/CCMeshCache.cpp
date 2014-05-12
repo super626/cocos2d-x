@@ -2,7 +2,7 @@
 #include "CCMesh.h"
 #include "CCFileUtils.h"
 
-using namespace cocos2d;
+NS_CC_BEGIN
 
 MeshCache* MeshCache::_cacheInstance = nullptr;
 
@@ -81,3 +81,5 @@ void MeshCache::listenBackToForeground(EventCustom* event)
     }
 }
 #endif
+
+NS_CC_END

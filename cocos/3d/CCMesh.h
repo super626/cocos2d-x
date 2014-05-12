@@ -8,6 +8,8 @@
 #include "math/CCMath.h"
 #include "base/ccTypes.h"
 
+NS_CC_BEGIN
+
 struct FaceVertex
 {
     FaceVertex(int vIndex, int uvIndex, int normIndex)
@@ -100,5 +102,7 @@ private:
     RenderMesh _renderableMesh;
     
 };
+
+NS_CC_END
 
 #endif // __CCMESH_H_

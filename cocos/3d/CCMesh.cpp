@@ -7,7 +7,8 @@
 #include <cctype>
 
 using namespace std;
-using namespace cocos2d;
+
+NS_CC_BEGIN
 
 class ObjMeshParser
 {
@@ -575,3 +576,5 @@ void Mesh::buildBuffer()
                  GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
+
+NS_CC_END

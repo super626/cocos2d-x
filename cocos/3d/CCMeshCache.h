@@ -6,6 +6,8 @@
 #include <map>
 #include "math/CCMath.h"
 
+NS_CC_BEGIN
+
 class Mesh;
 class MeshCache
 {
@@ -33,3 +35,5 @@ protected:
 };
 
 #endif // __CCMESH_CACHE_H_
+
+NS_CC_END
