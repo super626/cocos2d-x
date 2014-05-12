@@ -6,8 +6,8 @@
 //
 //
 
-#include "Sprite3D.h"
-#include "MeshCache.h"
+#include "CCSprite3D.h"
+#include "CCMeshCache.h"
 
 using namespace cocos2d;
 

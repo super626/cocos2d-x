@@ -28,7 +28,7 @@
 
 #include "cocos2d.h"
 
-#include "Mesh.h"
+#include "CCMesh.h"
 
 struct UniformHandles
 {

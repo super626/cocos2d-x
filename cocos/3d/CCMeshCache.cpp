@@ -1,5 +1,5 @@
-#include "MeshCache.h"
-#include "Mesh.h"
+#include "CCMeshCache.h"
+#include "CCMesh.h"
 #include "cocos2d.h"
 
 using namespace cocos2d;
