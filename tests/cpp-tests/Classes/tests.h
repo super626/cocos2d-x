@@ -27,6 +27,7 @@
 #include "LabelTest/LabelTestNew.h"
 #include "TextInputTest/TextInputTest.h"
 #include "SpriteTest/SpriteTest.h"
+#include "Sprite3DTest/Sprite3dTest.h"
 #include "SchedulerTest/SchedulerTest.h"
 #include "RenderTextureTest/RenderTextureTest.h"
 #include "Box2DTest/Box2dTest.h"

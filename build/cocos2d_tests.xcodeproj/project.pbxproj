@@ -825,6 +825,9 @@
 		A07A52BF1783AF210073F6A7 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A07A52B91783AE900073F6A7 /* OpenGLES.framework */; };
 		A07A52C01783AF250073F6A7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A07A52B71783AE6D0073F6A7 /* UIKit.framework */; };
 		A07A52C31783B02C0073F6A7 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A07A52C11783B01F0073F6A7 /* AVFoundation.framework */; };
+		B26CD3E0192175D00013B587 /* sprite3d in Resources */ = {isa = PBXBuildFile; fileRef = B26CD3DF192175D00013B587 /* sprite3d */; };
+		B2AA02A7192178510084BAEB /* Sprite3dTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AA02A5192178510084BAEB /* Sprite3dTest.cpp */; };
+		B2AA02A8192178510084BAEB /* Sprite3dTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AA02A5192178510084BAEB /* Sprite3dTest.cpp */; };
 		C08689C118D370C90093E810 /* background.caf in Resources */ = {isa = PBXBuildFile; fileRef = C08689C018D370C90093E810 /* background.caf */; };
 		C08689C218D370C90093E810 /* background.caf in Resources */ = {isa = PBXBuildFile; fileRef = C08689C018D370C90093E810 /* background.caf */; };
 		C08689C318D370C90093E810 /* background.caf in Resources */ = {isa = PBXBuildFile; fileRef = C08689C018D370C90093E810 /* background.caf */; };
@@ -1860,6 +1863,9 @@
 		A07A52B91783AE900073F6A7 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		A07A52BB1783AEB80073F6A7 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		A07A52C11783B01F0073F6A7 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		B26CD3DF192175D00013B587 /* sprite3d */ = {isa = PBXFileReference; lastKnownFileType = folder; name = sprite3d; path = "../tests/cpp-tests/Resources/sprite3d"; sourceTree = "<group>"; };
+		B2AA02A5192178510084BAEB /* Sprite3dTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Sprite3dTest.cpp; path = Sprite3DTest/Sprite3dTest.cpp; sourceTree = "<group>"; };
+		B2AA02A6192178510084BAEB /* Sprite3dTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sprite3dTest.h; path = Sprite3DTest/Sprite3dTest.h; sourceTree = "<group>"; };
 		C08689C018D370C90093E810 /* background.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = background.caf; path = "../tests/cpp-tests/Resources/background.caf"; sourceTree = "<group>"; };
 		D60AE43317F7FFE100757E4B /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/CoreMotion.framework; sourceTree = DEVELOPER_DIR; };
 		EDCC747E17C455FD007B692C /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
@@ -2255,8 +2261,9 @@
 				1AC35AEC18CECF0C00F37B72 /* ShaderTest */,
 				1AC35AF118CECF0C00F37B72 /* SpineTest */,
 				1AC35AF418CECF0C00F37B72 /* SpriteTest */,
-				1AC35AF718CECF0C00F37B72 /* testBasic.cpp */,
+				B2AA02A1192177C60084BAEB /* Sprite3dTest */,
 				1AC35AF818CECF0C00F37B72 /* testBasic.h */,
+				1AC35AF718CECF0C00F37B72 /* testBasic.cpp */,
 				1AC35AF918CECF0C00F37B72 /* testResource.h */,
 				1AC35AFA18CECF0C00F37B72 /* tests.h */,
 				1AC35AFB18CECF0C00F37B72 /* TextInputTest */,
@@ -3268,6 +3275,7 @@
 		1AC35CA818CED83500F37B72 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B26CD3DF192175D00013B587 /* sprite3d */,
 				3EA0FB5D191B92F100B170C8 /* cocosvideo.mp4 */,
 				1AC35CA918CED84500F37B72 /* animations */,
 				1AC35CAE18CED84500F37B72 /* ccb */,
@@ -3808,6 +3816,15 @@
 				46A15FC61807A4F9005B8026 /* libCocosDenshion iOS.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B2AA02A1192177C60084BAEB /* Sprite3dTest */ = {
+			isa = PBXGroup;
+			children = (
+				B2AA02A5192178510084BAEB /* Sprite3dTest.cpp */,
+				B2AA02A6192178510084BAEB /* Sprite3dTest.h */,
+			);
+			name = Sprite3dTest;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -4445,6 +4462,7 @@
 				1AC35CE518CED84500F37B72 /* effect1.wav in Resources */,
 				1AC35C9618CECF1400F37B72 /* Icon-76.png in Resources */,
 				1AC35C8A18CECF1400F37B72 /* Default@2x.png in Resources */,
+				B26CD3E0192175D00013B587 /* sprite3d in Resources */,
 				1AC35CE318CED84500F37B72 /* effect1.raw in Resources */,
 				1A221C9D191771E400FD2BE4 /* ccs-res in Resources */,
 				1AC35C9018CECF1400F37B72 /* Icon-29.png in Resources */,
@@ -4638,6 +4656,7 @@
 				29080DC1191B595E0066F8DF /* UIRichTextTest.cpp in Sources */,
 				1AC35B2B18CECF0C00F37B72 /* BaseTest.cpp in Sources */,
 				1AC35B7D18CECF0C00F37B72 /* PlayerController.cpp in Sources */,
+				B2AA02A7192178510084BAEB /* Sprite3dTest.cpp in Sources */,
 				29080D9F191B595E0066F8DF /* CustomReader.cpp in Sources */,
 				1AC35BE718CECF0C00F37B72 /* CCControlScene.cpp in Sources */,
 				29080DBF191B595E0066F8DF /* UIPageViewTest_Editor.cpp in Sources */,
@@ -4850,6 +4869,7 @@
 				1AC35B5618CECF0C00F37B72 /* ConfigurationTest.cpp in Sources */,
 				1AC35BE618CECF0C00F37B72 /* CCControlPotentiometerTest.cpp in Sources */,
 				1AC35C8618CECF1400F37B72 /* RootViewController.mm in Sources */,
+				B2AA02A8192178510084BAEB /* Sprite3dTest.cpp in Sources */,
 				1AC35C5C18CECF0C00F37B72 /* TileMapTest.cpp in Sources */,
 				29080DC2191B595E0066F8DF /* UIRichTextTest.cpp in Sources */,
 				3EA0FB72191C844400B170C8 /* UIVideoPlayerTest.cpp in Sources */,

@@ -84,6 +84,7 @@ Controller g_aTestNames[] = {
 	{ "Node: Scene", [](){return new SceneTestScene();} },
 	{ "Node: Spine", []() { return new SpineTestScene(); } },
 	{ "Node: Sprite", [](){return new SpriteTestScene(); } },
+    { "Node: Sprite3d", [](){  return new Sprite3dTestScene(); }},
 	{ "Node: TileMap", [](){return new TileMapTestScene(); } },
 	{ "Node: Text Input", [](){return new TextInputTestScene(); } },
     { "Mouse", []() { return new MouseTestScene(); } },
