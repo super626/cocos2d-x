@@ -35,7 +35,6 @@ NS_CC_BEGIN
 class Camera3D :public Node
 {
 public:
-
 	/**
      * create camera
      */
@@ -43,7 +42,6 @@ public:
 	    /**
      * The type of camera.
      */
-
     enum Type
     {
         PERSPECTIVE = 1,
@@ -78,10 +76,10 @@ public:
      */
     Camera3D::Type getCameraType() const;
 private:
-	Camera3D(float fieldOfView, float aspectRatio, float nearPlane, float farPlane);
+    Camera3D(float fieldOfView, float aspectRatio, float nearPlane, float farPlane);
     Camera3D(float zoomX, float zoomY, float aspectRatio, float nearPlane, float farPlane);
-	Camera3D();
-	~Camera3D();
+    Camera3D();
+    ~Camera3D();
 public:
 	/* sets the Eye value of the Camera */
     void setEye(const Vec3 &eye);
@@ -101,39 +99,39 @@ public:
      *
      * @return The camera projection matrix.
      */
-	 Mat4& getProjectionMatrix();
+    Mat4& getProjectionMatrix();
 		/**
      * Gets the camera's view matrix.
      *
      * @return The camera view matrix.
      */
-     Mat4& getViewMatrix();
+    Mat4& getViewMatrix();
 	/**
      * translate camera
      */
-	void translateX(float tx);
+    void translateX(float tx);
     void translateY(float ty);
     void translateZ(float tz);
 	/**
      * rotate camera
      */
-	void rotateX(float angle);
-	void rotateY(float angle);
-	void rotateZ(float angle);
-	void applyProjection();
+    void rotateX(float angle);
+    void rotateY(float angle);
+    void rotateZ(float angle);
+    void applyProjection();
 private:
-	Vec3 _center;
+    Vec3 _center;
     Vec3 _eye;
     Vec3 _up;
-	Mat4 _view;
-	Mat4 _projection;
-	Camera3D::Type _type;
+    Mat4 _view;
+    Mat4 _projection;
+    Camera3D::Type _type;
     float _fieldOfView;
     float _zoom[2];
     float _aspectRatio;
     float _nearPlane;
     float _farPlane;
-	int  _dirtyBits;
+    int  _dirtyBits;
 };
 NS_CC_END
 #endif// __CCCAMERA3D_H_

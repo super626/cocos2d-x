@@ -24,7 +24,7 @@ THE SOFTWARE.
 #include "3d/CCCamera3D.h"
 #include "base/CCDirector.h"
 NS_CC_BEGIN
-	Camera3D* Camera3D::create()
+Camera3D* Camera3D::create()
 {
 	auto ret = new Camera3D();
 	if (ret)
@@ -37,7 +37,7 @@ NS_CC_BEGIN
 }
 Camera3D* Camera3D::createPerspective(float fieldOfView, float aspectRatio, float nearPlane, float farPlane)
 {
-    auto ret = new Camera3D(fieldOfView, aspectRatio, nearPlane, farPlane);
+	auto ret = new Camera3D(fieldOfView, aspectRatio, nearPlane, farPlane);
 	if (ret)
 	{
 		ret->autorelease();
@@ -48,7 +48,7 @@ Camera3D* Camera3D::createPerspective(float fieldOfView, float aspectRatio, floa
 }
 Camera3D* Camera3D::createOrthographic(float zoomX, float zoomY, float aspectRatio, float nearPlane, float farPlane)
 {
-    auto ret = new Camera3D(zoomX, zoomY, aspectRatio, nearPlane, farPlane);
+	auto ret = new Camera3D(zoomX, zoomY, aspectRatio, nearPlane, farPlane);
 	if (ret)
 	{  
 		ret->autorelease();
@@ -59,21 +59,20 @@ Camera3D* Camera3D::createOrthographic(float zoomX, float zoomY, float aspectRat
 }
 Camera3D::Type Camera3D::getCameraType() const
 {
-    return _type;
+	return _type;
 }
 Camera3D::Camera3D(float fieldOfView, float aspectRatio, float nearPlane, float farPlane)
-  :_dirtyBits(CAMERA_DIRTY_ALL),_type(PERSPECTIVE), _fieldOfView(fieldOfView), _aspectRatio(aspectRatio), _nearPlane(nearPlane), _farPlane(farPlane)
+	:_dirtyBits(CAMERA_DIRTY_ALL),_type(PERSPECTIVE), _fieldOfView(fieldOfView), _aspectRatio(aspectRatio), _nearPlane(nearPlane), _farPlane(farPlane)
 {
-  
+
 }
 
 Camera3D::Camera3D(float zoomX, float zoomY, float aspectRatio, float nearPlane, float farPlane)
-    :_dirtyBits(CAMERA_DIRTY_ALL),_type(ORTHOGRAPHIC), _aspectRatio(aspectRatio), _nearPlane(nearPlane), _farPlane(farPlane)
+	:_dirtyBits(CAMERA_DIRTY_ALL),_type(ORTHOGRAPHIC), _aspectRatio(aspectRatio), _nearPlane(nearPlane), _farPlane(farPlane)
 {
-    // Orthographic camera.
-    _zoom[0] = zoomX;
-    _zoom[1] = zoomY;
-
+	// Orthographic camera.
+	_zoom[0] = zoomX;
+	_zoom[1] = zoomY;
 }
 Camera3D::Camera3D()
 {
@@ -86,19 +85,16 @@ void Camera3D::setEye(const Vec3& eye)
 	_eye = eye;
 	updateTransform();
 }
-
 void Camera3D::setEye(float x, float y, float z)
 {
 	_eye = Vec3(x, y, z);
 	updateTransform();
 }
-
 void Camera3D::setCenter(const Vec3& center)
 {
 	_center = center;
 	updateTransform();
 }
-
 void Camera3D::setUp(const Vec3& up)
 {
 	_up = up;
@@ -109,45 +105,45 @@ void Camera3D::translateX(float tx)
 
 	_eye.x+=tx;
 	_center.x+=tx;
-	 _dirtyBits |= CAMERA_DIRTY_VIEW;
+	_dirtyBits |= CAMERA_DIRTY_VIEW;
 }
 void Camera3D::translateY(float ty)
 {
 	_eye.y+=ty;
 	_center.y+=ty;
-	 _dirtyBits |= CAMERA_DIRTY_VIEW;
+	_dirtyBits |= CAMERA_DIRTY_VIEW;
 }
 void Camera3D::translateZ(float tz)
 {
-	 _eye.z+=tz;
+	_eye.z+=tz;
 	_center.z+=tz;
-	 _dirtyBits |= CAMERA_DIRTY_VIEW;
+	_dirtyBits |= CAMERA_DIRTY_VIEW;
 }
- Mat4& Camera3D::getProjectionMatrix() 
+Mat4& Camera3D::getProjectionMatrix() 
 {
-    if (_dirtyBits & CAMERA_DIRTY_PROJ)
-    {
-        if (_type == PERSPECTIVE)
-        {
-            Mat4::createPerspective(_fieldOfView, _aspectRatio, _nearPlane, _farPlane, &_projection);
-        }
-        else
-        {
-            Mat4::createOrthographic(_zoom[0], _zoom[1], _nearPlane, _farPlane, &_projection);
-        }
-        _dirtyBits &= ~CAMERA_DIRTY_PROJ;
-    }
-    return _projection;
+	if (_dirtyBits & CAMERA_DIRTY_PROJ)
+	{
+		if (_type == PERSPECTIVE)
+		{
+			Mat4::createPerspective(_fieldOfView, _aspectRatio, _nearPlane, _farPlane, &_projection);
+		}
+		else
+		{
+			Mat4::createOrthographic(_zoom[0], _zoom[1], _nearPlane, _farPlane, &_projection);
+		}
+		_dirtyBits &= ~CAMERA_DIRTY_PROJ;
+	}
+	return _projection;
 }
- Mat4& Camera3D::getViewMatrix()
+Mat4& Camera3D::getViewMatrix()
 {
-    if (_dirtyBits & CAMERA_DIRTY_VIEW)
-    {
-        _view= Mat4::IDENTITY;
-	    Mat4::createLookAt(_eye, _center, _up, &_view);
-        _dirtyBits &= ~CAMERA_DIRTY_VIEW;
-    }
-    return _view;
+	if (_dirtyBits & CAMERA_DIRTY_VIEW)
+	{
+		_view= Mat4::IDENTITY;
+		Mat4::createLookAt(_eye, _center, _up, &_view);
+		_dirtyBits &= ~CAMERA_DIRTY_VIEW;
+	}
+	return _view;
 }
 void Camera3D::rotateX(float angle)
 {
@@ -158,7 +154,7 @@ void Camera3D::rotateX(float angle)
 	float   fDistance  = tLookAtDir.length();
 	tRotateMat.transformVector(&tNormalDir);
 	_center = _eye + tNormalDir*fDistance;
-   _dirtyBits |= CAMERA_DIRTY_VIEW;
+	_dirtyBits |= CAMERA_DIRTY_VIEW;
 }
 void Camera3D::rotateY(float angle)
 {
@@ -169,8 +165,7 @@ void Camera3D::rotateY(float angle)
 	float   fDistance  = tLookAtDir.length();
 	tRotateMat.transformVector(&tNormalDir);
 	_center = _eye + tNormalDir*fDistance;
-	 _dirtyBits |= CAMERA_DIRTY_VIEW;
-
+	_dirtyBits |= CAMERA_DIRTY_VIEW;
 }
 void Camera3D::rotateZ(float angle)
 {
@@ -181,7 +176,7 @@ void Camera3D::rotateZ(float angle)
 	float   fDistance  = tLookAtDir.length();
 	tRotateMat.transformVector(&tNormalDir);
 	_center = _eye + tNormalDir*fDistance;
-	 _dirtyBits |= CAMERA_DIRTY_VIEW;
+	_dirtyBits |= CAMERA_DIRTY_VIEW;
 }
 void Camera3D::applyProjection()
 {
@@ -207,5 +202,4 @@ void Camera3D::applyProjection()
 	director->loadIdentityMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
 	GL::setProjectionMatrixDirty();
 }
-
 NS_CC_END
