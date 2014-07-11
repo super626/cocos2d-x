@@ -30,7 +30,7 @@
 #include "CCBundleReader.h"
 #include "base/CCData.h"
 #include "json/document.h"
-#include "CCString.h"
+#include "deprecated/CCString.h"
 
 
 #define BUNDLE_TYPE_SCENE               1

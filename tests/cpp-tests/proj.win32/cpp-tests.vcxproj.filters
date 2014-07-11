@@ -328,6 +328,9 @@
     <Filter Include="Classes\ExtensionsTest\CocoStudioActionTimelineTest">
       <UniqueIdentifier>{fa88df83-76d7-4f41-ad48-801dafd44889}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Classes\Camera3DTest">
+      <UniqueIdentifier>{5bf67bb6-e158-4b94-ba39-001f6d208f57}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -848,6 +851,9 @@
     </ClCompile>
     <ClCompile Include="..\Classes\TileMapTest\TileMapTest2.cpp">
       <Filter>Classes\TileMapTest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Camera3DTest\Camera3DTest.cpp">
+      <Filter>Classes\Camera3DTest</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1567,6 +1573,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\TileMapTest\TileMapTest2.h">
       <Filter>Classes\TileMapTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Camera3DTest\Camera3DTest.h">
+      <Filter>Classes\Camera3DTest</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

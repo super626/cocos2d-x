@@ -34,6 +34,7 @@ Controller g_aTestNames[] = {
     // TESTS MUST BE ORDERED ALPHABETICALLY
     //     violators will be prosecuted
     //
+	{ "3D: Camera3D", [](){  return new Camera3DTestScene(); }},
     { "3D: Sprite3D", [](){  return new Sprite3DTestScene(); }},
 	{ "ActionManager", [](){return new ActionManagerTestScene(); } },
 	{ "Actions - Basic", [](){ return new ActionsTestScene(); } },
