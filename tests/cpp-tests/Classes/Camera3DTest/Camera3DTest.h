@@ -51,17 +51,17 @@ public:
     virtual std::string subtitle() const override;
     virtual void onEnter() override;
 	void addNewSpriteWithCoords(Vec2 p);
-	bool onTouchBegan(Touch* touch, Event* event); 
+    bool onTouchBegan(Touch* touch, Event* event); 
     void onTouchMoved(Touch* touch, Event* event); 
-	void onTouchesEnded(Touch* touch, Event* event);
-	void translateCameraXCallback(Ref* sender,float value);
+    void onTouchesEnded(Touch* touch, Event* event);
+    void translateCameraXCallback(Ref* sender,float value);
     void translateCameraYCallback(Ref* sender,float value);
-	void translateCameraZCallback(Ref* sender,float value);
+    void translateCameraZCallback(Ref* sender,float value);
 protected:
     std::string    _title;
-	Layer3D*      _layer3D;
-	Point    _mosPos;
-	Point    _mosPosf;
+    Layer3D*      _layer3D;
+    Point    _mosPos;
+    Point    _mosPosf;
 };
 class Camera3DTestScene : public TestScene
 {
@@ -72,14 +72,14 @@ class Layer3D : public cocos2d::Layer
 {
 public:
     virtual bool init();  
-	virtual void visit(Renderer *renderer, const Mat4& parentTransform, uint32_t parentFlags);
-	void onBeginDraw();
+    virtual void visit(Renderer *renderer, const Mat4& parentTransform, uint32_t parentFlags);
+    void onBeginDraw();
     void onEndDraw();
     CREATE_FUNC(Layer3D);
-	cocos2d::Camera3D*    _activeCamera;
-	GroupCommand _groupCommand;
-	CustomCommand _BeginCommand;
+    cocos2d::Camera3D*    _activeCamera;
+    GroupCommand _groupCommand;
+    CustomCommand _BeginCommand;
     CustomCommand _EndCommand;
-	Director::Projection _directorProjection;
+    Director::Projection _directorProjection;
 };
 #endif
