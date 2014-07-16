@@ -50,7 +50,8 @@ public:
     virtual std::string title() const override;
     virtual std::string subtitle() const override;
     virtual void onEnter() override;
-	void addNewSpriteWithCoords(Vec2 p);
+	void addNewSpriteWithCoords(Vec3 p,std::string fileName,bool playAnimation=false,bool bindCamera=false);
+	//void addNewParticleSystemWithCoords(Vec3 p);
     bool onTouchBegan(Touch* touch, Event* event); 
     void onTouchMoved(Touch* touch, Event* event); 
     void onTouchesEnded(Touch* touch, Event* event);
@@ -60,6 +61,7 @@ public:
 protected:
     std::string    _title;
     Layer3D*      _layer3D;
+	Sprite3D*     _sprite3D;
     Point    _mosPos;
     Point    _mosPosf;
 };
@@ -76,7 +78,6 @@ public:
     void onBeginDraw();
     void onEndDraw();
     CREATE_FUNC(Layer3D);
-    cocos2d::Camera3D*    _activeCamera;
     GroupCommand _groupCommand;
     CustomCommand _BeginCommand;
     CustomCommand _EndCommand;

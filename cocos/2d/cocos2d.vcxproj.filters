@@ -592,6 +592,12 @@
     <ClCompile Include="..\3d\CCSubMesh.cpp">
       <Filter>3d</Filter>
     </ClCompile>
+    <ClCompile Include="..\3d\CCParticleEmitter3D.cpp">
+      <Filter>3d</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3d\CCBillboardParticleEmitter3D.cpp">
+      <Filter>3d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\physics\CCPhysicsBody.h">
@@ -1205,6 +1211,12 @@
       <Filter>3d</Filter>
     </ClInclude>
     <ClInclude Include="..\3d\CCSubMesh.h">
+      <Filter>3d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3d\CCParticleEmitter3D.h">
+      <Filter>3d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3d\CCBillboardParticleEmitter3D.h">
       <Filter>3d</Filter>
     </ClInclude>
   </ItemGroup>

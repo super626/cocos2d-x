@@ -25,12 +25,8 @@
 #define _CCCAMERA3D_H__
 #include "2d/CCNode.h"
 NS_CC_BEGIN
-// Camera3D dirty bits
-#define CAMERA_DIRTY_VIEW 1
-#define CAMERA_DIRTY_PROJ 2
-#define CAMERA_DIRTY_ALL (CAMERA_DIRTY_VIEW | CAMERA_DIRTY_PROJ)
 /**
- * Defines a camera which acts as a view of a scene to be rendered.
+ * Defines a camera .
  */
 class Camera3D :public Node
 {
@@ -55,7 +51,6 @@ public:
      * @param aspectRatio The aspect ratio of the camera (normally the width of the viewport divided by the height of the viewport).
      * @param nearPlane The near plane distance.
      * @param farPlane The far plane distance.
-	 * @param strId camera id
      */
     static Camera3D*    createPerspective(float fieldOfView, float aspectRatio, float nearPlane, float farPlane);
 	 /**
@@ -66,7 +61,6 @@ public:
      * @param aspectRatio The aspect ratio of the orthographic projection.
      * @param nearPlane The near plane distance.
      * @param farPlane The far plane distance.
-	 * @param strId Camera id
      */
     static Camera3D*  createOrthographic(float zoomX, float zoomY, float aspectRatio, float nearPlane, float farPlane);
 	static Camera3D*  getActiveCamera();
@@ -76,62 +70,48 @@ public:
      * @return The camera type.
      */
     Camera3D::Type  getCameraType() const;
-	
 private:
     Camera3D(float fieldOfView, float aspectRatio, float nearPlane, float farPlane);
     Camera3D(float zoomX, float zoomY, float aspectRatio, float nearPlane, float farPlane);
     Camera3D();
     ~Camera3D();
 public:
-    /* sets the Center value of the Camera */
-    void setCenter(const Vec3 &center);
-    /* returns the Center value of the Camera */
-    const Vec3& getCenter() const { return _center; }
-    /* sets the Up value of the Camera */
-    void setUp(const Vec3 &up);
-    /* Returns the Up value of the Camera */
-    const Vec3& getUp() const { return _up; }
+	/**
+	 *
+	 *
+	 */
+	void lookAt(const Vec3& position, const Vec3& up, const Vec3& target);
 	/**
      * Gets the camera's projection matrix.
      *
      * @return The camera projection matrix.
      */
     Mat4& getProjectionMatrix();
-		/**
+	/**
      * Gets the camera's view matrix.
      *
      * @return The camera view matrix.
      */
     Mat4& getViewMatrix();
-	/**
-     * translate camera
+	 /**
+     *  set the camera's projection View.
      */
-    void translateX(float tx);
-    void translateY(float ty);
-    void translateZ(float tz);
-	/**
-     * rotate camera
-     */
-    void rotateX(float angle);
-    void rotateY(float angle);
-    void rotateZ(float angle);
     void applyProjection();
+	 /**
+     * Sets the position (X, Y, and Z) in its parent's coordinate system
+     */
 	virtual void setPosition3D(const Vec3& position);
 	 //set active camera 
     bool setActiveCamera();
 private:
-    Vec3 _center;
-    //Vec3 _eye;
-    Vec3 _up;
-    Mat4 _view;
     Mat4 _projection;
+    Mat4 _view;
     Camera3D::Type _type;
     float _fieldOfView;
     float _zoom[2];
     float _aspectRatio;
     float _nearPlane;
     float _farPlane;
-    int  _dirtyBits;
     static Camera3D* _activeCamera;
 };
 NS_CC_END

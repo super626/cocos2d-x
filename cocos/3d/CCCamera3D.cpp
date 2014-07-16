@@ -67,17 +67,18 @@ Camera3D::Type Camera3D::getCameraType() const
 	return _type;
 }
 Camera3D::Camera3D(float fieldOfView, float aspectRatio, float nearPlane, float farPlane)
-	:_dirtyBits(CAMERA_DIRTY_ALL),_type(PERSPECTIVE), _fieldOfView(fieldOfView), _aspectRatio(aspectRatio), _nearPlane(nearPlane), _farPlane(farPlane)
+	:_type(PERSPECTIVE), _fieldOfView(fieldOfView), _aspectRatio(aspectRatio), _nearPlane(nearPlane), _farPlane(farPlane)
 {
 
 }
 
 Camera3D::Camera3D(float zoomX, float zoomY, float aspectRatio, float nearPlane, float farPlane)
-	:_dirtyBits(CAMERA_DIRTY_ALL),_type(ORTHOGRAPHIC), _aspectRatio(aspectRatio), _nearPlane(nearPlane), _farPlane(farPlane)
+	:_type(ORTHOGRAPHIC), _aspectRatio(aspectRatio), _nearPlane(nearPlane), _farPlane(farPlane)
 {
 	// Orthographic camera.
 	_zoom[0] = zoomX;
 	_zoom[1] = zoomY;
+	_transform= Mat4::IDENTITY;
 }
 Camera3D::Camera3D()
 {
@@ -89,7 +90,7 @@ Camera3D::~Camera3D()
 void Camera3D::setPosition3D(const Vec3& position)
 {
 	Node::setPosition3D(position);
-	_dirtyBits |= CAMERA_DIRTY_VIEW;
+	_transformUpdated = _transformDirty = _inverseDirty = true;
 }
 //set active camera 
 bool Camera3D::setActiveCamera()
@@ -97,101 +98,67 @@ bool Camera3D::setActiveCamera()
 	_activeCamera=this;
     return false;
 }
-void Camera3D::setCenter(const Vec3& center)
+void Camera3D::lookAt(const Vec3& position, const Vec3& up, const Vec3& target)
 {
-	_center = center;
-}
-void Camera3D::setUp(const Vec3& up)
-{
-	_up = up;
-}
-void Camera3D::translateX(float tx)
-{
-	_position.x+=tx;
-	_center.x+=tx;
-	_dirtyBits |= CAMERA_DIRTY_VIEW;
-}
-void Camera3D::translateY(float ty)
-{
-	_position.y+=ty;
-	_center.y+=ty;
-	_dirtyBits |= CAMERA_DIRTY_VIEW;
-}
-void Camera3D::translateZ(float tz)
-{
-	_positionZ+=tz;
-	_center.z+=tz;
-	_dirtyBits |= CAMERA_DIRTY_VIEW;
+	//_center = center;
+	//Mat4 matRotate;
+ //   Vec3 upv = up;
+ //   upv.normalize();
+
+ //   Vec3 zaxis;
+ //   Vec3::subtract(position, target, &zaxis);
+ //   zaxis.normalize();
+
+ //   Vec3 xaxis;
+ //   Vec3::cross(upv, zaxis, &xaxis);
+ //   xaxis.normalize();
+
+ //   Vec3 yaxis;
+ //   Vec3::cross(zaxis, xaxis, &yaxis);
+ //   yaxis.normalize();
+
+ //   matRotate.m[0] = xaxis.x;
+ //   matRotate.m[1] = xaxis.y;
+ //   matRotate.m[2] = xaxis.z;
+ //   matRotate.m[3] = 0;
+
+ //   matRotate.m[4] = yaxis.x;
+ //   matRotate.m[5] = yaxis.y;
+ //   matRotate.m[6] = yaxis.z;
+ //   matRotate.m[7] = 0;
+
+ //   matRotate.m[8] = zaxis.x;
+ //   matRotate.m[9] = zaxis.y;
+ //   matRotate.m[10] = zaxis.z;
+ //   matRotate.m[11] = 0;
+	//Quaternion rotationQuat;
+ //   Quaternion::createFromRotationMatrix(matRotate, &rotationQuat);
+ //   _rotation.set(rotationQuat);
+	Node::setPosition3D(position);
+	_transformUpdated = _transformDirty = _inverseDirty = true;
 }
 Mat4& Camera3D::getProjectionMatrix() 
 {
-	if (_dirtyBits & CAMERA_DIRTY_PROJ)
+	if (_type == PERSPECTIVE)
 	{
-		if (_type == PERSPECTIVE)
-		{
-			Mat4::createPerspective(_fieldOfView, _aspectRatio, _nearPlane, _farPlane, &_projection);
-		}
-		else
-		{
-			Mat4::createOrthographic(_zoom[0], _zoom[1], _nearPlane, _farPlane, &_projection);
-		}
-		_dirtyBits &= ~CAMERA_DIRTY_PROJ;
+		Mat4::createPerspective(_fieldOfView, _aspectRatio, _nearPlane, _farPlane, &_projection);
+	}
+	else
+	{
+		Mat4::createOrthographic(_zoom[0], _zoom[1], _nearPlane, _farPlane, &_projection);
 	}
 	return _projection;
 }
 Mat4& Camera3D::getViewMatrix()
 {
-	if (_dirtyBits & CAMERA_DIRTY_VIEW)
-	{
-		_view= Mat4::IDENTITY;
-		Mat4::createLookAt(getPosition3D(), _center, _up, &_view);
-		_dirtyBits &= ~CAMERA_DIRTY_VIEW;
-	}
+	_view=getNodeToWorldTransform().getInversed();
 	return _view;
-}
-void Camera3D::rotateX(float angle)
-{
-	Vec3 	eye=this->getPosition3D();
-	Mat4	tRotateMat;
-	tRotateMat.rotateX(CC_DEGREES_TO_RADIANS(angle));
-	Vec3    tLookAtDir = _center - eye ;
-	Vec3    tNormalDir = tLookAtDir.getNormalized();
-	float   fDistance  = tLookAtDir.length();
-	tRotateMat.transformVector(&tNormalDir);
-	_center = eye + tNormalDir*fDistance;
-	_dirtyBits |= CAMERA_DIRTY_VIEW;
-}
-void Camera3D::rotateY(float angle)
-{
-	Vec3 	eye=this->getPosition3D();
-	Mat4	tRotateMat;
-	tRotateMat.rotateY(CC_DEGREES_TO_RADIANS(angle));
-	Vec3    tLookAtDir = _center - eye ;
-	Vec3    tNormalDir = tLookAtDir.getNormalized();
-	float   fDistance  = tLookAtDir.length();
-	tRotateMat.transformVector(&tNormalDir);
-	_center = eye + tNormalDir*fDistance;
-	_dirtyBits |= CAMERA_DIRTY_VIEW;
-}
-void Camera3D::rotateZ(float angle)
-{
-	Vec3 	eye=this->getPosition3D();
-	Mat4	tRotateMat;
-	tRotateMat.rotateZ(CC_DEGREES_TO_RADIANS(angle));
-	Vec3    tLookAtDir = _center - eye ;
-	Vec3    tNormalDir = tLookAtDir.getNormalized();
-	float   fDistance  = tLookAtDir.length();
-	tRotateMat.transformVector(&tNormalDir);
-	_center = eye + tNormalDir*fDistance;
-	_dirtyBits |= CAMERA_DIRTY_VIEW;
 }
 void Camera3D::applyProjection()
 {
 	getProjectionMatrix();
 	getViewMatrix();
 	Director* director = Director::getInstance();
-	//Size size = director->getWinSize();
-	//director->setViewport();
 	director->loadIdentityMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
 	director->loadIdentityMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WP8

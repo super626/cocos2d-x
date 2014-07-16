@@ -25,6 +25,7 @@ THE SOFTWARE.
 
 #include "Camera3DTest.h"
 #include "3d/CCCamera3D.h"
+//#include "3d/CCBillboardParticleEmitter3D.h"
 #include <algorithm>
 #include "../testResource.h"
 
@@ -75,6 +76,8 @@ static Layer* restartSpriteTestAction()
 Camera3DTestDemo::Camera3DTestDemo(void)
 	: BaseTest()
 {
+
+	_sprite3D=NULL;
 	auto s = Director::getInstance()->getWinSize();
 	auto listener = EventListenerTouchOneByOne::create();
 	listener->setSwallowTouches(true);
@@ -85,15 +88,10 @@ Camera3DTestDemo::Camera3DTestDemo(void)
 	auto layer3D=Layer3D::create();
 	addChild(layer3D,0);
 	_layer3D=layer3D;
-	addNewSpriteWithCoords( Vec2(s.width/2, s.height/2) );
-	/*
-	auto particleSystem3D = BillboardParticleEmitter::create();
-	particleSystem3D->setPosition(Vec2(s.width/2, s.height/2));
-	particleSystem3D->setPositionZ(0);
-	particleSystem3D->setTexture("Images/Icon.png");
-	particleSystem3D->setTotalParticles(50);
-	particleSystem3D->setDefaultProperty();
-	layer3D->addChild(particleSystem3D);*/
+	addNewSpriteWithCoords( Vec3(s.width/2, s.height/2,0),"Sprite3DTest/scene.c3t",false,false);
+	addNewSpriteWithCoords( Vec3(s.width/2, s.height/2,0),"Sprite3DTest/orc.c3b",true,true);
+	//addNewParticleSystemWithCoords(Vec3(s.width/2-30, s.height/2,0));
+	//addNewParticleSystemWithCoords(Vec3(s.width/2+80, s.height/2,-150));
 	_mosPos=Point(0,0);
 	_mosPosf=Point(0,0);
 	TTFConfig ttfConfig("fonts/arial.ttf", 20);
@@ -134,19 +132,50 @@ std::string Camera3DTestDemo::subtitle() const
 }
 void Camera3DTestDemo::translateCameraXCallback(Ref* sender,float value)
 {
-
-		Camera3D::getActiveCamera()->translateX(value);
+		if(_sprite3D)
+		{
+			Vec3  pos=_sprite3D->getPosition3D();
+			pos.x+=value;
+			_sprite3D->setPosition3D(pos);
+		}
+		else
+		{
+			Vec3  pos=Camera3D::getActiveCamera()->getPosition3D();
+			pos.x+=value;
+			Camera3D::getActiveCamera()->setPosition3D(pos);
+		}
+			
 }
 void Camera3DTestDemo::translateCameraYCallback(Ref* sender,float value)
 {
-
-		Camera3D::getActiveCamera()->translateY(value);
+		if(_sprite3D)
+		{
+			Vec3  pos=_sprite3D->getPosition3D();
+	        pos.y+=value;
+		    _sprite3D->setPosition3D(pos);
+		}
+		else
+		{
+			Vec3  pos=Camera3D::getActiveCamera()->getPosition3D();
+	        pos.y+=value;
+		    Camera3D::getActiveCamera()->setPosition3D(pos);
+		}
+			
 }
 void Camera3DTestDemo::translateCameraZCallback(Ref* sender,float value)
 {
-
-		Camera3D::getActiveCamera()->translateZ(value);
-
+	if(_sprite3D)
+	{
+		Vec3  pos=_sprite3D->getPosition3D();
+		pos.z+=value;
+		_sprite3D->setPositionZ(pos.z);
+	}
+	else
+	{
+		Vec3  pos=Camera3D::getActiveCamera()->getPosition3D();
+		pos.z+=value;
+		Camera3D::getActiveCamera()->setPositionZ(pos.z);
+	}    	
 }
 void Camera3DTestDemo::onEnter()
 {
@@ -177,18 +206,31 @@ void Camera3DTestDemo::backCallback(Ref* sender)
 	Director::getInstance()->replaceScene(s);
 	s->release();
 }
-void Camera3DTestDemo::addNewSpriteWithCoords(Vec2 p)
+//void Camera3DTestDemo::addNewParticleSystemWithCoords(Vec3 p)
+//{
+//	auto particleSystem3D = BillboardParticleEmitter3D::create();
+//	particleSystem3D->setPosition(Vec2(p.x,p.y));
+//	particleSystem3D->setPositionZ(p.z);
+//	particleSystem3D->setTexture(s_fire);
+//	particleSystem3D->setTotalParticles(250);
+//	particleSystem3D->setScale(0.1);
+//	particleSystem3D->setDefaultProperty();
+//	particleSystem3D->start();
+//	_layer3D->addChild(particleSystem3D,0);
+//}
+void Camera3DTestDemo::addNewSpriteWithCoords(Vec3 p,std::string fileName,bool playAnimation,bool bindCamera)
 {
 	
-	std::string fileName = "Sprite3DTest/orc.c3b";
 	auto sprite = Sprite3D::create(fileName);
 	sprite->setScale(1);
-	sprite->setRotation3D(Vec3(0,0,0));
 	_layer3D->addChild(sprite);
 	sprite->setPosition( Vec2( p.x, p.y) );
-	auto animation = Animation3D::create(fileName);
-	if (animation)
+    sprite->setPositionZ(p.z);
+	if(playAnimation)
 	{
+		auto animation = Animation3D::create(fileName);
+		if (animation)
+		{
 		auto animate = Animate3D::create(animation);
 		bool inverse = (std::rand() % 3 == 0);
 
@@ -196,14 +238,39 @@ void Camera3DTestDemo::addNewSpriteWithCoords(Vec2 p)
 		float speed = 1.0f;
 		if(rand2 % 3 == 1)
 		{
-			speed = animate->getSpeed() + CCRANDOM_0_1();
+		speed = animate->getSpeed() + CCRANDOM_0_1();
 		}
 		else if(rand2 % 3 == 2)
 		{
-			speed = animate->getSpeed() - 0.5 * CCRANDOM_0_1();
+		speed = animate->getSpeed() - 0.5 * CCRANDOM_0_1();
 		}
 		animate->setSpeed(inverse ? -speed : speed);
 		sprite->runAction(RepeatForever::create(animate));
+		}
+	}
+	if(bindCamera)
+	{
+		//_sprite3D=sprite;
+		//auto s = Director::getInstance()->getWinSize();
+		//auto camera=Camera3D::createPerspective(60, (GLfloat)s.width/s.height, 10, 1000);
+		//if(_sprite3D)
+		//{
+		//	//camera->lookAt(Vec3(0,0,50),Vec3(0, 1, 0),Vec3(0,0,0));
+		//	//_sprite3D->addChild(camera);
+		//}
+		//else
+		//{
+		//	//camera->lookAt(Vec3(240,160,50),Vec3(0, 1, 0),Vec3(240,160,0));
+		//	//_layer3D->addChild(camera);
+		//}
+		//camera->setActiveCamera();
+		
+		
+	}
+	else
+	{
+		sprite->setScale(3);
+		sprite->setRotation3D(Vec3(0,0,0));
 	}
 }
 bool Camera3DTestDemo::onTouchBegan(Touch* touch, Event* event)
@@ -216,6 +283,7 @@ bool Camera3DTestDemo::onTouchBegan(Touch* touch, Event* event)
 	}
 	return true;
 }
+Vec3  rotation(0,0,0);
 void Camera3DTestDemo::onTouchMoved(Touch* touch, Event* event)
 {
 	if(touch)
@@ -227,9 +295,18 @@ void Camera3DTestDemo::onTouchMoved(Touch* touch, Event* event)
 		float angleY=(_mosPos.y-_mosPosf.y)*0.4;
 		if(_layer3D)
 		{
-			auto camera3D=(Camera3D*) _layer3D->getChildByTag(99999);
-			camera3D->rotateY(angleX);
-			camera3D->rotateX(-angleY);
+			if(_sprite3D)
+			{
+				Vec3  rotation=_sprite3D->getRotation3D();
+				rotation.y+=angleX;
+				_sprite3D->setRotation3D(rotation);
+			}
+			else
+			{
+				Vec3  rotation=Camera3D::getActiveCamera()->getRotation3D();
+				rotation.y+=angleX;
+				Camera3D::getActiveCamera()->setRotation3D(rotation);
+			}
 		}
 	}
 }
@@ -250,14 +327,11 @@ void Camera3DTestScene::runThisTest()
 }
 bool Layer3D::init()
 {
-	auto s = Director::getInstance()->getWinSize();
-	auto camera=Camera3D::createPerspective(60, (GLfloat)s.width/s.height, 10, 1000);
-	camera->setPosition3D(Vec3(240,160,60));
-	camera->setCenter(Vec3(240,160,0));
-	camera->setUp( Vec3(0, 1, 0));
-	camera->setActiveCamera();
-	addChild(camera,0,99999);
-	_activeCamera=camera;
+	 auto s = Director::getInstance()->getWinSize();
+	 auto camera=Camera3D::createPerspective(60, (GLfloat)s.width/s.height, 10, 1000);
+	 camera->lookAt(Vec3(240,160,50),Vec3(0, 1, 0),Vec3(240,160,0));
+	 camera->setActiveCamera();
+     addChild(camera);
 	return true;
 }
 void Layer3D::visit(Renderer *renderer, const Mat4& parentTransform, uint32_t parentFlags)
