@@ -30,6 +30,7 @@
 #include "3d/CCSubMesh.h"
 #include "3d/CCAttachNode.h"
 #include "3d/CCDrawNode3D.h"
+#include "3d/CCAABB.h"
 
 #include <algorithm>
 #include "../testResource.h"
@@ -553,15 +554,6 @@ void Sprite3DWithSkinTest::addNewSpriteWithCoords(Vec2 p)
     addChild(sprite);
     sprite->setPosition( Vec2( p.x, p.y) );
 
-	auto testdraw = DrawNode3D::create();
-	//testdraw->drawLine(Vec3(10,10,10), Vec3(100,100,100),Color4F(0,1,0,1));
-	Vec3* pos = new Vec3[8];
-	
-	getpos(pos);
-	
-	testdraw->drawCube(pos,Color4F(0,1,0,1));
-
-	addChild(testdraw);
 
     //test attach
     auto sp = Sprite3D::create("Sprite3DTest/orc.c3t");
@@ -569,6 +561,11 @@ void Sprite3DWithSkinTest::addNewSpriteWithCoords(Vec2 p)
     sprite->getAttachNode("Bip001 L Hand")->addChild(sp);
 
 	auto testsp = Sprite3D::create("Sprite3DTest/test.c3p");
+	auto testdraw = DrawNode3D::create();
+	//testdraw->drawLine(Vec3(10,10,10), Vec3(100,100,100),Color4F(0,1,0,1));
+	testdraw->drawCube(testsp->getCllider(),Color4F(0,1,0,1));
+	//sprite->getAttachNode("Bip001 L Hand")->addChild(testdraw);
+	addChild(testdraw);
 
     auto animation = Animation3D::create(fileName);
     if (animation)

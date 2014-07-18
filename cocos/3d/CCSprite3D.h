@@ -65,9 +65,15 @@ public:
     
     /**get skin*/
     MeshSkin* getSkin() const { return _skin; }
+
+	Vec3* getCllider()
+	{
+		return _clliderpos;
+	}
     
     /**get AttachNode by bone name, return nullptr if not exist*/
     AttachNode* getAttachNode(const std::string& boneName);
+
     
     /**remove attach node*/
     void removeAttachNode(const std::string& boneName);
@@ -117,6 +123,8 @@ protected:
     std::unordered_map<std::string, AttachNode*> _attachments;
 
     BlendFunc                    _blend;
+
+	Vec3* _clliderpos;
 };
 
 extern std::string s_attributeNames[];//attribute names array

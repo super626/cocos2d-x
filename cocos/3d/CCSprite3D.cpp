@@ -31,6 +31,7 @@
 #include "3d/CCSubMesh.h"
 #include "3d/CCAttachNode.h"
 #include "3d/CCSubMeshState.h"
+#include "3d/CCAABB.h"
 
 #include "base/CCDirector.h"
 #include "base/CCPlatformMacros.h"
@@ -173,6 +174,10 @@ bool Sprite3D::loadFromC3x(const std::string& path)
 		{
 			return false;
 		}
+		auto _aabb = new AABB(collisondata.origin,Vec3(collisondata.origin.x + collisondata.extent.x,collisondata.origin.y + collisondata.extent.y,-(collisondata.origin.z + collisondata.extent.z)));
+		Vec3* pos = new Vec3[8];
+		_aabb->getCorners(pos);
+		_clliderpos = pos;
 	}
 	else
 	{

@@ -34,6 +34,7 @@ namespace cocos2d {
     class Sprite3D;
     class Delay;
 	class DrawNode3D;
+	class AABB;
 }
 
 class Sprite3DTestDemo : public BaseTest
@@ -158,19 +159,6 @@ public:
     
     void onTouchesEnded(const std::vector<Touch*>& touches, Event* event);
 
-	static Vec3* getpos(Vec3* pos)
-	{
-		pos[0] = Vec3(100,100,0);
-		pos[1] = Vec3(200,100,0);
-		pos[2] = Vec3(200,200,0);
-		pos[3] = Vec3(100,200,0);
-		pos[4] = Vec3(100,200,-100);
-		pos[5] = Vec3(200,200,-100);
-		pos[6] = Vec3(200,100,-100);
-		pos[7] = Vec3(100,100,-100);
-
-		return pos;
-	}
 };
 
 class Animate3DTest : public Sprite3DTestDemo
