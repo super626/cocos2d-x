@@ -76,6 +76,7 @@ Controller g_aTestNames[] = {
 	{ "Node: Spine", []() { return new SpineTestScene(); } },
 	{ "Node: Sprite", [](){return new SpriteTestScene(); } },
     { "Node: Sprite3D", [](){  return new Sprite3DTestScene(); }},
+	{ "Node: Camera3D", [](){  return new Camera3DTestScene(); }},
 	{ "Node: TileMap", [](){return new TileMapTestScene(); } },
 	{ "Node: FastTileMap", [](){return new TileMapTestSceneNew(); } },
 	{ "Node: Text Input", [](){return new TextInputTestScene(); } },

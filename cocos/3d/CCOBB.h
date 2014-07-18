@@ -22,8 +22,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#ifndef __CC_OBB_H_
-#define __CC_OBB_H_
+#ifndef __CC_OBB_H__
+#define __CC_OBB_H__
 
 #include "CCAABB.h"
 
@@ -56,15 +56,18 @@ public:
     // clear obb
     void reset();
 
-    // face to the obb's -z direction
-    // verts[0] : front left bottom corner
-    // verts[1] : front right bottom corner
-    // verts[2] : front right top corner
-    // verts[3] : front left top corner
-    // verts[4] : back left bottom corner
-    // verts[5] : back right bottom corner
-    // verts[6] : back right top corner
-    // verts[7] : back left top corner
+    /* face to the obb's -z direction
+     * verts[0] : left top front
+     * verts[1] : left bottom front
+     * verts[2] : right bottom front
+     * verts[3] : right top front
+     *
+     * face to the obb's z direction
+     * verts[4] : right top back
+     * verts[5] : right bottom back
+     * verts[6] : left bottom back
+     * verts[7] : left top back
+     */
     void getCorners(Vec3* verts) const;
 
 	/**

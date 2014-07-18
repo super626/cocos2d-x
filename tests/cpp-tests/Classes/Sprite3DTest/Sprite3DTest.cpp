@@ -668,7 +668,7 @@ void Animate3DTest::update(float dt)
 
 void Animate3DTest::addSprite3D()
 {
-    std::string fileName = "Sprite3DTest/tortoise.c3b";
+    std::string fileName = "Sprite3DTest/tortoise.c3t";
     auto sprite = Sprite3D::create(fileName);
     sprite->setScale(0.1f);
     auto s = Director::getInstance()->getWinSize();

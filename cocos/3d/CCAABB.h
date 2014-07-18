@@ -57,8 +57,17 @@ public:
      */
     Vec3 getCenter();
 
-    /**
-     * Gets the corners of the bounding box in the specified array.
+    /* Near face, specified counter-clockwise looking towards the origin from the positive z-axis.
+     * verts[0] : left top front
+     * verts[1] : left bottom front
+     * verts[2] : right bottom front
+     * verts[3] : right top front
+     *
+     * Far face, specified counter-clockwise looking towards the origin from the negative z-axis.
+     * verts[4] : right top back
+     * verts[5] : right bottom back
+     * verts[6] : left bottom back
+     * verts[7] : left top back
      */
     void getCorners(Vec3 *dst) const;
 

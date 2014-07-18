@@ -22,8 +22,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#ifndef __CCDRAW_NODE_3D_H__
-#define __CCDRAW_NODE_3D_H__
+#ifndef __CC_DRAW_NODE_3D_H__
+#define __CC_DRAW_NODE_3D_H__
 
 #include "2d/CCNode.h"
 #include "base/ccTypes.h"

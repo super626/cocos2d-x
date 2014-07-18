@@ -161,8 +161,8 @@ static void _eigenVectors(Mat4* vout, Vec3* dout, Mat4 a)
         for(ip=0;ip<n;ip++)
         {
             _getElement(b, ip) += _getElement(z, ip);
-            _getElement(d, ip) = _getElement(b, ip); // d.m[ip] = b.m[ip];
-            _getElement(z, ip) = 0.0f; //z.m[ip] = 0.0;
+            _getElement(d, ip) = _getElement(b, ip);
+            _getElement(z, ip) = 0.0f;
         }
     }
 
@@ -172,7 +172,6 @@ static void _eigenVectors(Mat4* vout, Vec3* dout, Mat4 a)
     return;
 }
 
-//	return an OBB extracing from the vertices;
 static Mat4 _GetOBBOrientation(const Vec3* aVertPos, int nVertCount)
 {
     Mat4 Cov;
@@ -192,14 +191,11 @@ static Mat4 _GetOBBOrientation(const Vec3* aVertPos, int nVertCount)
     return Evecs;
 }
 
-////////
 OBB::OBB()
 {
     reset();
 }
 
-
-// build obb from oriented bounding box
 OBB::OBB(const AABB& aabb)
 {
     reset();
@@ -214,7 +210,6 @@ OBB::OBB(const AABB& aabb)
     extents.scale(0.5f);
 }
 
-// build obb from points
 OBB::OBB(const Vec3* verts, int nVerts)
 {
     if (!nVerts) return;
@@ -259,7 +254,6 @@ OBB::OBB(const Vec3* verts, int nVerts)
     extents = 0.5f * (vecMax - vecMin);
 }
 
-// is point in this obb
 bool OBB::isPointIn(const Vec3& point) const
 {
     Vec3 vd = point - center;
@@ -279,42 +273,26 @@ bool OBB::isPointIn(const Vec3& point) const
     return true;
 }
 
-// clear obb
 void OBB::reset()
 {
     memset(this, 0, sizeof(OBB));
 }
 
-// face to the obb's -z direction
-// verts[0] : front left bottom corner
-// verts[1] : front right bottom corner
-// verts[2] : front right top corner
-// verts[3] : front left top corner
-// verts[4] : back left bottom corner
-// verts[5] : back right bottom corner
-// verts[6] : back right top corner
-// verts[7] : back left top corner
 void OBB::getCorners(Vec3* verts) const
 {
     Vec3 extX = xAxis * extents.x;
     Vec3 extY = yAxis * extents.y;
     Vec3 extZ = zAxis * extents.z;
     
-    verts[0] = center - extX  - extY + extZ; //front left bottom;
-
-    verts[1] = center + extX - extY + extZ; //front right bottom;
-
-    verts[2] = center + extX + extY + extZ; //front right top corner;
-
-    verts[3] = center - extX + extY + extZ;  //front left top corner;
-
-    verts[4] = center - extX - extY - extZ; //back left bottom corner;
-
-    verts[5] = center + extX - extY - extZ; //back right bottom corner
-
-    verts[6] = center + extX + extY - extZ; //back right top corner
-
-    verts[7] = center - extX + extY - extZ; //back left top corner;
+    verts[0] = center - extX + extY + extZ;     // left top front
+    verts[1] = center - extX  - extY + extZ;    // left bottom front
+    verts[2] = center + extX - extY + extZ;     // right bottom front
+    verts[3] = center + extX + extY + extZ;     // right top front
+    
+    verts[4] = center + extX + extY - extZ;     // right top back
+    verts[5] = center + extX - extY - extZ;     // right bottom back
+    verts[6] = center - extX - extY - extZ;     // left bottom back
+    verts[7] = center - extX + extY - extZ;     // left top back
 }
 
 void OBB::transform(const Mat4& mat)

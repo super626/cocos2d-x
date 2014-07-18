@@ -182,16 +182,15 @@ void AABB::transform(const Mat4& matrix)
     corners[7].set(_min.x, _max.y, _min.z);
 
     // C3DTransform the corners, recalculating the min and max points along the way.
-    matrix.transformPoint(&corners[0]);
-    Vec3 newMin = corners[0];
-    Vec3 newMax = corners[0];
-    for (int i = 1; i < 8; i++)
-    {
+    //matrix.transformPoint(&corners[0]);
+
+    for (int i = 0; i < 8; i++)
         matrix.transformPoint(&corners[i]);
+    
+    reset();
+    
+    for (int i = 0; i < 8; i++)
         updateMinMax(&corners[i]);
-    }
-    _min = newMin;
-    _max = newMax;
 }
 
 

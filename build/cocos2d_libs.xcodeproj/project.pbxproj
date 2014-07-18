@@ -1781,6 +1781,10 @@
 		5E0930001976782100A3C5FA /* CCDrawNode3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E092FF61976768200A3C5FA /* CCDrawNode3D.cpp */; };
 		5E0930011976782100A3C5FA /* CCOBB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E092FF81976768200A3C5FA /* CCOBB.cpp */; };
 		5E0930021976782100A3C5FA /* CCAABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E6073A4196D2AB700DBB038 /* CCAABB.cpp */; };
+		5E09300519779C4400A3C5FA /* CCRay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E09300319779C4400A3C5FA /* CCRay.cpp */; };
+		5E09300619779C4400A3C5FA /* CCRay.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E09300419779C4400A3C5FA /* CCRay.h */; };
+		5E1DF0501977E8F000C4ED66 /* CCCamera3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E1DF04E1977E8F000C4ED66 /* CCCamera3D.cpp */; };
+		5E1DF0511977E8F000C4ED66 /* CCCamera3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E1DF04F1977E8F000C4ED66 /* CCCamera3D.h */; };
 		A07A4CAF1783777C0073F6A7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1551A342158F2AB200E66CFE /* Foundation.framework */; };
 		B24AA985195A675C007B4522 /* CCFastTMXLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B24AA981195A675C007B4522 /* CCFastTMXLayer.cpp */; };
 		B24AA986195A675C007B4522 /* CCFastTMXLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B24AA981195A675C007B4522 /* CCFastTMXLayer.cpp */; };
@@ -2893,6 +2897,10 @@
 		5E092FF71976768200A3C5FA /* CCDrawNode3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCDrawNode3D.h; sourceTree = "<group>"; };
 		5E092FF81976768200A3C5FA /* CCOBB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCOBB.cpp; sourceTree = "<group>"; };
 		5E092FF91976768200A3C5FA /* CCOBB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCOBB.h; sourceTree = "<group>"; };
+		5E09300319779C4400A3C5FA /* CCRay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCRay.cpp; sourceTree = "<group>"; };
+		5E09300419779C4400A3C5FA /* CCRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCRay.h; sourceTree = "<group>"; };
+		5E1DF04E1977E8F000C4ED66 /* CCCamera3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCCamera3D.cpp; sourceTree = "<group>"; };
+		5E1DF04F1977E8F000C4ED66 /* CCCamera3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCCamera3D.h; sourceTree = "<group>"; };
 		5E6073A4196D2AB700DBB038 /* CCAABB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCAABB.cpp; sourceTree = "<group>"; };
 		5E6073A5196D2AB700DBB038 /* CCAABB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCAABB.h; sourceTree = "<group>"; };
 		A03F2CB81780BD04006731B9 /* libchipmunk Mac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libchipmunk Mac.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4991,6 +4999,10 @@
 		B29594B81926D61F003EEF37 /* 3d */ = {
 			isa = PBXGroup;
 			children = (
+				5E1DF04E1977E8F000C4ED66 /* CCCamera3D.cpp */,
+				5E1DF04F1977E8F000C4ED66 /* CCCamera3D.h */,
+				5E09300319779C4400A3C5FA /* CCRay.cpp */,
+				5E09300419779C4400A3C5FA /* CCRay.h */,
 				5E092FF61976768200A3C5FA /* CCDrawNode3D.cpp */,
 				5E092FF71976768200A3C5FA /* CCDrawNode3D.h */,
 				5E092FF81976768200A3C5FA /* CCOBB.cpp */,
@@ -5763,6 +5775,7 @@
 				50ABC0181926664800A911A9 /* CCImage.h in Headers */,
 				50ABBE8E1925AB6F00A911A9 /* CCNS.h in Headers */,
 				50ABBEA61925AB6F00A911A9 /* CCScriptSupport.h in Headers */,
+				5E09300619779C4400A3C5FA /* CCRay.h in Headers */,
 				46C02E0A18E91123004B7456 /* xxhash.h in Headers */,
 				5034CA4C191D591100CE6051 /* ccShader_Label_df_glow.frag in Headers */,
 				50E6D33B18E174130051CA34 /* UIRelativeBox.h in Headers */,
@@ -5866,6 +5879,7 @@
 				2905FA8718CF08D100240AA3 /* UITextBMFont.h in Headers */,
 				1A8C59AA180E930E00EF57C3 /* CCArmatureDataManager.h in Headers */,
 				1A8C59AE180E930E00EF57C3 /* CCArmatureDefine.h in Headers */,
+				5E1DF0511977E8F000C4ED66 /* CCCamera3D.h in Headers */,
 				1A8C59B2180E930E00EF57C3 /* CCBatchNode.h in Headers */,
 				1A8C59B6180E930E00EF57C3 /* CCBone.h in Headers */,
 				1A8C59BA180E930E00EF57C3 /* CCColliderDetector.h in Headers */,
@@ -6793,6 +6807,7 @@
 				50ABBEC01925AB6F00A911A9 /* CCValue.cpp in Sources */,
 				50ABBD591925AB0000A911A9 /* Vec2.cpp in Sources */,
 				50ABBE421925AB6F00A911A9 /* CCDirector.cpp in Sources */,
+				5E09300519779C4400A3C5FA /* CCRay.cpp in Sources */,
 				1A57007E180BC5A10088DEC7 /* CCActionInterval.cpp in Sources */,
 				1A570082180BC5A10088DEC7 /* CCActionManager.cpp in Sources */,
 				1A570086180BC5A10088DEC7 /* CCActionPageTurn3D.cpp in Sources */,
@@ -7048,6 +7063,7 @@
 				2905FA5318CF08D100240AA3 /* UIImageView.cpp in Sources */,
 				1A1645B3191B726C008C7C7F /* ConvertUTFWrapper.cpp in Sources */,
 				1A8C5A04180E930E00EF57C3 /* CCUtilMath.cpp in Sources */,
+				5E1DF0501977E8F000C4ED66 /* CCCamera3D.cpp in Sources */,
 				2905FA7518CF08D100240AA3 /* UIScrollView.cpp in Sources */,
 				1A8C5A0E180E930E00EF57C3 /* DictionaryHelper.cpp in Sources */,
 				1ABA68AF1888D700007D1BB4 /* CCFontCharMap.cpp in Sources */,

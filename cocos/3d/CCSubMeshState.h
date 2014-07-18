@@ -68,4 +68,4 @@ protected:
 
 NS_CC_END
 
-#endif // __CCMESH_H_
+#endif // __CCSUBMESHSTATE_H__

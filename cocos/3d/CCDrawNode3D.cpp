@@ -201,31 +201,23 @@ void DrawNode3D::drawLine(const Vec3 &from, const Vec3 &to, const Color4F &color
 
 void DrawNode3D::drawCube(Vec3* vertices, const Color4F &color)
 {
-    // top
-    //   __
-    // /   /
-    //  ——
-    drawLine(vertices[0], vertices[3], color);
-    drawLine(vertices[3], vertices[4], color);
-    drawLine(vertices[4], vertices[7], color);
-    drawLine(vertices[7], vertices[0], color);
-    
-    // vertical
-    //    |  |
-    //  |  |
+    // front face
     drawLine(vertices[0], vertices[1], color);
-    drawLine(vertices[2], vertices[3], color);
-    drawLine(vertices[4], vertices[5], color);
-    drawLine(vertices[6], vertices[7], color);
-    
-    // bottom
-    //   __
-    // /   /
-    //  ——
     drawLine(vertices[1], vertices[2], color);
-    drawLine(vertices[2], vertices[5], color);
+    drawLine(vertices[2], vertices[3], color);
+    drawLine(vertices[3], vertices[0], color);
+    
+    // back face
+    drawLine(vertices[4], vertices[5], color);
     drawLine(vertices[5], vertices[6], color);
-    drawLine(vertices[6], vertices[1], color);
+    drawLine(vertices[6], vertices[7], color);
+    drawLine(vertices[7], vertices[4], color);
+    
+    // edge
+    drawLine(vertices[0], vertices[7], color);
+    drawLine(vertices[1], vertices[6], color);
+    drawLine(vertices[2], vertices[5], color);
+    drawLine(vertices[3], vertices[4], color);
 }
 
 void DrawNode3D::clear()
