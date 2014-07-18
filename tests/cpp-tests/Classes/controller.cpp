@@ -78,7 +78,9 @@ Controller g_aTestNames[] = {
     { "Node: Sprite3D", [](){  return new Sprite3DTestScene(); }},
 	{ "Node: Camera3D", [](){  return new Camera3DTestScene(); }},
 	{ "Node: TileMap", [](){return new TileMapTestScene(); } },
+#if CC_TARGET_PLATFORM != CC_PLATFORM_WP8
 	{ "Node: FastTileMap", [](){return new TileMapTestSceneNew(); } },
+#endif
 	{ "Node: Text Input", [](){return new TextInputTestScene(); } },
     { "Node: UI", [](){  return new UITestScene(); }},
     { "Mouse", []() { return new MouseTestScene(); } },
@@ -88,8 +90,10 @@ Controller g_aTestNames[] = {
     { "ReleasePool", [](){ return new ReleasePoolTestScene(); } },
 	{ "Rotate World", [](){return new RotateWorldTestScene(); } },
 	{ "Scheduler", [](){return new SchedulerTestScene(); } },
+#if CC_TARGET_PLATFORM != CC_PLATFORM_WP8
 	{ "Shader - Basic", []() { return new ShaderTestScene(); } },
     { "Shader - Sprite", []() { return new ShaderTestScene2(); } },
+#endif
 	{ "Texture2D", [](){return new TextureTestScene(); } },
 	{ "TextureCache", []() { return new TextureCacheTestScene(); } },
 	{ "TexturePacker Encryption", []() { return new TextureAtlasEncryptionTestScene(); } },

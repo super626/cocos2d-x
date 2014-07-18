@@ -918,7 +918,7 @@ bool Bundle3D::loadMaterialDataBinary(MaterialData* materialdata)
     if (!seekToFirstType(BUNDLE_TYPE_MATERIAL))
         return false;
 
-    unsigned int materialnum = 0;
+    unsigned int materialnum = 1;
     if (_version == "0.2")
     {
         _binaryReader.read(&materialnum, 4, 1);
