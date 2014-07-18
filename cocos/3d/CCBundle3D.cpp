@@ -83,6 +83,11 @@ static const char* ANIMATIONDATA_ROTATION =  "rotation";
 static const char* ANIMATIONDATA_SCALE =  "scale";
 static const char* ANIMATIONDATA_KEYTIME =  "keytime";
 
+static const char* COLLISONDATA_BOX = "boxes";
+static const char* COLLISONDATA_ATTACHMENT = "attachment";
+static const char* COLLISONDATA_ORIGIN = "origin";
+static const char* COLLISONDATA_EXTENT = "extent";
+
 NS_CC_BEGIN
 
 void getChildMap(std::map<int, std::vector<int> >& map, SkinData* skinData, const rapidjson::Value& val)
@@ -188,6 +193,11 @@ bool Bundle3D::load(const std::string& path)
         _isBinary = true;
         ret = loadBinary(path);
     }
+	else if (ext == ".c3p")
+    {
+        _isBinary = false;
+        ret = loadJson(path);
+    }
     else 
     {
         CCLOGINFO("%s is invalid file formate", path);
@@ -252,6 +262,18 @@ bool Bundle3D::loadAnimationData(const std::string& id, Animation3DData* animati
     {
         return loadAnimationDataJson(animationdata);
     }
+}
+
+bool Bundle3D::loadCollisonData(const std::string& id, CollisonData* collisondata)
+{
+	if(_isBinary)
+	{
+		return true;
+	}
+	else
+	{
+		return loadCollisonDataJson(collisondata);
+	}
 }
 
 bool Bundle3D::loadJson(const std::string& path)
@@ -541,6 +563,26 @@ bool Bundle3D::loadAnimationDataJson(Animation3DData* animationdata)
     }
     
     return true;
+}
+
+bool Bundle3D::loadCollisonDataJson(CollisonData* collisondata)
+{
+	if (!_jsonReader.HasMember(COLLISONDATA_BOX)) return false;
+	const rapidjson::Value& collison_data_array =  _jsonReader[COLLISONDATA_BOX];
+	if (collison_data_array.Size()==0) return false;
+
+	for(int i = 0; i < collison_data_array.Size(); i++)
+	{
+		const rapidjson::Value&  collison =  collison_data_array[i];
+
+		collisondata->ColliderID = collison[ID].GetString();
+		collisondata->AttachPoint = collison[COLLISONDATA_ATTACHMENT].GetString();
+		const rapidjson::Value&  origin =  collison[COLLISONDATA_ORIGIN];
+		collisondata->origin = Vec3(origin[(rapidjson::SizeType)0].GetDouble(),origin[1].GetDouble(),origin[2].GetDouble());
+		const rapidjson::Value&  extent =  collison[COLLISONDATA_EXTENT];
+		collisondata->extent = Vec3(extent[(rapidjson::SizeType)0].GetDouble(),extent[1].GetDouble(),extent[2].GetDouble());
+	}
+	return true;
 }
 
 bool Bundle3D::loadBinary(const std::string& path)

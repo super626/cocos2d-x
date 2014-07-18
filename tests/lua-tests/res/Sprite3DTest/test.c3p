@@ -1,0 +1,19 @@
+{
+    "version": "1.2",
+    "boxes": [
+        {
+            "id": "box1",
+            "attachment": "",
+            "origin": [
+                0,
+                0,
+                0
+            ],
+            "extent": [
+                10,
+                10,
+                10
+            ]
+        }
+    ]
+}
