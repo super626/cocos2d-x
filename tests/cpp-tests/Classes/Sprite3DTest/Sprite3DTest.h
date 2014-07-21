@@ -225,4 +225,18 @@ public:
     virtual void runThisTest();
 };
 
+class Sprite3DWithSubMeshTest : public Sprite3DTestDemo
+{
+public:
+    CREATE_FUNC(Sprite3DWithSubMeshTest);
+    Sprite3DWithSubMeshTest();
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+    
+    void addNewSpriteWithCoords(Vec2 p);
+    
+    void onTouchesEnded(const std::vector<Touch*>& touches, Event* event);
+
+};
+
 #endif
