@@ -32,28 +32,38 @@ NS_CC_BEGIN
 class OBB
 {
 public:
-    
-    Vec3 center; // obb center
-    
-    Vec3 xAxis; // x axis of obb, unit vector
-    Vec3 yAxis; // y axis of obb, unit vecotr
-    Vec3 zAxis; // z axis of obb, unit vector
-    
-    Vec3 extents; // obb length along each axis
+    Vec3 _center;   // obb center
+    Vec3 _xAxis;    // x axis of obb, unit vector
+    Vec3 _yAxis;    // y axis of obb, unit vecotr
+    Vec3 _zAxis;    // z axis of obb, unit vector
+    Vec3 _extents;  // obb length along each axis
     
 public:
     OBB();
 
-    // construct obb from oriented bounding box
+    /*
+     * construct obb from oriented bounding box
+     */
     OBB(const AABB& aabb);
     
-    // construct obb from points
+    /*
+     * construct obb from points
+     */
     OBB(const Vec3* verts, int nVerts);
     
-    // is point in this obb
+    /*
+     * is point in this obb
+     */
     bool isPointIn(const Vec3& point) const;
 
-    // clear obb
+    /*
+     * specify obb values
+     */
+    void set(const Vec3& center, const Vec3& _xAxis, const Vec3& _yAxis, const Vec3& _zAxis, const Vec3& _extents);
+    
+    /*
+     * clear obb
+     */ 
     void reset();
 
     /* face to the obb's -z direction

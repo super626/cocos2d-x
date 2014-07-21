@@ -33,8 +33,9 @@ namespace cocos2d {
     class Animate3D;
     class Sprite3D;
     class Delay;
-	class DrawNode3D;
-	class AABB;
+    class DrawNode3D;
+    class OBB;
+    class Ray;
 }
 
 class Sprite3DTestDemo : public BaseTest
@@ -158,7 +159,6 @@ public:
     void addNewSpriteWithCoords(Vec2 p);
     
     void onTouchesEnded(const std::vector<Touch*>& touches, Event* event);
-
 };
 
 class Animate3DTest : public Sprite3DTestDemo
@@ -173,6 +173,10 @@ public:
     void onTouchesEnded(const std::vector<Touch*>& touches, Event* event);
     
     virtual void update(float dt) override;
+    
+protected:
+    void unproject(const Mat4& viewProjection, const Size* viewport, Vec3* src, Vec3* dst);
+    void calculateRayByLocationInView(Ray* ray, const Vec2& location);
     
 protected:
     void addSprite3D();
@@ -199,6 +203,10 @@ protected:
     State   _state;
     
     MoveTo* _moveAction;
+    
+    DrawNode3D* _drawAABB;
+    OBB* _obb;
+    Vec3 _aabbExt;
 };
 
 
@@ -223,20 +231,6 @@ class Sprite3DTestScene : public TestScene
 {
 public:
     virtual void runThisTest();
-};
-
-class Sprite3DWithSubMeshTest : public Sprite3DTestDemo
-{
-public:
-    CREATE_FUNC(Sprite3DWithSubMeshTest);
-    Sprite3DWithSubMeshTest();
-    virtual std::string title() const override;
-    virtual std::string subtitle() const override;
-    
-    void addNewSpriteWithCoords(Vec2 p);
-    
-    void onTouchesEnded(const std::vector<Touch*>& touches, Event* event);
-
 };
 
 #endif

@@ -607,6 +607,9 @@
     <ClCompile Include="..\3d\CCCamera3D.cpp">
       <Filter>3d</Filter>
     </ClCompile>
+    <ClCompile Include="..\3d\CCRay.cpp">
+      <Filter>3d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\physics\CCPhysicsBody.h">
@@ -1235,6 +1238,9 @@
       <Filter>3d</Filter>
     </ClInclude>
     <ClInclude Include="..\3d\CCCamera3D.h">
+      <Filter>3d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3d\CCRay.h">
       <Filter>3d</Filter>
     </ClInclude>
   </ItemGroup>

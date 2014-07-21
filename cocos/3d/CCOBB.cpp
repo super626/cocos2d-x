@@ -200,14 +200,14 @@ OBB::OBB(const AABB& aabb)
 {
     reset();
     
-    center = (aabb._min + aabb._max);
-    center.scale(0.5f);
-    xAxis = Vec3(1.0f, 0.0f, 0.0f);
-    yAxis = Vec3(0.0f, 1.0f, 0.0f);
-    zAxis = Vec3(0.0f, 0.0f, 1.0f);
+    _center = (aabb._min + aabb._max);
+    _center.scale(0.5f);
+    _xAxis = Vec3(1.0f, 0.0f, 0.0f);
+    _yAxis = Vec3(0.0f, 1.0f, 0.0f);
+    _zAxis = Vec3(0.0f, 0.0f, 1.0f);
     
-    extents = aabb._max - aabb._min;
-    extents.scale(0.5f);
+    _extents = aabb._max - aabb._min;
+    _extents.scale(0.5f);
 }
 
 OBB::OBB(const Vec3* verts, int nVerts)
@@ -240,37 +240,46 @@ OBB::OBB(const Vec3* verts, int nVerts)
     
     matTransform.transpose();
     
-    xAxis = Vec3(matTransform.m[0], matTransform.m[1], matTransform.m[2]);
-    yAxis = Vec3(matTransform.m[4], matTransform.m[5], matTransform.m[6]);
-    zAxis = Vec3(matTransform.m[8], matTransform.m[9], matTransform.m[10]);
+    _xAxis = Vec3(matTransform.m[0], matTransform.m[1], matTransform.m[2]);
+    _yAxis = Vec3(matTransform.m[4], matTransform.m[5], matTransform.m[6]);
+    _zAxis = Vec3(matTransform.m[8], matTransform.m[9], matTransform.m[10]);
     
-    center	= 0.5f * (vecMax + vecMin);
-    center *= matTransform;
+    _center	= 0.5f * (vecMax + vecMin);
+    _center *= matTransform;
     
-    xAxis.normalize();
-    yAxis.normalize();
-    zAxis.normalize();
+    _xAxis.normalize();
+    _yAxis.normalize();
+    _zAxis.normalize();
     
-    extents = 0.5f * (vecMax - vecMin);
+    _extents = 0.5f * (vecMax - vecMin);
 }
 
 bool OBB::isPointIn(const Vec3& point) const
 {
-    Vec3 vd = point - center;
+    Vec3 vd = point - _center;
 
-    float d = vd.dot(xAxis);
-    if (d > extents.x || d < -extents.x)
+    float d = vd.dot(_xAxis);
+    if (d > _extents.x || d < -_extents.x)
         return false;
 
-    d = vd.dot(yAxis);
-    if (d > extents.y || d < -extents.y)
+    d = vd.dot(_yAxis);
+    if (d > _extents.y || d < -_extents.y)
         return false;
 
-    d = vd.dot(zAxis);
-    if (d > extents.z || d < -extents.z)
+    d = vd.dot(_zAxis);
+    if (d > _extents.z || d < -_extents.z)
         return false;
 
     return true;
+}
+
+void OBB::set(const Vec3& center, const Vec3& xAxis, const Vec3& yAxis, const Vec3& zAxis, const Vec3& extents)
+{
+    _center = center;
+    _xAxis = xAxis;
+    _yAxis = yAxis;
+    _zAxis = zAxis;
+    _extents = extents;
 }
 
 void OBB::reset()
@@ -280,43 +289,43 @@ void OBB::reset()
 
 void OBB::getCorners(Vec3* verts) const
 {
-    Vec3 extX = xAxis * extents.x;
-    Vec3 extY = yAxis * extents.y;
-    Vec3 extZ = zAxis * extents.z;
+    Vec3 extX = _xAxis * _extents.x;
+    Vec3 extY = _yAxis * _extents.y;
+    Vec3 extZ = _zAxis * _extents.z;
     
-    verts[0] = center - extX + extY + extZ;     // left top front
-    verts[1] = center - extX  - extY + extZ;    // left bottom front
-    verts[2] = center + extX - extY + extZ;     // right bottom front
-    verts[3] = center + extX + extY + extZ;     // right top front
+    verts[0] = _center - extX + extY + extZ;     // left top front
+    verts[1] = _center - extX - extY + extZ;     // left bottom front
+    verts[2] = _center + extX - extY + extZ;     // right bottom front
+    verts[3] = _center + extX + extY + extZ;     // right top front
     
-    verts[4] = center + extX + extY - extZ;     // right top back
-    verts[5] = center + extX - extY - extZ;     // right bottom back
-    verts[6] = center - extX - extY - extZ;     // left bottom back
-    verts[7] = center - extX + extY - extZ;     // left top back
+    verts[4] = _center + extX + extY - extZ;     // right top back
+    verts[5] = _center + extX - extY - extZ;     // right bottom back
+    verts[6] = _center - extX - extY - extZ;     // left bottom back
+    verts[7] = _center - extX + extY - extZ;     // left top back
 }
 
 void OBB::transform(const Mat4& mat)
 {
-    Vec4 newcenter = mat * Vec4(center.x, center.y, center.z, 1.0f);// center;
-    center.x = newcenter.x;
-    center.y = newcenter.y;
-    center.z = newcenter.z;
+    Vec4 newcenter = mat * Vec4(_center.x, _center.y, _center.z, 1.0f);// center;
+    _center.x = newcenter.x;
+    _center.y = newcenter.y;
+    _center.z = newcenter.z;
 
-    xAxis = mat * xAxis;
-    yAxis = mat * yAxis;
-    zAxis = mat * zAxis;
+    _xAxis = mat * _xAxis;
+    _yAxis = mat * _yAxis;
+    _zAxis = mat * _zAxis;
 
-    xAxis.normalize();
-    yAxis.normalize();
-    zAxis.normalize();
+    _xAxis.normalize();
+    _yAxis.normalize();
+    _zAxis.normalize();
 
     Vec3 scale, trans;
     Quaternion quat;
     mat.decompose(&scale, &quat, &trans);
 
-    extents.x *= scale.x;
-    extents.y *= scale.y;
-    extents.z *= scale.z;
+    _extents.x *= scale.x;
+    _extents.y *= scale.y;
+    _extents.z *= scale.z;
 }
 
 NS_CC_END

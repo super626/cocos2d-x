@@ -33,24 +33,18 @@ NS_CC_BEGIN
 class AABB;
 class OBB;
 
-class CCRay
+class Ray
 {
 public:
-
-    /**
-     * Represents when a 3D entity does not intersect a ray.
-     */
-    static const int INTERSECTS_NONE = -1;
-
 	/**
      * Constructor.
      */
-    CCRay();
+    Ray();
 
     /**
      * Constructor.
      */
-    CCRay(const CCRay& ray);
+    Ray(const Ray& ray);
     
     /**
      * Constructs a new ray initialized to the specified values.
@@ -58,12 +52,12 @@ public:
      * @param origin The ray's origin.
      * @param direction The ray's direction.
      */
-    CCRay(const Vec3& origin, const Vec3& direction);
+    Ray(const Vec3& origin, const Vec3& direction);
 
 	/**
      * Destructor.
      */
-    ~CCRay();
+    ~Ray();
 
 	/**
      * Check whether this ray intersects the specified bounding box.

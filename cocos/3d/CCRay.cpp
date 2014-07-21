@@ -26,21 +26,21 @@ THE SOFTWARE.
 
 NS_CC_BEGIN
 
-CCRay::CCRay()
+Ray::Ray()
     : _direction(0, 0, 1)
 {
 }
 
-CCRay::CCRay(const Vec3& origin, const Vec3& direction)
+Ray::Ray(const Vec3& origin, const Vec3& direction)
 {
     set(origin, direction);
 }
 
-CCRay::~CCRay()
+Ray::~Ray()
 {
 }
 
-bool CCRay::intersects( const AABB* box ) const
+bool Ray::intersects( const AABB* box ) const
 {
 	Vec3 ptOnPlane;
 	Vec3 min = box->_min;
@@ -108,56 +108,55 @@ bool CCRay::intersects( const AABB* box ) const
 	return false;
 }
 
-bool CCRay::intersects(const OBB* obb) const
+bool Ray::intersects(const OBB* obb) const
 {
     AABB box;
-    box._min = - obb->extents;
-    box._max = obb->extents;
+    box._min = - obb->_extents;
+    box._max = obb->_extents;
 
-    CCRay ray;
+    Ray ray;
     ray._direction = _direction;
     ray._origin = _origin;
 
     Mat4 mat = Mat4::IDENTITY;
-    mat.m[0] = obb->xAxis.x;
-    mat.m[1] = obb->xAxis.y;
-    mat.m[2] = obb->xAxis.z;
+    mat.m[0] = obb->_xAxis.x;
+    mat.m[1] = obb->_xAxis.y;
+    mat.m[2] = obb->_xAxis.z;
 
-    mat.m[4] = obb->yAxis.x;
-    mat.m[5] = obb->yAxis.y;
-    mat.m[6] = obb->yAxis.z;
+    mat.m[4] = obb->_yAxis.x;
+    mat.m[5] = obb->_yAxis.y;
+    mat.m[6] = obb->_yAxis.z;
 
-    mat.m[8] = obb->zAxis.x;
-    mat.m[9] = obb->zAxis.y;
-    mat.m[10] = obb->zAxis.z;
+    mat.m[8] = obb->_zAxis.x;
+    mat.m[9] = obb->_zAxis.y;
+    mat.m[10] = obb->_zAxis.z;
 
-    mat.m[12] = obb->center.x;
-    mat.m[13] = obb->center.y;
-    mat.m[14] = obb->center.z;
+    mat.m[12] = obb->_center.x;
+    mat.m[13] = obb->_center.y;
+    mat.m[14] = obb->_center.z;
 
-    mat = mat.getInversed();//????
-    //mat.invertOrthMat();
+    mat = mat.getInversed();
 
     ray.transform(mat);
 
     return ray.intersects(&box);
 }
 
-void CCRay::set(const Vec3& origin, const Vec3& direction)
+void Ray::set(const Vec3& origin, const Vec3& direction)
 {
     _origin = origin;
     _direction = direction;
     normalize();
 }
 
-void CCRay::transform(const Mat4& matrix)
+void Ray::transform(const Mat4& matrix)
 {
     matrix.transformPoint(&_origin);
     matrix.transformVector(&_direction);
     _direction.normalize();
 }
 
-void CCRay::normalize()
+void Ray::normalize()
 {
     if (_direction.isZero())
     {
