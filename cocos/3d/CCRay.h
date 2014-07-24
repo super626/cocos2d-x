@@ -36,7 +36,7 @@ class OBB;
 class Ray
 {
 public:
-	/**
+    /**
      * Constructor.
      */
     Ray();
@@ -54,22 +54,22 @@ public:
      */
     Ray(const Vec3& origin, const Vec3& direction);
 
-	/**
+    /**
      * Destructor.
      */
     ~Ray();
 
-	/**
+    /**
      * Check whether this ray intersects the specified bounding box.
      */
     bool intersects(const AABB* box) const;
 
-	/**
+    /**
      * Check whether this ray intersects the specified obb.
      */
     bool intersects(const OBB* obb) const;
 
-	/**
+    /**
      * Sets this ray to the specified values.
      *
      * @param origin The ray's origin.
