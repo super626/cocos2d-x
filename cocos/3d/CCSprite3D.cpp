@@ -175,9 +175,9 @@ bool Sprite3D::loadFromC3x(const std::string& path)
 			return false;
 		}
 		auto _aabb = new AABB(collisondata.origin,Vec3(collisondata.origin.x + collisondata.extent.x,collisondata.origin.y + collisondata.extent.y,-(collisondata.origin.z + collisondata.extent.z)));
-		Vec3* pos = new Vec3[8];
-		_aabb->getCorners(pos);
-		_clliderpos = pos;
+		/*Vec3* cube = new Vec3[8];
+		_aabb->getCorners(cube);*/
+		_cllidercube = _aabb;
 	}
 	else
 	{
