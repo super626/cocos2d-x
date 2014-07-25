@@ -801,7 +801,7 @@ void Animate3DTest::onTouchesEnded(const std::vector<Touch*>& touches, Event* ev
         {
             Ray ray;
             calculateRayByLocationInView(&ray,location);
-            if(ray.intersects(_obb))
+            if(ray.intersects(*_obb))
             {
 				_hasPick = !_hasPick;
                 //hurt the tortoise
