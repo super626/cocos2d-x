@@ -560,7 +560,7 @@ std::string Sprite3DWithSkinTest::subtitle() const
 
 void Sprite3DWithSkinTest::addNewSpriteWithCoords(Vec2 p)
 {
-    std::string fileName = "Sprite3DTest/orc.c3t";
+    std::string fileName = "Sprite3DTest/orc.c3b";
     auto sprite = Sprite3D::create(fileName);
     sprite->setScale(3);
     sprite->setRotation3D(Vec3(0,180,0));
@@ -715,7 +715,7 @@ void Animate3DTest::addSprite3D()
     sprite->runAction(seq);
     
 
-	auto testsp = Sprite3D::create("Sprite3DTest/test.c3p");
+	auto testsp = Sprite3D::create("Sprite3DTest/test1.c3p");
 	// Generate a OBB box by AABB
     //Vec3 extents = Vec3(60, 30, 20);
     //AABB aabb(-extents, extents);
@@ -900,7 +900,7 @@ std::string Sprite3DWithSubMeshTest::subtitle() const
 
 void Sprite3DWithSubMeshTest::addNewSpriteWithCoords(Vec2 p)
 {
-    std::string fileName = "Sprite3DTest/lanternfish.c3t";
+    std::string fileName = "Sprite3DTest/lanternfish.c3b";
     auto sprite = Sprite3D::create(fileName);
     sprite->setScale(2.f);
     addChild(sprite);
@@ -927,15 +927,15 @@ void Sprite3DWithSubMeshTest::onTouchesEnded(const std::vector<Touch*>& touches,
 Sprite3DWithCollisonTest::Sprite3DWithCollisonTest()
 : _sprite1(nullptr)
 , _sprite2(nullptr)
-, _moveAction1(nullptr)
-, _moveAction2(nullptr)
+, _moveActionGo1(nullptr)
+, _moveActionGo2(nullptr)
+, _moveActionBack1(nullptr)
+, _moveActionBack2(nullptr)
 , _obb1(nullptr)
 , _obb2(nullptr)
 , _drawAABB1(nullptr)
 , _drawAABB2(nullptr)
 ,_hasCollider(false)
-, _aabb1(nullptr)
-, _aabb2(nullptr)
 {
 	auto listener = EventListenerTouchAllAtOnce::create();
     listener->onTouchesEnded = CC_CALLBACK_2(Sprite3DWithCollisonTest::onTouchesEnded, this);
@@ -959,7 +959,7 @@ std::string Sprite3DWithCollisonTest::subtitle() const
 
 void Sprite3DWithCollisonTest::addNewSpriteWithCoords(Vec2 p)
 {
-    std::string fileName1 = "Sprite3DTest/lanternfish.c3t";
+    std::string fileName1 = "Sprite3DTest/lanternfish.c3b";
     auto sprite1 = Sprite3D::create(fileName1);
     sprite1->setScale(1.f);
     addChild(sprite1);
@@ -972,16 +972,13 @@ void Sprite3DWithCollisonTest::addNewSpriteWithCoords(Vec2 p)
         auto animate1 = Animate3D::create(animation1);
         sprite1->runAction(RepeatForever::create(animate1));
     }
-	_moveAction1 = MoveTo::create(6.f, Vec2(p.x / 3.5f, p.y) );
-    _moveAction1->retain();
-    auto seq1 = Sequence::create(_moveAction1, CallFunc::create(CC_CALLBACK_0(Sprite3DWithCollisonTest::reachEndCallBack1, this)), nullptr);
-    seq1->setTag(100);
-    sprite1->runAction(seq1);
+
+	goCallBack1();
+
 	auto collisonsp1 = Sprite3D::create("Sprite3DTest/test.c3p");
 	// Generate a OBB box by AABB
     CC_SAFE_DELETE(_obb1);
 	_obb1 = new OBB(*collisonsp1->getCllider());
-    _aabb1 = collisonsp1->getCllider();
     _drawAABB1 = DrawNode3D::create();
     addChild(_drawAABB1);
 
@@ -999,16 +996,13 @@ void Sprite3DWithCollisonTest::addNewSpriteWithCoords(Vec2 p)
         auto animate2 = Animate3D::create(animation2, 0.f, 1.933f);
         sprite2->runAction(RepeatForever::create(animate2));
     }
-	_moveAction2 = MoveTo::create(6.f, Vec2(p.x * 1.8f, p.y) );
-    _moveAction2->retain();
-    auto seq2 = Sequence::create(_moveAction2, CallFunc::create(CC_CALLBACK_0(Sprite3DWithCollisonTest::reachEndCallBack2, this)), nullptr);
-    seq2->setTag(100);
-    sprite2->runAction(seq2);
+
+	goCallBack2();
+
 	auto collisonsp2 = Sprite3D::create("Sprite3DTest/test.c3p");
 	// Generate a OBB box by AABB
     CC_SAFE_DELETE(_obb2);
 	_obb2 = new OBB(*collisonsp2->getCllider());
-    _aabb2 = collisonsp2->getCllider();
     _drawAABB2 = DrawNode3D::create();
     addChild(_drawAABB2);
 }
@@ -1055,33 +1049,62 @@ void Sprite3DWithCollisonTest::update(float dt)
         _obb2->getCorners(corners2);
         _drawAABB2->drawCube(corners2, _hasCollider?Color4F(1,0,0,1):Color4F(0,1,0,1));
     }
-	if(_aabb1->intersects(*_aabb2))
-		_hasCollider = !_hasCollider;
 
+    bool iscollider  = _obb1->intersects(_obb2);
+	if(iscollider)
+	{
+        if(!_hasCollider)
+        {
+		    reachEndCallBack1();
+		    reachEndCallBack2();
+            _hasCollider = true;
+        }
+	}
+    else
+    {
+        if(_hasCollider)
+            _hasCollider = false;
+    }
 }
 
 void Sprite3DWithCollisonTest::reachEndCallBack1()
 {
-    _sprite1->stopActionByTag(100);
-    auto inverse = (MoveTo*)_moveAction1->reverse();
-    inverse->retain();
-    _moveAction1->release();
-    _moveAction1 = inverse;
-    auto rot = RotateBy::create(1.f, Vec3(0.f, 180.f, 0.f));
-    auto seq = Sequence::create(rot, _moveAction1, CallFunc::create(CC_CALLBACK_0(Sprite3DWithCollisonTest::reachEndCallBack1, this)), nullptr);
-    seq->setTag(100);
-    _sprite1->runAction(seq);
+ 
+        _sprite1->stopActionByTag(100);
+        _moveActionBack1 = MoveTo::create(6.f, Vec2(Director::getInstance()->getWinSize().width / 2 * 1.8f, Director::getInstance()->getWinSize().height / 2) );
+        auto rot = RotateBy::create(1.f, Vec3(0.f, 180.f, 0.f));
+        auto seq = Sequence::create(_moveActionBack1, CallFunc::create(CC_CALLBACK_0(Sprite3DWithCollisonTest::goCallBack1, this)) ,nullptr);
+        seq->setTag(100);
+        _sprite1->runAction(seq);
+
 }
 
 void Sprite3DWithCollisonTest::reachEndCallBack2()
 {
-    _sprite2->stopActionByTag(100);
-    auto inverse = (MoveTo*)_moveAction2->reverse();
-    inverse->retain();
-    _moveAction2->release();
-    _moveAction2 = inverse;
-    auto rot = RotateBy::create(1.f, Vec3(0.f, 180.f, 0.f));
-    auto seq = Sequence::create(rot, _moveAction2, CallFunc::create(CC_CALLBACK_0(Sprite3DWithCollisonTest::reachEndCallBack2, this)), nullptr);
+
+        _sprite2->stopActionByTag(100);
+        _moveActionBack2 = MoveTo::create(6.f, Vec2(Director::getInstance()->getWinSize().width / (3.5f * 2), Director::getInstance()->getWinSize().height / 2) );
+        auto rot = RotateBy::create(1.f, Vec3(0.f, 180.f, 0.f));
+        auto seq = Sequence::create(_moveActionBack2, CallFunc::create(CC_CALLBACK_0(Sprite3DWithCollisonTest::goCallBack2, this)), nullptr);
+        seq->setTag(100);
+        _sprite2->runAction(seq);
+
+}
+
+void Sprite3DWithCollisonTest::goCallBack1()
+{
+    _moveActionGo1 = MoveTo::create(6.f, Vec2(Director::getInstance()->getWinSize().width / (3.5f * 2), Director::getInstance()->getWinSize().height / 2) );
+    _moveActionGo1->retain();
+    auto seq = Sequence::create(_moveActionGo1, nullptr);
+    seq->setTag(100);
+    _sprite1->runAction(seq);
+}
+
+void Sprite3DWithCollisonTest::goCallBack2()
+{
+    _moveActionGo2 = MoveTo::create(6.f, Vec2(Director::getInstance()->getWinSize().width / 2 * 1.8f, Director::getInstance()->getWinSize().height / 2) );
+    _moveActionGo2->retain();
+    auto seq = Sequence::create(_moveActionGo2, nullptr);
     seq->setTag(100);
     _sprite2->runAction(seq);
 }

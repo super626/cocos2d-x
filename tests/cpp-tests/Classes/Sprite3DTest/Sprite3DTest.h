@@ -263,24 +263,25 @@ public:
 
 protected:
 	void reachEndCallBack1();
-	void renewCallBack1();
-    
 	void reachEndCallBack2();
-	void renewCallBack2();
+
+    void goCallBack1();
+	void goCallBack2();
 
     cocos2d::Sprite3D* _sprite1;
 	cocos2d::Sprite3D* _sprite2;
 
-	MoveTo* _moveAction1;
-	MoveTo* _moveAction2;
+	MoveTo* _moveActionGo1;
+	MoveTo* _moveActionGo2;
+    MoveTo* _moveActionBack1;
+	MoveTo* _moveActionBack2;
 
 	DrawNode3D* _drawAABB1;
 	DrawNode3D* _drawAABB2;
 
     OBB* _obb1;
 	OBB* _obb2;
-	AABB* _aabb1;
-	AABB* _aabb2;
+
 	bool _hasCollider;
 };
 

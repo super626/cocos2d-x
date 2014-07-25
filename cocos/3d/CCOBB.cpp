@@ -304,6 +304,118 @@ void OBB::getCorners(Vec3* verts) const
     verts[7] = _center - extX + extY - extZ;     // left top back
 }
 
+float OBB::projectPoint(const Vec3& point, const Vec3& axis)const
+{
+    float dot = axis.dot(point);
+    float ret = dot * point.length();
+    return ret;
+}
+
+void OBB::getInterval(const OBB* box, const Vec3& axis, float &min, float &max)const
+{
+    assert(box);
+    
+    Vec3 corners[8];
+    box->getCorners(corners);
+    float value;
+    min = max = projectPoint(axis, corners[0]);
+    for(int i = 1; i < 8; i++)
+    {
+        value = projectPoint(axis, corners[i]);
+        min = MIN(min, value);
+        max = MAX(max, value);
+    }
+}
+
+Vec3 OBB::getEdgeDir(int index)const
+{
+    Vec3 corners[8];
+    getCorners(corners);
+    
+    Vec3 tmpLine;
+    switch(index)
+    {
+        case 0:// edge with x axis
+            tmpLine = corners[5] - corners[6];
+            tmpLine.normalize();
+            break;
+        case 1:// edge with y axis
+            tmpLine = corners[7] - corners[6];
+            tmpLine.normalize();
+            break;
+        case 2:// edge with z axis
+            tmpLine = corners[1] - corners[6];
+            tmpLine.normalize();
+            break;
+    }
+    return tmpLine;
+}
+
+Vec3 OBB::getFaceDir(int index) const
+{
+    Vec3 corners[8];
+    getCorners(corners);
+    
+    Vec3 faceDir, v0, v1;
+    switch(index)
+    {
+        case 0:// front and back
+            v0 = corners[2] - corners[1];
+            v1 = corners[0] - corners[1];
+            Vec3::cross(v0, v1, &faceDir);
+            faceDir.normalize();
+            break;
+        case 1:// left and right
+            v0 = corners[5] - corners[2];
+            v1 = corners[3] - corners[2];
+            Vec3::cross(v0, v1, &faceDir);
+            faceDir.normalize();
+            break;
+        case 2:// top and bottom
+            v0 = corners[1] - corners[2];
+            v1 = corners[5] - corners[2];
+            Vec3::cross(v0, v1, &faceDir);
+            faceDir.normalize();
+            break;
+    }
+    return faceDir;
+}
+
+bool OBB::intersects(const OBB* box) const
+{
+    assert(box);
+    
+    float min1, max1, min2, max2;
+    for (int i = 0; i < 3; i++)
+    {
+        getInterval(this, getFaceDir(i), min1, max1);
+        getInterval(box, getFaceDir(i), min2, max2);
+        if (max1 < min2 || max2 < min1) return false;
+    }
+    
+    for (int i = 0; i < 3; i++)
+    {
+        getInterval(this, box->getFaceDir(i), min1, max1);
+        getInterval(box, box->getFaceDir(i), min2, max2);
+        if (max1 < min2 || max2 < min1) return false;
+    }
+    
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            Vec3 axis;
+            Vec3::cross(getEdgeDir(i), box->getEdgeDir(j), &axis);
+            getInterval(this, axis, min1, max1);
+            getInterval(box, axis, min2, max2);
+            if (max1 < min2 || max2 < min1) return false;
+        }
+    }
+    
+    return true;
+}
+
+
 void OBB::transform(const Mat4& mat)
 {
     Vec4 newcenter = mat * Vec4(_center.x, _center.y, _center.z, 1.0f);// center;
