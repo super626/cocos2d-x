@@ -33,19 +33,15 @@ class Camera3D :public Node
 {
 public:
     /**
-    * create camera
-    */
-    static Camera3D*	create();
-    /**
-    * The type of camera.
-    */
-    enum Type
+     * The type of camera.
+     */
+    enum class Type
     {
         PERSPECTIVE = 1,
         ORTHOGRAPHIC = 2
     };
 public:
-    /**
+   /**
     * Creates a perspective camera.
     *
     * @param fieldOfView The field of view for the perspective camera (normally in the range of 40-60 degrees).
@@ -55,64 +51,69 @@ public:
     */
     static Camera3D*    createPerspective(float fieldOfView, float aspectRatio, float nearPlane, float farPlane);
     /**
-    * Creates an orthographic camera.
-    *
-    * @param zoomX The zoom factor along the X-axis of the orthographic projection (the width of the ortho projection).
-    * @param zoomY The zoom factor along the Y-axis of the orthographic projection (the height of the ortho projection).
-    * @param aspectRatio The aspect ratio of the orthographic projection.
-    * @param nearPlane The near plane distance.
-    * @param farPlane The far plane distance.
-    */
-    static Camera3D*  createOrthographic(float zoomX, float zoomY, float aspectRatio, float nearPlane, float farPlane);
-    static Camera3D*  getActiveCamera();
+     * Creates an orthographic camera.
+     *
+     * @param zoomX The zoom factor along the X-axis of the orthographic projection (the width of the ortho projection).
+     * @param zoomY The zoom factor along the Y-axis of the orthographic projection (the height of the ortho projection).
+     * @param aspectRatio The aspect ratio of the orthographic projection.
+     * @param nearPlane The near plane distance.
+     * @param farPlane The far plane distance.
+     */
+    static Camera3D*  createOrthographic(float zoomX, float zoomY, float nearPlane, float farPlane);
+	static Camera3D*  getActiveCamera();
     /**
-    * Gets the type of camera.
-    *
-    * @return The camera type.
-    */
+     * Gets the type of camera.
+     *
+     * @return The camera type.
+     */
     Camera3D::Type  getCameraType() const;
+
+	/**
+	 *
+	 *
+	 */
+	void lookAt(const Vec3& position, const Vec3& up, const Vec3& target);
+	
     /* returns the Eye value of the Camera */
     Vec3& getEyePos();
 
     /* returns the Look value of the Camera */
     Vec3& getLookPos();
-private:
-    Camera3D(float fieldOfView, float aspectRatio, float nearPlane, float farPlane);
-    Camera3D(float zoomX, float zoomY, float aspectRatio, float nearPlane, float farPlane);
-    Camera3D();
-    ~Camera3D();
-public:
-    /**
-    *
-    *
-    */
-    void lookAt(const Vec3& position, const Vec3& up, const Vec3& lookAtPos);
+    
     /**
     * Gets the camera's projection matrix.
     *
     * @return The camera projection matrix.
     */
-    Mat4& getProjectionMatrix();
+    const Mat4& getProjectionMatrix();
     /**
     * Gets the camera's view matrix.
     *
     * @return The camera view matrix.
     */
-    Mat4& getViewMatrix();
+    const Mat4& getViewMatrix();
+    
+    /**get view projection matrix*/
+    const Mat4& getViewProjectionMatrix();
+    
+    /**set additional matrix for the projection matrix, it multiplys mat to projection matrix when called, used by WP8*/
+    void setAdditionalProjection(const Mat4& mat);
+    
     /**
-    *  set the camera's projection View.
-    */
+     *  set the camera's projection View.
+     */
     void applyProjection();
     /**
-    * Sets the position (X, Y, and Z) in its parent's coordinate system
-    */
-    virtual void setPosition3D(const Vec3& position);
+     * Sets the position (X, Y, and Z) in its parent's coordinate system
+     */
+	virtual void setPosition3D(const Vec3& position);
     virtual void setRotation3D(const Vec3& rotation);
-    //set active camera 
-    bool setActiveCamera();
+	 //set active camera 
+    static void setActiveCamera(Camera3D* camera);
+    
     /**
-    * rotate camera
-    */
+     * rotate camera
+     */
     void rotate(const Vec3& axis, float angle);
     /**
      * Rotate along a specific line
@@ -122,25 +123,34 @@ public:
      */
     void rotateAlong(const Vec3& point,const Vec3& axis, float angle);
     /**
-    * translate camera
-    */
+     * translate camera
+     */
     void translate(const Vec3& vector);
     void scale(float scale);
     virtual const Mat4& getNodeToParentTransform() const;
     /**
-    * Convert the specified point of viewport from screenspace coordinate into the worldspace coordinate.
-    */
+     * Convert the specified point of viewport from screenspace coordinate into the worldspace coordinate.
+     */
     void unproject(const Mat4& viewProjection, const Size* viewport, Vec3* src, Vec3* dst);
     /**
-    * Ray from camera to the screen position
-    */
+     * Ray from camera to the screen position
+     */
     void calculateRayByLocationInView(Ray* ray, const Vec2& location);
-private:
+    
+    
+CC_CONSTRUCTOR_ACCESS:
+    Camera3D();
+    ~Camera3D();
+    
+protected:
+    
     Mat4 _projection;
     Mat4 _view;
+    Mat4 _viewProjection;
     Vec3 _lookAtPos;
     Vec3 _realEyePos;
     Vec3 _up;
+    
     Camera3D::Type _type;
     float _fieldOfView;
     float _zoom[2];

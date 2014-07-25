@@ -154,9 +154,9 @@ void Camera3DTestDemo::onEnter()
     addNewSpriteWithCoords( Vec3(0,0,0),"CameraTest/girl.c3b",true,true);
     addNewParticleSystemWithCoords(Vec3(0, 0,0));
     TTFConfig ttfConfig("fonts/arial.ttf", 20);
-    auto label1 = Label::createWithTTF(ttfConfig,"zoomout");
+    auto label1 = Label::createWithTTF(ttfConfig,"zoom out");
     auto menuItem1 = MenuItemLabel::create(label1, CC_CALLBACK_1(Camera3DTestDemo::scaleCameraCallback,this,-2));
-    auto label2 = Label::createWithTTF(ttfConfig,"zoomin");
+    auto label2 = Label::createWithTTF(ttfConfig,"zoom in");
     auto menuItem2 = MenuItemLabel::create(label2, CC_CALLBACK_1(Camera3DTestDemo::scaleCameraCallback,this,2));
     auto label3 = Label::createWithTTF(ttfConfig,"rotate+");
     auto menuItem3 = MenuItemLabel::create(label3, CC_CALLBACK_1(Camera3DTestDemo::rotateCameraCallback,this,10));
@@ -196,7 +196,7 @@ void Camera3DTestDemo::onEnter()
     _camera=Camera3D::createPerspective(60, (GLfloat)s.width/s.height, 1, 1000);
     _camera->retain();
     _camera->lookAt(Vec3(0, 50, -50)+_sprite3D->getPosition3D(),Vec3(0, 1, 0),_sprite3D->getPosition3D());
-    _camera->setActiveCamera();
+    Camera3D::setActiveCamera(_camera);
     DrawNode3D* line =DrawNode3D::create();
     _layer3D->addChild(_camera);
     //draw x

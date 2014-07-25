@@ -31,6 +31,7 @@ THE SOFTWARE.
 // standard includes
 #include <string>
 
+#include "3d/CCCamera3D.h"
 #include "2d/CCDrawingPrimitives.h"
 #include "2d/CCScene.h"
 #include "2d/CCSpriteFrameCache.h"
@@ -166,6 +167,8 @@ bool Director::init(void)
 
 Director::~Director(void)
 {
+    Camera3D::setActiveCamera(nullptr);
+    
     CCLOGINFO("deallocing Director: %p", this);
 
     CC_SAFE_RELEASE(_FPSLabel);
@@ -283,6 +286,13 @@ void Director::drawScene()
     }
 
     pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+    auto camera = Camera3D::getActiveCamera();
+    camera = nullptr;
+    if (camera)
+    {
+        pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
+        loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION, camera->getViewProjectionMatrix());
+    }
 
     // draw the scene
     if (_runningScene)
@@ -305,6 +315,11 @@ void Director::drawScene()
     _renderer->render();
     _eventDispatcher->dispatchEvent(_eventAfterDraw);
 
+    if (camera)
+    {
+        popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
+    }
+    
     popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
 
     _totalFrames++;
@@ -600,11 +615,18 @@ void Director::setProjection(Projection projection)
     {
         case Projection::_2D:
         {
+            if (Camera3D::getActiveCamera() == nullptr)
+            {
+                auto camera = Camera3D::createOrthographic(size.width, size.height, -1024, 1024);
+                Camera3D::setActiveCamera(camera);
+            }
+            
             loadIdentityMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WP8
             if(getOpenGLView() != nullptr)
             {
                 multiplyMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION, getOpenGLView()->getOrientationMatrix());
+                camera->setAdditionalProjection(getOpenGLView()->getOrientationMatrix());
             }
 #endif
             Mat4 orthoMatrix;
@@ -617,17 +639,27 @@ void Director::setProjection(Projection projection)
         case Projection::_3D:
         {
             float zeye = this->getZEye();
+            
+            Camera3D* camera = nullptr;
+            if (Camera3D::getActiveCamera() == nullptr)
+            {
+                camera = Camera3D::createPerspective(60, (GLfloat)size.width/size.height, 10, zeye+size.height/2);
+                Camera3D::setActiveCamera(camera);
+            }
 
             Mat4 matrixPerspective, matrixLookup;
 
             loadIdentityMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
-            
+
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WP8
             //if needed, we need to add a rotation for Landscape orientations on Windows Phone 8 since it is always in Portrait Mode
             GLView* view = getOpenGLView();
+            
             if(getOpenGLView() != nullptr)
             {
                 multiplyMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION, getOpenGLView()->getOrientationMatrix());
+                
+                camera->setAdditionalProjection(getOpenGLView()->getOrientationMatrix());
             }
 #endif
             // issue #1334
@@ -640,6 +672,9 @@ void Director::setProjection(Projection projection)
             multiplyMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION, matrixLookup);
             
             loadIdentityMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+            
+            if (camera)
+            camera->lookAt(eye, up, center);
             break;
         }
 
