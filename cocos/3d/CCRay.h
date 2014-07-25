@@ -27,11 +27,10 @@
 
 #include "base/ccMacros.h"
 #include "math/CCMath.h"
+#include "CCAABB.h"
+#include "CCOBB.h"
 
 NS_CC_BEGIN
-
-class AABB;
-class OBB;
 
 class Ray
 {
@@ -62,12 +61,12 @@ public:
     /**
      * Check whether this ray intersects the specified bounding box.
      */
-    bool intersects(const AABB* box) const;
+    bool intersects(const AABB& aabb) const;
 
     /**
      * Check whether this ray intersects the specified obb.
      */
-    bool intersects(const OBB* obb) const;
+    bool intersects(const OBB& obb) const;
 
     /**
      * Sets this ray to the specified values.

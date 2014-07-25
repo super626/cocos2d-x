@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<effect>
+<particleSystem totalParticles="100" emitDelay="0" emitPosX="-150" emitPosY="0" emitPosZ="0"  emitDuration="-1" emitType="0" emitRate="30" boxSizeX="40" boxSizeY="20" boxSizeZ="0" sphereRadius="0" life="3" lifeVar="0.25" startColorR="1" startColorG="1" startColorB="1" startColorA="1" startColorVarR="0.5" startColorVarG="0.5" startColorVarB="0.5" startColorVarA="0" dirType="1" velocityAxisX="0" velocityAxisY="1" velocityAxisZ="0" startSpeed="20" startSpeedVar="0" startScale="0.5" startScaleVar="1" startRotation="0" startRotationVar="45" uvRectLeft="0" uvRectTop="0" uvRectRight="1" uvRectBottom="1" renderType="0" billboardSizeX="8" billboardSizeY="8" billboardType="1" textureName="CameraTest/bubble2.png">
+    <scaleAffector type="0" endScale="1"/>
+    <colorAffector type="0" endColorR="1" endColorG="0" endColorB="0" endColorA="0"/>
+    <RotAffector type="0" rotationEnd="0"/>
+</particleSystem>
+<particleSystem totalParticles="100" emitDelay="0" emitPosX="150" emitPosY="0" emitPosZ="0" emitDuration="-1" emitType="0" emitRate="30" boxSizeX="40" boxSizeY="20" boxSizeZ="0" sphereRadius="0" life="3" lifeVar="0.25" startColorR="1" startColorG="0.5" startColorB="0.5" startColorA="1" startColorVarR="0.5" startColorVarG="0.5" startColorVarB="0.5" startColorVarA="0" dirType="1" velocityAxisX="0" velocityAxisY="1" velocityAxisZ="0" startSpeed="20" startSpeedVar="0" startScale="0.5" startScaleVar="1" startRotation="0" startRotationVar="45" uvRectLeft="0" uvRectTop="0" uvRectRight="1" uvRectBottom="1" renderType="0" billboardSizeX="8" billboardSizeY="8" billboardType="0" textureName="CameraTest/bubble2.png">
+    <scaleAffector type="0" endScale="1"/>
+    <colorAffector type="0" endColorR="0.5" endColorG="0" endColorB="1" endColorA="0"/>
+    <RotAffector type="0" rotationEnd="360"/>
+</particleSystem>
+</effect> 
+ 
+
+
+

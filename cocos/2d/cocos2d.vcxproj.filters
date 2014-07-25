@@ -607,7 +607,13 @@
     <ClCompile Include="..\3d\CCCamera3D.cpp">
       <Filter>3d</Filter>
     </ClCompile>
-    <ClCompile Include="..\3d\CCRay.cpp">
+  <ClCompile Include="..\3d\CCRay.cpp">
+      <Filter>3d</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3d\CCParticleSystem3D.cpp">
+      <Filter>3d</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3d\CCParticleAffector.cpp">
       <Filter>3d</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1241,6 +1247,12 @@
       <Filter>3d</Filter>
     </ClInclude>
     <ClInclude Include="..\3d\CCRay.h">
+      <Filter>3d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3d\CCParticleSystem3D.h">
+      <Filter>3d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3d\CCParticleAffector.h">
       <Filter>3d</Filter>
     </ClInclude>
   </ItemGroup>

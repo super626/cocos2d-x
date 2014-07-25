@@ -74,7 +74,7 @@ public:
     /**clear bone blend states*/
     void clearBoneBlendState();
     /**
-     * Creates C3DBone.
+     * Creates Bone3D.
      */
     static Bone3D* create(const std::string& id);
     

@@ -76,14 +76,14 @@ void AABB::getCorners(Vec3 *dst) const
     dst[7].set(_min.x, _max.y, _min.z);
 }
 
-bool AABB::intersects(const AABB& box) const
+bool AABB::intersects(const AABB& aabb) const
 {
-    return ((_min.x >= box._min.x && _min.x <= box._max.x) || (box._min.x >= _min.x && box._min.x <= _max.x)) &&
-           ((_min.y >= box._min.y && _min.y <= box._max.y) || (box._min.y >= _min.y && box._min.y <= _max.y)) &&
-           ((_min.z >= box._min.z && _min.z <= box._max.z) || (box._min.z >= _min.z && box._min.z <= _max.z));
+    return ((_min.x >= aabb._min.x && _min.x <= aabb._max.x) || (aabb._min.x >= _min.x && aabb._min.x <= _max.x)) &&
+           ((_min.y >= aabb._min.y && _min.y <= aabb._max.y) || (aabb._min.y >= _min.y && aabb._min.y <= _max.y)) &&
+           ((_min.z >= aabb._min.z && _min.z <= aabb._max.z) || (aabb._min.z >= _min.z && aabb._min.z <= _max.z));
 }
 
-bool AABB::containPoint( const Vec3& point) const
+bool AABB::containPoint(const Vec3& point) const
 {
 	if (point.x < _min.x) return false;
 	if (point.y < _min.y) return false;
@@ -181,7 +181,7 @@ void AABB::transform(const Mat4& matrix)
     // Left-top-back.
     corners[7].set(_min.x, _max.y, _min.z);
 
-    // C3DTransform the corners, recalculating the min and max points along the way.
+    // Transform the corners, recalculating the min and max points along the way.
     //matrix.transformPoint(&corners[0]);
 
     for (int i = 0; i < 8; i++)

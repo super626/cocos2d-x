@@ -133,7 +133,7 @@ void Bone3D::clearBoneBlendState()
 }
 
 /**
- * Creates C3DBone.
+ * Creates Bone3D.
  */
 Bone3D* Bone3D::create(const std::string& id)
 {

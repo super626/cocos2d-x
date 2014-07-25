@@ -74,7 +74,7 @@ public:
     /**
      * Tests whether this bounding box intersects the specified bounding object.
      */
-    bool intersects(const AABB& box) const;
+    bool intersects(const AABB& aabb) const;
 
     /**
      * check whether the point is in.
