@@ -237,6 +237,18 @@ public:
     }
 };
 
+/**collision data*/
+struct CollisonData
+{
+	/*std::vector<std::string> ColliderID;
+	std::vector<std::string> AttachPoint;
+	std::vector<Vec3> origin;
+	std::vector<Vec3> extent;*/
+	std::string ColliderID;
+	std::string AttachPoint;
+	Vec3 origin;
+	Vec3 extent;
+};
 /**reference data*/
 struct Reference
 {

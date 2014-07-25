@@ -42,6 +42,7 @@ class Texture2D;
 class MeshSkin;
 class AttachNode;
 class SubMeshState;
+class AABB;
 
 /** Sprite3D: A sprite can be loaded from 3D model files, .obj, .c3t, .c3b, then can be drawed as sprite */
 class CC_DLL Sprite3D : public Node, public BlendProtocol
@@ -65,9 +66,15 @@ public:
     
     /**get skin*/
     MeshSkin* getSkin() const { return _skin; }
+
+	AABB* getCllider()
+	{
+		return _cllidercube;
+	}
     
     /**get AttachNode by bone name, return nullptr if not exist*/
     AttachNode* getAttachNode(const std::string& boneName);
+
     
     /**remove attach node*/
     void removeAttachNode(const std::string& boneName);
@@ -117,6 +124,8 @@ protected:
     std::unordered_map<std::string, AttachNode*> _attachments;
 
     BlendFunc                    _blend;
+
+	AABB* _cllidercube;
 };
 
 extern std::string CC_DLL s_attributeNames[];//attribute names array

@@ -31,6 +31,7 @@
 #include "3d/CCSubMesh.h"
 #include "3d/CCAttachNode.h"
 #include "3d/CCSubMeshState.h"
+#include "3d/CCAABB.h"
 
 #include "base/CCDirector.h"
 #include "base/CCPlatformMacros.h"
@@ -152,6 +153,9 @@ bool Sprite3D::loadFromObj(const std::string& path)
 
 bool Sprite3D::loadFromC3x(const std::string& path)
 {
+	std::string ext = path.substr(path.length() - 4, 4);
+    std::transform(ext.begin(), ext.end(), ext.begin(), tolower);
+
     std::string fullPath = FileUtils::getInstance()->fullPathForFilename(path);
     std::string key = fullPath + "#";
     
@@ -160,37 +164,55 @@ bool Sprite3D::loadFromC3x(const std::string& path)
     if (!bundle->load(fullPath))
         return false;
     
-    MeshData meshdata;
-    bool ret = bundle->loadMeshData("", &meshdata);
-    if (!ret)
-    {
-        return false;
-    }
-    
-    _mesh = Mesh::create(meshdata.vertex, meshdata.vertexSizeInFloat, meshdata.subMeshIndices, meshdata.attribs);
+    bool ret;
 
-    CC_SAFE_RETAIN(_mesh);
-    //add mesh to cache
-    MeshCache::getInstance()->addMesh(key, _mesh);
+    if(ext == ".c3p")
+	{
+		CollisonData collisondata;
+		ret = bundle->loadCollisonData("", &collisondata);
+		if(!ret)
+		{
+			return false;
+		}
+		auto _aabb = new AABB(collisondata.origin,Vec3(collisondata.origin.x + collisondata.extent.x,collisondata.origin.y + collisondata.extent.y,-(collisondata.origin.z + collisondata.extent.z)));
+		/*Vec3* cube = new Vec3[8];
+		_aabb->getCorners(cube);*/
+		_cllidercube = _aabb;
+	}
+	else
+	{
+		MeshData meshdata;
+		ret = bundle->loadMeshData("", &meshdata);
+		if (!ret)
+		{
+			return false;
+		}
     
-    _skin = MeshSkin::create(fullPath, "");
-    CC_SAFE_RETAIN(_skin);
+		_mesh = Mesh::create(meshdata.vertex, meshdata.vertexSizeInFloat, meshdata.subMeshIndices, meshdata.attribs);
+
+		CC_SAFE_RETAIN(_mesh);
+		//add mesh to cache
+		MeshCache::getInstance()->addMesh(key, _mesh);
     
-    MaterialData materialdata;
-    ret = bundle->loadMaterialData("", &materialdata);
-    if (ret)
-    {
-        std::vector<std::string> texpaths;
-        texpaths.resize(_mesh->getSubMeshCount(), "");
-        for (auto& it : materialdata.texturePaths)
-        {
-            texpaths[it.first] = it.second;
-        }
-        genMaterials(key, texpaths);
-    }
+		_skin = MeshSkin::create(fullPath, "");
+		CC_SAFE_RETAIN(_skin);
     
-    genGLProgramState();
-    
+		MaterialData materialdata;
+		ret = bundle->loadMaterialData("", &materialdata);
+		if (ret)
+		{
+			std::vector<std::string> texpaths;
+			texpaths.resize(_mesh->getSubMeshCount(), "");
+			for (auto& it : materialdata.texturePaths)
+			{
+				texpaths[it.first] = it.second;
+			}
+			genMaterials(key, texpaths);
+		}
+
+		genGLProgramState();
+	}
+  
     return true;
 }
 
@@ -226,7 +248,7 @@ bool Sprite3D::initWithFile(const std::string &path)
     {
         return loadFromObj(path);
     }
-    else if (ext == ".c3b" || ext == ".c3t")
+    else if (ext == ".c3b" || ext == ".c3t" || ext == ".c3p")
     {
         return loadFromC3x(path);
     }
@@ -372,7 +394,8 @@ void Sprite3D::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
         }
         //support tint and fade
         meshCommand.setDisplayColor(Vec4(color.r, color.g, color.b, color.a));
-        Director::getInstance()->getRenderer()->addCommand(&meshCommand);
+		//Director::getInstance()->getRenderer()->addCommand(&meshCommand);
+		renderer->addCommand(&meshCommand);
     }
 }
 
