@@ -1050,7 +1050,7 @@ void Sprite3DWithCollisonTest::update(float dt)
         _drawAABB2->drawCube(corners2, _hasCollider?Color4F(1,0,0,1):Color4F(0,1,0,1));
     }
 
-    bool iscollider  = _obb1->intersects(_obb2);
+    bool iscollider  = _obb1->intersects(*_obb2);
 	if(iscollider)
 	{
         if(!_hasCollider)

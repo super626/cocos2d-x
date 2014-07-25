@@ -88,7 +88,7 @@ public:
     /*
      * Calculate the min and max project value of through the box's corners
      */
-    void getInterval(const OBB* box, const Vec3& axis, float &min, float &max) const;
+    void getInterval(const OBB& box, const Vec3& axis, float &min, float &max) const;
     
     /*
      * Get the edege of x y z axis direction
@@ -103,7 +103,7 @@ public:
     /*
      * Check intersect with other
      */
-    bool intersects(const OBB* box) const;
+    bool intersects(const OBB& box) const;
     
 	/**
      * Transforms the obb by the given transformation matrix.

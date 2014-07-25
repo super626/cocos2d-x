@@ -311,12 +311,10 @@ float OBB::projectPoint(const Vec3& point, const Vec3& axis)const
     return ret;
 }
 
-void OBB::getInterval(const OBB* box, const Vec3& axis, float &min, float &max)const
+void OBB::getInterval(const OBB& box, const Vec3& axis, float &min, float &max)const
 {
-    assert(box);
-    
     Vec3 corners[8];
-    box->getCorners(corners);
+    box.getCorners(corners);
     float value;
     min = max = projectPoint(axis, corners[0]);
     for(int i = 1; i < 8; i++)
@@ -381,22 +379,20 @@ Vec3 OBB::getFaceDir(int index) const
     return faceDir;
 }
 
-bool OBB::intersects(const OBB* box) const
+bool OBB::intersects(const OBB& box) const
 {
-    assert(box);
-    
     float min1, max1, min2, max2;
     for (int i = 0; i < 3; i++)
     {
-        getInterval(this, getFaceDir(i), min1, max1);
+        getInterval(*this, getFaceDir(i), min1, max1);
         getInterval(box, getFaceDir(i), min2, max2);
         if (max1 < min2 || max2 < min1) return false;
     }
     
     for (int i = 0; i < 3; i++)
     {
-        getInterval(this, box->getFaceDir(i), min1, max1);
-        getInterval(box, box->getFaceDir(i), min2, max2);
+        getInterval(*this, box.getFaceDir(i), min1, max1);
+        getInterval(box, box.getFaceDir(i), min2, max2);
         if (max1 < min2 || max2 < min1) return false;
     }
     
@@ -405,8 +401,8 @@ bool OBB::intersects(const OBB* box) const
         for (int j = 0; j < 3; j++)
         {
             Vec3 axis;
-            Vec3::cross(getEdgeDir(i), box->getEdgeDir(j), &axis);
-            getInterval(this, axis, min1, max1);
+            Vec3::cross(getEdgeDir(i), box.getEdgeDir(j), &axis);
+            getInterval(*this, axis, min1, max1);
             getInterval(box, axis, min2, max2);
             if (max1 < min2 || max2 < min1) return false;
         }
