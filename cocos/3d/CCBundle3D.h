@@ -159,7 +159,7 @@ protected:
      * get model path
      * @param str Full path of model file
      */
-    void getModelRelativePath(const std::string& path);
+    void getModelPath(const std::string& fullPath);
 
     /*
     * set the read position in buffer to the target type
@@ -176,8 +176,8 @@ protected:
     
     static Bundle3D* _instance;
     
-    std::string _modelRelativePath;
-    std::string         _path;
+    std::string _modelPath;
+    std::string _path;
     
     std::string _version;// the c3b or c3t version
     
