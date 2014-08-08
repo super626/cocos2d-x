@@ -27,6 +27,7 @@
 
 #include "../testBasic.h"
 #include "../BaseTest.h"
+#include "3d/CCOBB.h"
 #include <string>
 
 namespace cocos2d {
@@ -222,6 +223,79 @@ public:
 protected:
     bool _hasWeapon;
     cocos2d::Sprite3D* _sprite;
+};
+
+class Sprite3DWithCollisonTest : public Sprite3DTestDemo
+{
+public:
+    CREATE_FUNC(Sprite3DWithCollisonTest);
+    Sprite3DWithCollisonTest();
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+    virtual void update(float dt) override;
+    void addNewSpriteWithCoords(Vec2 p);
+    void onTouchesEnded(const std::vector<Touch*>& touches, Event* event);
+protected:
+    void reachEndCallBack();
+    
+    cocos2d::Sprite3D*          _sprite1;
+    cocos2d::Sprite3D*          _sprite2;
+    MoveTo*                     _moveActionGo1;
+    MoveTo*                     _moveActionGo2;
+    DrawNode3D*                 _drawAABB1;
+    DrawNode3D*                 _drawAABB2;
+    OBB*                        _obb1;
+    OBB*                        _obb2;
+    bool                        _hasCollider;
+    Label*                      _labelHPPos;
+    int                         _HP;
+    int                         _Dir;
+};
+
+class Sprite3DWithOBBPerfromanceTest : public Sprite3DTestDemo
+{
+public:
+    CREATE_FUNC(Sprite3DWithOBBPerfromanceTest);
+    Sprite3DWithOBBPerfromanceTest();
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+    virtual void update(float dt) override;
+    void addNewOBBWithCoords(Vec2 p);
+    void addNewSpriteWithCoords(Vec2 p);
+    void onTouchesEnded(const std::vector<Touch*>& touches, Event* event);
+    void addOBBCallback(Ref* sender,float value);
+    void addNewOBBWithCount(float value);
+protected:
+    cocos2d::Sprite3D*        _sprite;
+    std::vector<OBB>          _obb;
+    DrawNode3D*               _drawOBB;
+    Label*                    _labelCubeCount;
+    MoveTo*                   _moveAction;
+    OBB                       _obbt;
+    DrawNode3D*               _drawDebug;
+    bool                      _hasCollider;
+    void initDrawBox();
+    void reachEndCallBack();
+};
+
+class Sprite3DWithAABBPerfromanceTest : public Sprite3DTestDemo
+{
+public:
+    CREATE_FUNC(Sprite3DWithAABBPerfromanceTest);
+    Sprite3DWithAABBPerfromanceTest();
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+    virtual void update(float dt) override;
+    void addNewAABBWithCoords(Vec2 p);
+    void onTouchesEnded(const std::vector<Touch*>& touches, Event* event);
+    void addAABBCallback(Ref* sender,float value);
+    void addNewAABBWithCount(float value);
+protected:
+    std::vector<AABB>          _aabb;
+    DrawNode3D*               _drawAABB;
+    Label*                    _labelCubeCount;
+    
+    void initDrawBox();
 };
 
 class Sprite3DTestScene : public TestScene

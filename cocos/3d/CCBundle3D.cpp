@@ -179,7 +179,7 @@ bool Bundle3D::load(const std::string& path)
     if (_path == path)
         return true;
 
-    getModelRelativePath(path);
+    getModelPath(path);
 
     bool ret = false;
     std::string ext = path.substr(path.length() - 4, 4);
@@ -480,7 +480,7 @@ bool Bundle3D::loadMaterialDataJson_0_1(MaterialData* materialdata)
     const rapidjson::Value& material_data_base_array_0 = material_data_base_array[(rapidjson::SizeType)0];
 
     // set texture
-    materialdata->texturePaths[0] =_modelRelativePath + material_data_base_array_0[MATERIALDATA_FILENAME].GetString();
+    materialdata->texturePaths[0] = _modelPath + material_data_base_array_0[MATERIALDATA_FILENAME].GetString();
 
     return true;
 }
@@ -498,7 +498,7 @@ bool Bundle3D::loadMaterialDataJson_0_2(MaterialData* materialdata)
         //std::string id = material_val[ID].GetString();
         
         // set texture
-        materialdata->texturePaths[i] = _modelRelativePath + material_val[MATERIALDATA_TEXTURES].GetString();
+        materialdata->texturePaths[i] = _modelPath + material_val[MATERIALDATA_TEXTURES].GetString();
     }
     
     return true;
@@ -907,7 +907,7 @@ bool Bundle3D::loadMaterialDataBinary(MaterialData* materialdata)
             return false;
         }
         
-        std::string path = _modelRelativePath + texturePath;
+        std::string path = _modelPath + texturePath;
         materialdata->texturePaths[i] = path;
     }
     
@@ -1051,21 +1051,10 @@ unsigned int Bundle3D::parseGLProgramAttribute(const std::string& str)
     }
 }
 
-void Bundle3D::getModelRelativePath(const std::string& path)
+void Bundle3D::getModelPath(const std::string& fullPath)
 {
-    ssize_t index = path.find_last_of('/');
-    std::string fullModelPath;
-    fullModelPath = path.substr(0, index + 1);
-
-    auto list = FileUtils::getInstance()->getSearchPaths();
-    for( const auto &item : list )
-    {
-        if ( fullModelPath.find(item) != std::string::npos )
-        {
-            _modelRelativePath = fullModelPath.substr(item.length(), fullModelPath.length() + 1);
-            break;
-        }
-    } 
+    ssize_t index = fullPath.find_last_of('/');
+    _modelPath = fullPath.substr(0, index + 1);
 }
 
 Reference* Bundle3D::seekToFirstType(unsigned int type)
@@ -1090,7 +1079,7 @@ Reference* Bundle3D::seekToFirstType(unsigned int type)
 
 Bundle3D::Bundle3D()
 :_isBinary(false),
-_modelRelativePath(""),
+_modelPath(""),
 _path(""),
 _version(""),
 _jsonBuffer(nullptr),
