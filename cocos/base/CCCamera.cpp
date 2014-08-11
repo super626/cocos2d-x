@@ -29,6 +29,8 @@
 
 NS_CC_BEGIN
 
+Camera* Camera::_visitingCamera = nullptr;
+
 Camera* Camera::create()
 {
     Camera* camera = nullptr;
@@ -134,7 +136,7 @@ const Mat4& Camera::getProjectionMatrix() const
 {
     return _projection;
 }
-const Mat4& Camera::getViewMatrix()
+const Mat4& Camera::getViewMatrix() const
 {
     Mat4 viewInv(getNodeToWorldTransform());
     static int count = sizeof(float) * 16;
@@ -183,7 +185,7 @@ void Camera::lookAt(const Vec3& lookAtPos, const Vec3& up)
     setRotation3D(Vec3(CC_RADIANS_TO_DEGREES(fPitch),CC_RADIANS_TO_DEGREES(fYaw),CC_RADIANS_TO_DEGREES(fRoll)));
 }
 
-const Mat4& Camera::getViewProjectionMatrix()
+const Mat4& Camera::getViewProjectionMatrix() const
 {
     getViewMatrix();
     if (_viewProjectionDirty)
@@ -201,7 +203,7 @@ void Camera::setAdditionalProjection(const Mat4& mat)
     getViewProjectionMatrix();
 }
 
-void Camera::unproject(const Size& viewport, Vec3* src, Vec3* dst)
+void Camera::unproject(const Size& viewport, Vec3* src, Vec3* dst) const
 {
     assert(dst);
     Vec4 screen(src->x / viewport.width, ((viewport.height - src->y)) / viewport.height, src->z, 1.0f);
@@ -224,17 +226,9 @@ void Camera::onEnter()
 {
     if (_scene == nullptr)
     {
-        auto parent = getParent();
-        while (parent)
-        {
-            auto scene = dynamic_cast<Scene*>(parent);
-            if (scene)
-            {
-                setScene(scene);
-                break;
-            }
-            parent = parent->getParent();
-        }
+        auto scene = getScene();
+        if (scene)
+            setScene(scene);
     }
     Node::onEnter();
 }

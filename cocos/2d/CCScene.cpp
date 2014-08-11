@@ -54,16 +54,16 @@ Scene::~Scene()
 
 bool Scene::init()
 {
-    //create default camera
-    auto camera = Camera::create();
-    addChild(camera);
-    
     auto size = Director::getInstance()->getWinSize();
     return initWithSize(size);
 }
 
 bool Scene::initWithSize(const Size& size)
 {
+    //create default camera
+    auto camera = Camera::create();
+    addChild(camera);
+    
     setContentSize(size);
     return true;
 }
@@ -153,6 +153,10 @@ bool Scene::initWithPhysics()
     {
         Director * director;
         CC_BREAK_IF( ! (director = Director::getInstance()) );
+        // add camera
+        auto camera = Camera::create();
+        addChild(camera);
+        
         this->setContentSize(director->getWinSize());
         CC_BREAK_IF(! (_physicsWorld = PhysicsWorld::construct(*this)));
         
@@ -183,12 +187,6 @@ void Scene::addChildToPhysicsWorld(Node* child)
         
         addToPhysicsWorldFunc(child);
     }
-}
-
-Camera* Scene::getCameraByIndex(int index) const
-{
-    CCASSERT(index < _cameras.size(), "invalid index");
-    return _cameras[index];
 }
 
 #endif
