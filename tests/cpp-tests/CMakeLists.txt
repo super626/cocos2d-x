@@ -155,6 +155,7 @@ set(SAMPLE_SRC
   Classes/PhysicsTest/PhysicsTest.cpp
   Classes/ReleasePoolTest/ReleasePoolTest.cpp
   Classes/RenderTextureTest/RenderTextureTest.cpp
+  Classes/Runner3DTest/Runner3DTest.cpp
   Classes/RotateWorldTest/RotateWorldTest.cpp
   Classes/SceneTest/SceneTest.cpp
   Classes/SchedulerTest/SchedulerTest.cpp

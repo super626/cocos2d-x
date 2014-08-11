@@ -734,10 +734,14 @@ void Animate3DTest::update(float dt)
         _swim->setWeight(1.f - t);
         _hurt->setWeight(t);
     }
+
+	auto s = Director::getInstance()->getWinSize();
+	float t = 2.f * static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 1.f;
+	_sprite->setPosition3D(cocos2d::Vec3(_sprite->getPositionX(), _sprite->getPositionY(), t * (s.height / 2.f)));
 }
 
 void Animate3DTest::addSprite3D()
-{
+{ 
     std::string fileName = "Sprite3DTest/tortoise.c3b";
     auto sprite = Sprite3D::create(fileName);
     sprite->setScale(0.1f);

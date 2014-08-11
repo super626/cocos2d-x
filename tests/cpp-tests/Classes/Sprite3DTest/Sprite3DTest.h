@@ -167,6 +167,7 @@ public:
     void onTouchesEnded(const std::vector<Touch*>& touches, Event* event);
 };
 
+
 class Animate3DTest : public Sprite3DTestDemo
 {
 public:
@@ -229,5 +230,4 @@ class Sprite3DTestScene : public TestScene
 public:
     virtual void runThisTest();
 };
-
 #endif

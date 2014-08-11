@@ -70,5 +70,6 @@
 
 #include "Sprite3DTest/Sprite3DTest.h"
 #include "Camera3DTest/Camera3DTest.h"
+#include "Runner3DTest/Runner3DTest.h"
 
 #endif
