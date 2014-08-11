@@ -99,7 +99,7 @@ void Runner3DTestDemo::initCamera(cocos2d::Node *parent)
 	auto s = Director::getInstance()->getWinSize();
 	_camera = cocos2d::Camera::createPerspective(60.0f, s.width / s.height, 1.0f, 10000.0f);
 	_camera->setCameraFlag(cocos2d::CameraFlag::USER1);
-	_camera->setPosition3D(cocos2d::Vec3(0.0f, 150.0f, 150.0f));
+	_camera->setPosition3D(cocos2d::Vec3(0.0f, 50.0f, 100.0f));
 	_camera->lookAt(cocos2d::Vec3(0.0f, 0.0f, 0.0f), Vec3(0,1,0));
 	parent->addChild(_camera);
 }
