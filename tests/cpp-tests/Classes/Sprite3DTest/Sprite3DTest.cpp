@@ -37,6 +37,7 @@
 #include "3d/CCAABB.h"
 #include "3d/CCOBB.h"
 #include "3d/CCRay.h"
+#include "3d/CCCamera3D.h"
 
 enum
 {
@@ -62,7 +63,8 @@ static std::function<Layer*()> createFunctions[] =
     CL(Sprite3DWithSubMeshTest),
     CL(Sprite3DWithCollisonTest),
     CL(Sprite3DWithOBBPerfromanceTest),
-    CL(Sprite3DWithAABBPerfromanceTest)
+    CL(Sprite3DWithAABBPerfromanceTest),
+    CL(BillBoardTest)
 };
 
 #define MAX_LAYER    (sizeof(createFunctions) / sizeof(createFunctions[0]))
@@ -1581,4 +1583,232 @@ void Sprite3DWithAABBPerfromanceTest::delAABBWithCount(float value)
     }
     else
         return;
+}
+
+BillBoardTest::BillBoardTest()
+: _billborad(nullptr)
+, _billboradAni(nullptr)
+, _camera(nullptr)
+{
+    auto listener = EventListenerTouchAllAtOnce::create();
+    listener->onTouchesMoved = CC_CALLBACK_2(BillBoardTest::onTouchesMoved, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+    auto layer3D=Layer::create();
+    addChild(layer3D,0);
+    _layerBillBorad=layer3D;
+    DrawNode3D* line =DrawNode3D::create();
+    auto s = Director::getInstance()->getWinSize();
+    if (_camera == nullptr)
+    {
+        _camera=Camera3D::createPerspective(60, (GLfloat)s.width/s.height, 1, 500);
+        _camera->setCameraFlag(CameraFlag::CAMERA_USER1);
+        Camera3D::addCamera(_camera);
+    }
+    _layerBillBorad->addChild(_camera);
+    addNewBillBoradWithCoords(Vec3(20,0,0));
+    addNewAniBillBoradWithCoords(Vec3(-20,0,0));
+    _camera->setPosition3D(Vec3(0, 130, 130));
+    _camera->lookAt(Vec3(0,0,0), Vec3(0,1,0));
+
+    for( int j =-20; j<=20 ;j++)
+    {
+        line->drawLine(Vec3(-100, 0, 5*j),Vec3(100,0,5*j),Color4F(0,1,0,1));
+    }
+    //draw z
+    for( int j =-20; j<=20 ;j++)
+    {
+        line->drawLine(Vec3(5*j, 0, -100),Vec3(5*j,0,100),Color4F(0,1,0,1));
+    }
+    //draw y
+    //line->drawLine(Vec3(0, -50, 0),Vec3(0,0,0),Color4F(0,0.5,0,1));
+    //line->drawLine(Vec3(0, 0, 0),Vec3(0,50,0),Color4F(0,1,0,1));
+    _layerBillBorad->addChild(line,1);
+
+    TTFConfig ttfConfig("fonts/arial.ttf", 20);
+    auto label1 = Label::createWithTTF(ttfConfig,"rotate+");
+    auto menuItem1 = MenuItemLabel::create(label1, CC_CALLBACK_1(BillBoardTest::rotateCameraCallback,this,10));
+    auto label2 = Label::createWithTTF(ttfConfig,"rotate-");
+    auto menuItem2 = MenuItemLabel::create(label2, CC_CALLBACK_1(BillBoardTest::rotateCameraCallback,this,-10));
+    auto menu = Menu::create(menuItem1,menuItem2,NULL);
+    menu->setPosition(Vec2::ZERO);
+    menuItem1->setPosition( Vec2( s.width-50, VisibleRect::top().y-150) );
+    menuItem2->setPosition( Vec2( s.width-50, VisibleRect::top().y-200) );
+    addChild(menu, 0);
+    _layerBillBorad->setCameraMask(2);
+}
+BillBoardTest::~BillBoardTest()
+{
+    if (_camera)
+    {
+        Camera3D::removeCamera(_camera);
+        _camera = nullptr;
+    }
+}
+std::string BillBoardTest::title() const
+{
+    return "Testing BillBoard";
+}
+std::string BillBoardTest::subtitle() const
+{
+    return "";
+}
+void BillBoardTest::addNewBillBoradWithCoords(Vec3 p)
+{
+    _billborad = BillBorad::create("Images/Icon.png");
+    _billborad->setScale(0.5f);
+    _layerBillBorad->addChild(_billborad,10);
+    _billborad->setPosition(Vec2( p.x,p.y ));
+
+    auto billborad1 = BillBorad::create("Images/Icon.png");
+    billborad1->setScale(0.5f);
+    _layerBillBorad->addChild(billborad1,10);
+    billborad1->setPosition3D(Vec3(p.x,p.y,p.z - 130));
+
+    auto billborad2 = BillBorad::create("Images/Icon.png");
+    billborad2->setScale(0.5f);
+    _layerBillBorad->addChild(billborad2,10);
+    billborad2->setPosition3D(Vec3(p.x,p.y,p.z + 50));
+
+    auto billborad3 = BillBorad::create("Images/Icon.png");
+    billborad3->setScale(0.5f);
+    _layerBillBorad->addChild(billborad3,10);
+    billborad3->setPosition3D(Vec3(p.x,p.y,p.z + 90));
+
+    auto billborad4 = BillBorad::create("Images/Icon.png");
+    billborad4->setScale(0.5f);
+    _layerBillBorad->addChild(billborad4,10);
+    billborad4->setPosition3D(Vec3(p.x,p.y,p.z - 60));
+
+
+}
+void BillBoardTest::addNewAniBillBoradWithCoords(Vec3 p)
+{
+
+    auto billboradAni1 = BillBorad::create("Images/grossini.png");
+    billboradAni1->setScale(0.5f);
+    billboradAni1->setPosition3D(Vec3(p.x, p.y, p.z - 130));
+    _layerBillBorad->addChild(billboradAni1,10);
+    
+    auto animation1 = Animation::create();
+    for( int i=1;i<15;i++)
+    {
+        char szName1[100] = {0};
+        sprintf(szName1, "Images/grossini_dance_%02d.png", i);
+        animation1->addSpriteFrameWithFile(szName1);
+    }
+    // should last 2.8 seconds. And there are 14 frames.
+    animation1->setDelayPerUnit(2.8f / 14.0f);
+    animation1->setRestoreOriginalFrame(true);
+
+    auto action1 = Animate::create(animation1);
+    billboradAni1->runAction(RepeatForever::create(action1));
+
+    auto billboradAni2 = BillBorad::create("Images/grossini.png");
+    billboradAni2->setScale(0.5f);
+    billboradAni2->setPosition3D(Vec3(p.x, p.y, p.z - 60));
+    _layerBillBorad->addChild(billboradAni2,10);
+    
+    auto animation2 = Animation::create();
+    for( int i=1;i<15;i++)
+    {
+        char szName2[100] = {0};
+        sprintf(szName2, "Images/grossini_dance_%02d.png", i);
+        animation2->addSpriteFrameWithFile(szName2);
+    }
+    // should last 2.8 seconds. And there are 14 frames.
+    animation2->setDelayPerUnit(2.8f / 14.0f);
+    animation2->setRestoreOriginalFrame(true);
+
+    auto action2 = Animate::create(animation2);
+    billboradAni2->runAction(RepeatForever::create(action2));
+
+    _billboradAni = BillBorad::create("Images/grossini.png");
+    _billboradAni->setScale(0.5f);
+    _billboradAni->setPosition3D( p );
+    _layerBillBorad->addChild(_billboradAni,10);
+    
+    auto animation = Animation::create();
+    for( int i=1;i<15;i++)
+    {
+        char szName[100] = {0};
+        sprintf(szName, "Images/grossini_dance_%02d.png", i);
+        animation->addSpriteFrameWithFile(szName);
+    }
+    // should last 2.8 seconds. And there are 14 frames.
+    animation->setDelayPerUnit(2.8f / 14.0f);
+    animation->setRestoreOriginalFrame(true);
+
+    auto action = Animate::create(animation);
+    _billboradAni->runAction(RepeatForever::create(action));
+
+    auto billboradAni3 = BillBorad::create("Images/grossini.png");
+    billboradAni3->setScale(0.5f);
+    billboradAni3->setPosition3D(Vec3(p.x, p.y, p.z + 50));
+    _layerBillBorad->addChild(billboradAni3,10);
+    
+    auto animation3 = Animation::create();
+    for( int i=1;i<15;i++)
+    {
+        char szName3[100] = {0};
+        sprintf(szName3, "Images/grossini_dance_%02d.png", i);
+        animation3->addSpriteFrameWithFile(szName3);
+    }
+    // should last 2.8 seconds. And there are 14 frames.
+    animation3->setDelayPerUnit(2.8f / 14.0f);
+    animation3->setRestoreOriginalFrame(true);
+
+    auto action3 = Animate::create(animation3);
+    billboradAni3->runAction(RepeatForever::create(action3));
+
+    auto billboradAni4 = BillBorad::create("Images/grossini.png");
+    billboradAni4->setScale(0.5f);
+    billboradAni4->setPosition3D(Vec3(p.x, p.y, p.z + 90));
+    _layerBillBorad->addChild(billboradAni4,10);
+    
+    auto animation4 = Animation::create();
+    for( int i=1;i<15;i++)
+    {
+        char szName4[100] = {0};
+        sprintf(szName4, "Images/grossini_dance_%02d.png", i);
+        animation4->addSpriteFrameWithFile(szName4);
+    }
+    // should last 2.8 seconds. And there are 14 frames.
+    animation4->setDelayPerUnit(2.8f / 14.0f);
+    animation4->setRestoreOriginalFrame(true);
+
+    auto action4 = Animate::create(animation4);
+    billboradAni4->runAction(RepeatForever::create(action4));
+}
+void BillBoardTest::update(float dt)
+{
+
+}
+void BillBoardTest::onTouchesMoved(const std::vector<Touch*>& touches, Event* event)
+{
+    if(touches.size()==1)
+    {
+        auto touch = touches[0];
+        auto location = touch->getLocation();
+        auto PreviousLocation = touch->getPreviousLocation();
+        Point newPos = PreviousLocation - location;
+
+        Vec3 cameraDir;
+        Vec3 cameraRightDir;
+        _camera->getNodeToWorldTransform().getForwardVector(&cameraDir);
+        cameraDir.normalize();
+        cameraDir.y=0;
+        _camera->getNodeToWorldTransform().getRightVector(&cameraRightDir);
+        cameraRightDir.normalize();
+        cameraRightDir.y=0;
+        Vec3 cameraPos=  _camera->getPosition3D();
+        cameraPos+=cameraDir*newPos.y*0.1;
+        cameraPos+=cameraRightDir*newPos.x*0.1;
+        _camera->setPosition3D(cameraPos);      
+    }
+}
+void BillBoardTest::rotateCameraCallback(Ref* sender,float value)
+{
+    Vec3  rotation3D= _camera->getRotation3D();
+    rotation3D.y+= value;
+    _camera->setRotation3D(rotation3D);
 }

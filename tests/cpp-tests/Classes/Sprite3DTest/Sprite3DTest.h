@@ -28,6 +28,7 @@
 #include "../testBasic.h"
 #include "../BaseTest.h"
 #include "3d/CCOBB.h"
+#include "3d/CCBillBoard.h"
 #include <string>
 #include <vector>
 
@@ -39,6 +40,7 @@ namespace cocos2d {
     class OBB;
     class Ray;
     class AABB;
+    class BillBorad;
 }
 
 class Sprite3DTestDemo : public BaseTest
@@ -338,5 +340,28 @@ protected:
 
     void initDrawBox();
 };
+
+class BillBoardTest : public Sprite3DTestDemo
+{
+public:
+    virtual ~BillBoardTest(void);
+    CREATE_FUNC(BillBoardTest);
+    BillBoardTest();
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+    virtual void update(float dt) override;
+    void addNewBillBoradWithCoords(Vec3 p);
+    void addNewAniBillBoradWithCoords(Vec3 p);
+    void rotateCameraCallback(Ref* sender,float value);
+    void onTouchesMoved(const std::vector<Touch*>& touches, Event* event);
+
+protected:
+    BillBorad*        _billborad;
+    BillBorad*        _billboradAni;
+    Camera3D*         _camera;
+    Layer*            _layerBillBorad;
+
+};
+
 
 #endif
