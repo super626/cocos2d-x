@@ -124,9 +124,6 @@ private:
     // need to keep track of threads so we can join them, we use one worker thread for now
     std::vector< std::thread > _workers;
     
-    // synchronization
-    std::mutex _queue_mutex;
-    std::condition_variable _condition;
     bool _stop;
     
     memory_sequential_consistent::CircularFifo<std::function<void()>, 256 > _taskQueue;
@@ -146,9 +143,7 @@ inline ThreadPool::ThreadPool()
                                      std::function<void()> task;
                                      while(_taskQueue.pop(task) == false && !_stop)
                                      {
-                                         std::unique_lock<std::mutex> lock(this->_queue_mutex);
-                                         _condition.wait(lock);
-                                         //std::this_thread::yield();
+                                         std::this_thread::sleep_for(std::chrono::milliseconds(1));
                                      }
                                      
                                      if (_stop)
@@ -177,15 +172,9 @@ auto ThreadPool::enqueue(F&& f, Args&&... args)
     
     std::future<return_type> res = task->get_future();
     {
-        bool wasEmpty = _taskQueue.wasEmpty();
         while(_taskQueue.push([task](){ (*task)(); }) == false)
         {
             std::this_thread::yield();
-        }
-        if (wasEmpty)
-        {
-            std::unique_lock<std::mutex> lock(_queue_mutex);
-            _condition.notify_one();
         }
     }
 
@@ -197,7 +186,6 @@ inline ThreadPool::~ThreadPool()
 {
     _stop = true;
     
-    _condition.notify_all();
     for(size_t i = 0;i<_workers.size();++i)
         _workers[i].join();
 }
