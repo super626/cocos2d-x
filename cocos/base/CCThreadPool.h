@@ -124,6 +124,10 @@ private:
     // need to keep track of threads so we can join them, we use one worker thread for now
     std::vector< std::thread > _workers;
     
+    // synchronization
+    std::mutex _queue_mutex;
+    std::condition_variable _condition;
+    
     bool _stop;
     
     memory_sequential_consistent::CircularFifo<std::function<void()>, 256 > _taskQueue;
@@ -143,7 +147,9 @@ inline ThreadPool::ThreadPool()
                                      std::function<void()> task;
                                      while(_taskQueue.pop(task) == false && !_stop)
                                      {
-                                         std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                                         //std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                                         std::unique_lock<std::mutex> lock(this->_queue_mutex);
+                                         this->_condition.wait(lock);
                                      }
                                      
                                      if (_stop)
@@ -177,6 +183,8 @@ auto ThreadPool::enqueue(F&& f, Args&&... args)
             std::this_thread::yield();
         }
     }
+    
+    _condition.notify_one();
 
     return res;
 }
@@ -184,7 +192,11 @@ auto ThreadPool::enqueue(F&& f, Args&&... args)
 // the destructor joins all threads
 inline ThreadPool::~ThreadPool()
 {
-    _stop = true;
+    {
+        std::unique_lock<std::mutex> lock(_queue_mutex);
+        _stop = true;
+    }
+    _condition.notify_all();
     
     for(size_t i = 0;i<_workers.size();++i)
         _workers[i].join();
