@@ -118,15 +118,16 @@ public:
     template<class F, class... Args>
     auto enqueue(F&& f, Args&&... args)
     -> std::future<typename std::result_of<F(Args...)>::type>;
-    static ThreadPool* getInstance();
     ~ThreadPool();
+    
+    // start thread pool, should call start in order to use the thread pool
+    void start();
+    // stop thread pool
+    void stop();
+    
 private:
     // need to keep track of threads so we can join them, we use one worker thread for now
     std::vector< std::thread > _workers;
-    
-    // synchronization
-    std::mutex _queue_mutex;
-    std::condition_variable _condition;
     
     bool _stop;
     
@@ -137,29 +138,46 @@ private:
 inline ThreadPool::ThreadPool()
 :   _stop(false)
 {
+    //start();
+}
+
+void ThreadPool::start()
+{
+    if (!_stop)
+        return;
+    
     size_t threads = 1;
     for(size_t i = 0;i<threads;++i)
         _workers.emplace_back(
-                             [this]
-                             {
-                                 for(;;)
-                                 {
-                                     std::function<void()> task;
-                                     while(_taskQueue.pop(task) == false && !_stop)
-                                     {
-                                         //std::this_thread::sleep_for(std::chrono::milliseconds(1));
-                                         std::unique_lock<std::mutex> lock(this->_queue_mutex);
-                                         this->_condition.wait(lock);
-                                     }
-                                     
-                                     if (_stop)
-                                         return;
-                                     
-                                     task();
-                                     
-                                 }
-                             }
-                             );
+                              [this]
+                              {
+                                  for(;;)
+                                  {
+                                      std::function<void()> task;
+                                      while(_taskQueue.pop(task) == false && !_stop)
+                                      {
+                                          std::this_thread::yield();
+                                      }
+                                      
+                                      if (_stop)
+                                          return;
+                                      
+                                      task();
+                                      
+                                  }
+                              }
+                              );
+}
+
+void ThreadPool::stop()
+{
+    if (!_stop)
+    {
+        _stop = true;
+        
+        for(size_t i = 0;i<_workers.size();++i)
+            _workers[i].join();
+    }
 }
 
 // add new work item to the pool
@@ -183,8 +201,6 @@ auto ThreadPool::enqueue(F&& f, Args&&... args)
             std::this_thread::yield();
         }
     }
-    
-    _condition.notify_one();
 
     return res;
 }
@@ -192,14 +208,7 @@ auto ThreadPool::enqueue(F&& f, Args&&... args)
 // the destructor joins all threads
 inline ThreadPool::~ThreadPool()
 {
-    {
-        std::unique_lock<std::mutex> lock(_queue_mutex);
-        _stop = true;
-    }
-    _condition.notify_all();
-    
-    for(size_t i = 0;i<_workers.size();++i)
-        _workers[i].join();
+    stop();
 }
 
 NS_CC_END

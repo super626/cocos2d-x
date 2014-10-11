@@ -47,6 +47,9 @@ NS_CC_BEGIN
 
 std::string s_attributeNames[] = {GLProgram::ATTRIBUTE_NAME_POSITION, GLProgram::ATTRIBUTE_NAME_COLOR, GLProgram::ATTRIBUTE_NAME_TEX_COORD, GLProgram::ATTRIBUTE_NAME_TEX_COORD1, GLProgram::ATTRIBUTE_NAME_TEX_COORD2,GLProgram::ATTRIBUTE_NAME_TEX_COORD3,GLProgram::ATTRIBUTE_NAME_NORMAL, GLProgram::ATTRIBUTE_NAME_BLEND_WEIGHT, GLProgram::ATTRIBUTE_NAME_BLEND_INDEX};
 
+static ThreadPool s_ThreadPool;
+bool Sprite3D::s_useThreadPool = false;
+
 Sprite3D* Sprite3D::create(const std::string &modelPath)
 {
     if (modelPath.length() < 4)
@@ -528,8 +531,11 @@ void Sprite3D::update(float delta)
 {
     if (_skeleton)
     {
-        _future = ThreadPool::getInstance()->enqueue([](Skeleton3D* skel){skel->updateBoneMatrix();}, _skeleton);
-        //_skeleton->updateBoneMatrix();
+        if (s_useThreadPool)
+            _future = s_ThreadPool.enqueue([](Skeleton3D* skel){skel->updateBoneMatrix();}, _skeleton);
+        else
+            _skeleton->updateBoneMatrix();
+        //
     }
 }
 
@@ -568,7 +574,7 @@ void Sprite3D::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
         auto skin = mesh->getSkin();
         if (skin)
         {
-            if (_future.valid())
+            if (s_useThreadPool && _future.valid())
                 _future.get();
             meshCommand.setMatrixPaletteSize((int)skin->getMatrixPaletteSize());
             meshCommand.setMatrixPalette(skin->getMatrixPalette());
@@ -679,6 +685,18 @@ MeshSkin* Sprite3D::getSkin() const
             return it->getSkin();
     }
     return nullptr;
+}
+
+void Sprite3D::setUpdateBoneUseThreadPool(bool useThreadPool)
+{
+    if (s_useThreadPool != useThreadPool)
+    {
+        s_useThreadPool = useThreadPool;
+        if (s_useThreadPool)
+            s_ThreadPool.start();
+        else
+            s_ThreadPool.stop();
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////

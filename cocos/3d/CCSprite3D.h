@@ -119,6 +119,9 @@ public:
     /** light mask getter & setter, light works only when _lightmask & light's flag is true, default value of _lightmask is 0xffff */
     void setLightMask(unsigned int mask) { _lightMask = mask; }
     unsigned int getLightMask() const { return _lightMask; }
+    
+    /** use thread pool to update bones, it will update bone tree in another thread if true */
+    static void setUpdateBoneUseThreadPool(bool useThreadPool);
 
 CC_CONSTRUCTOR_ACCESS:
     
@@ -174,6 +177,7 @@ protected:
 
     unsigned int                 _lightMask;
     bool                         _shaderUsingLight; // is current shader using light ?
+    static bool                  s_useThreadPool; // use threadpool ?
 };
 
 ///////////////////////////////////////////////////////
