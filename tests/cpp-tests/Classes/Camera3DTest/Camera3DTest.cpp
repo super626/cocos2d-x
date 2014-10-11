@@ -229,8 +229,7 @@ void Camera3DTestDemo::SwitchViewCallback(Ref* sender, CameraType cameraType)
     {
          _camera->setPosition3D(Vec3(0, 130, 130) + _sprite3D->getPosition3D());
          _camera->lookAt(_sprite3D->getPosition3D(), Vec3(0,1,0));
-        //_incRot->setEnabled(true);
-        //_decRot->setEnabled(true);
+
         _RotateRightlabel->setColor(Color3B::WHITE);
         _RotateLeftlabel->setColor(Color3B::WHITE);
         _ZoomInlabel->setColor(Color3B::WHITE);
@@ -243,8 +242,7 @@ void Camera3DTestDemo::SwitchViewCallback(Ref* sender, CameraType cameraType)
         newFaceDir.normalize();
         _camera->setPosition3D(Vec3(0,35,0) + _sprite3D->getPosition3D());
         _camera->lookAt(_sprite3D->getPosition3D() + newFaceDir*50, Vec3(0, 1, 0));
-        //_incRot->setEnabled(true);
-        //_decRot->setEnabled(true);
+
         _RotateRightlabel->setColor(Color3B::WHITE);
         _RotateLeftlabel->setColor(Color3B::WHITE);
         _ZoomInlabel->setColor(Color3B::GRAY);
@@ -254,8 +252,7 @@ void Camera3DTestDemo::SwitchViewCallback(Ref* sender, CameraType cameraType)
     {
         _camera->setPosition3D(Vec3(0, 130, 130) + _sprite3D->getPosition3D());
         _camera->lookAt(_sprite3D->getPosition3D(), Vec3(0,1,0));
-        //_incRot->setEnabled(false);
-        //_decRot->setEnabled(false);
+
         _RotateRightlabel->setColor(Color3B::GRAY);
         _RotateLeftlabel->setColor(Color3B::GRAY);
         _ZoomInlabel->setColor(Color3B::WHITE);
@@ -277,7 +274,7 @@ void Camera3DTestDemo::onEnter()
     addChild(layer3D,0);
     _layer3D=layer3D;
     _curState=State_None;
-    addNewSpriteWithCoords( Vec3(0,0,0),"Sprite3DTest/girl.c3b",true,0.2,true);
+    addNewSpriteWithCoords( Vec3(0,0,0),"Sprite3DTest/girl.c3b",true,0.2f,true);
     TTFConfig ttfConfig("fonts/arial.ttf", 20);
 
     auto containerForLabel1 = Node::create();
@@ -335,32 +332,20 @@ void Camera3DTestDemo::onEnter()
     listener4->onTouchEnded = CC_CALLBACK_2(Camera3DTestDemo::onTouchesRotateRightEnd, this);
 
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener4, _RotateRightlabel);
-    //auto label1 = Label::createWithTTF(ttfConfig,"zoom out");
-    //auto menuItem1 = MenuItemLabel::create(label1, CC_CALLBACK_1(Camera3DTestDemo::scaleCameraCallback,this,1));
-    //auto label2 = Label::createWithTTF(ttfConfig,"zoom in");
-    //auto menuItem2 = MenuItemLabel::create(label2, CC_CALLBACK_1(Camera3DTestDemo::scaleCameraCallback,this,-1));
-    //auto label3 = Label::createWithTTF(ttfConfig,"rotate+");
-    //auto menuItem3 = MenuItemLabel::create(label3, CC_CALLBACK_1(Camera3DTestDemo::rotateCameraCallback,this,10));
-    //_incRot = menuItem3;
-    //auto label4 = Label::createWithTTF(ttfConfig,"rotate-");
-    //auto menuItem4 = MenuItemLabel::create(label4, CC_CALLBACK_1(Camera3DTestDemo::rotateCameraCallback,this,-10));
-    //_decRot = menuItem4;
-    auto label5 = Label::createWithTTF(ttfConfig,"free ");
-    auto menuItem5 = MenuItemLabel::create(label5, CC_CALLBACK_1(Camera3DTestDemo::SwitchViewCallback,this,CameraType::FreeCamera));
-    auto label6 = Label::createWithTTF(ttfConfig,"third person");
-    auto menuItem6 = MenuItemLabel::create(label6, CC_CALLBACK_1(Camera3DTestDemo::SwitchViewCallback,this,CameraType::ThirdCamera));
-    auto label7 = Label::createWithTTF(ttfConfig,"first person");
-    auto menuItem7 = MenuItemLabel::create(label7, CC_CALLBACK_1(Camera3DTestDemo::SwitchViewCallback,this,CameraType::FirstCamera));
-    auto menu = Menu::create(menuItem5, menuItem6, menuItem7, nullptr);
+
+    auto label1 = Label::createWithTTF(ttfConfig,"free ");
+    auto menuItem1 = MenuItemLabel::create(label1, CC_CALLBACK_1(Camera3DTestDemo::SwitchViewCallback,this,CameraType::FreeCamera));
+    auto label2 = Label::createWithTTF(ttfConfig,"third person");
+    auto menuItem2 = MenuItemLabel::create(label2, CC_CALLBACK_1(Camera3DTestDemo::SwitchViewCallback,this,CameraType::ThirdCamera));
+    auto label3 = Label::createWithTTF(ttfConfig,"first person");
+    auto menuItem3 = MenuItemLabel::create(label3, CC_CALLBACK_1(Camera3DTestDemo::SwitchViewCallback,this,CameraType::FirstCamera));
+    auto menu = Menu::create(menuItem1, menuItem2, menuItem3, nullptr);
 
     menu->setPosition(Vec2::ZERO);
-    //menuItem1->setPosition(s.width-50, VisibleRect::top().y-50 );
-    //menuItem2->setPosition(s.width-50, VisibleRect::top().y-100);
-    //menuItem3->setPosition(s.width-50, VisibleRect::top().y-150);
-    //menuItem4->setPosition(s.width-50, VisibleRect::top().y-200);
-    menuItem5->setPosition(VisibleRect::left().x+100, VisibleRect::top().y-50);
-    menuItem6->setPosition(VisibleRect::left().x+100, VisibleRect::top().y -100);
-    menuItem7->setPosition(VisibleRect::left().x+100, VisibleRect::top().y -150);
+
+    menuItem1->setPosition(VisibleRect::left().x+100, VisibleRect::top().y-50);
+    menuItem2->setPosition(VisibleRect::left().x+100, VisibleRect::top().y -100);
+    menuItem3->setPosition(VisibleRect::left().x+100, VisibleRect::top().y -150);
     addChild(menu, 0);
     schedule(CC_SCHEDULE_SELECTOR(Camera3DTestDemo::updateCamera), 0.0f);
     if (_camera == nullptr)
@@ -472,8 +457,8 @@ void Camera3DTestDemo::onTouchesMoved(const std::vector<Touch*>& touches, cocos2
              cameraRightDir.normalize();
              cameraRightDir.y=0;
              Vec3 cameraPos=  _camera->getPosition3D();
-             cameraPos+=cameraDir*newPos.y*0.1;
-             cameraPos+=cameraRightDir*newPos.x*0.1;
+             cameraPos+=cameraDir*newPos.y*0.1f;
+             cameraPos+=cameraRightDir*newPos.x*0.1f;
             _camera->setPosition3D(cameraPos);
              if(_sprite3D &&  _cameraType==CameraType::FirstCamera)
             {
@@ -629,7 +614,7 @@ void Camera3DTestDemo::updateCamera(float fDelta)
             if(_camera&& _cameraType!=CameraType::FirstCamera)
             {
                 Vec3 cameraPos = _camera->getPosition3D();
-                if(cameraPos.y <= 200)
+                if(cameraPos.length() <= 300)
                 {
                     cameraPos += cameraPos.getNormalized();
                     _camera->setPosition3D(cameraPos);
@@ -641,7 +626,7 @@ void Camera3DTestDemo::updateCamera(float fDelta)
             if(_camera&& _cameraType!=CameraType::FirstCamera)
             {
                 Vec3 cameraPos = _camera->getPosition3D();
-                if(cameraPos.y >= 50)
+                if(cameraPos.length() >= 50)
                 {
                     cameraPos -= cameraPos.getNormalized();
                     _camera->setPosition3D(cameraPos);
