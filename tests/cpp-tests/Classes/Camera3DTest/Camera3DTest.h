@@ -102,10 +102,10 @@ protected:
     bool _bZoomIn;
     bool _bRotateLeft;
     bool _bRotateRight;
-    Label* rotaterightlabel;
-    Label* rotateleftlabel;
-    Label* zoominlabel;
-    Label* zoomoutlabel;
+    Label* _RotateRightlabel;
+    Label* _RotateLeftlabel;
+    Label* _ZoomInlabel;
+    Label* _ZoomOutlabel;
 };
 class Camera3DTestScene : public TestScene
 {

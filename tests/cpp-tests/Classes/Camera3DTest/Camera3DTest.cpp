@@ -231,10 +231,10 @@ void Camera3DTestDemo::SwitchViewCallback(Ref* sender, CameraType cameraType)
          _camera->lookAt(_sprite3D->getPosition3D(), Vec3(0,1,0));
         //_incRot->setEnabled(true);
         //_decRot->setEnabled(true);
-        rotaterightlabel->setColor(Color3B::WHITE);
-        rotateleftlabel->setColor(Color3B::WHITE);
-        zoominlabel->setColor(Color3B::WHITE);
-        zoomoutlabel->setColor(Color3B::WHITE);
+        _RotateRightlabel->setColor(Color3B::WHITE);
+        _RotateLeftlabel->setColor(Color3B::WHITE);
+        _ZoomInlabel->setColor(Color3B::WHITE);
+        _ZoomOutlabel->setColor(Color3B::WHITE);
     }
     else if(_cameraType==CameraType::FirstCamera)
     {
@@ -245,10 +245,10 @@ void Camera3DTestDemo::SwitchViewCallback(Ref* sender, CameraType cameraType)
         _camera->lookAt(_sprite3D->getPosition3D() + newFaceDir*50, Vec3(0, 1, 0));
         //_incRot->setEnabled(true);
         //_decRot->setEnabled(true);
-        rotaterightlabel->setColor(Color3B::WHITE);
-        rotateleftlabel->setColor(Color3B::WHITE);
-        zoominlabel->setColor(Color3B::GRAY);
-        zoomoutlabel->setColor(Color3B::GRAY);
+        _RotateRightlabel->setColor(Color3B::WHITE);
+        _RotateLeftlabel->setColor(Color3B::WHITE);
+        _ZoomInlabel->setColor(Color3B::GRAY);
+        _ZoomOutlabel->setColor(Color3B::GRAY);
     }
     else if(_cameraType==CameraType::ThirdCamera)
     {
@@ -256,10 +256,10 @@ void Camera3DTestDemo::SwitchViewCallback(Ref* sender, CameraType cameraType)
         _camera->lookAt(_sprite3D->getPosition3D(), Vec3(0,1,0));
         //_incRot->setEnabled(false);
         //_decRot->setEnabled(false);
-        rotaterightlabel->setColor(Color3B::GRAY);
-        rotateleftlabel->setColor(Color3B::GRAY);
-        zoominlabel->setColor(Color3B::WHITE);
-        zoomoutlabel->setColor(Color3B::WHITE);
+        _RotateRightlabel->setColor(Color3B::GRAY);
+        _RotateLeftlabel->setColor(Color3B::GRAY);
+        _ZoomInlabel->setColor(Color3B::WHITE);
+        _ZoomOutlabel->setColor(Color3B::WHITE);
     }
 }
 void Camera3DTestDemo::onEnter()
@@ -281,9 +281,9 @@ void Camera3DTestDemo::onEnter()
     TTFConfig ttfConfig("fonts/arial.ttf", 20);
 
     auto containerForLabel1 = Node::create();
-    zoomoutlabel = Label::createWithTTF(ttfConfig,"zoom out");
-    zoomoutlabel->setPosition(s.width-50, VisibleRect::top().y-30);
-    containerForLabel1->addChild(zoomoutlabel);
+    _ZoomOutlabel = Label::createWithTTF(ttfConfig,"zoom out");
+    _ZoomOutlabel->setPosition(s.width-50, VisibleRect::top().y-30);
+    containerForLabel1->addChild(_ZoomOutlabel);
     addChild(containerForLabel1, 10);
 
     auto listener1 = EventListenerTouchOneByOne::create();
@@ -292,12 +292,12 @@ void Camera3DTestDemo::onEnter()
     listener1->onTouchBegan = CC_CALLBACK_2(Camera3DTestDemo::onTouchesZoomOut, this);
     listener1->onTouchEnded = CC_CALLBACK_2(Camera3DTestDemo::onTouchesZoomOutEnd, this);
 
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener1, zoomoutlabel);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener1, _ZoomOutlabel);
 
     auto containerForLabel2 = Node::create();
-    zoominlabel = Label::createWithTTF(ttfConfig,"zoom in");
-    zoominlabel->setPosition(s.width-50, VisibleRect::top().y-100);
-    containerForLabel2->addChild(zoominlabel);
+    _ZoomInlabel = Label::createWithTTF(ttfConfig,"zoom in");
+    _ZoomInlabel->setPosition(s.width-50, VisibleRect::top().y-100);
+    containerForLabel2->addChild(_ZoomInlabel);
     addChild(containerForLabel2, 10);
 
     auto listener2 = EventListenerTouchOneByOne::create();
@@ -306,12 +306,12 @@ void Camera3DTestDemo::onEnter()
     listener2->onTouchBegan = CC_CALLBACK_2(Camera3DTestDemo::onTouchesZoomIn, this);
     listener2->onTouchEnded = CC_CALLBACK_2(Camera3DTestDemo::onTouchesZoomInEnd, this);
 
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener2, zoominlabel);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener2, _ZoomInlabel);
 
     auto containerForLabel3 = Node::create();
-    rotateleftlabel = Label::createWithTTF(ttfConfig,"rotate left");
-    rotateleftlabel->setPosition(s.width-50, VisibleRect::top().y-170);
-    containerForLabel3->addChild(rotateleftlabel);
+    _RotateLeftlabel = Label::createWithTTF(ttfConfig,"rotate left");
+    _RotateLeftlabel->setPosition(s.width-50, VisibleRect::top().y-170);
+    containerForLabel3->addChild(_RotateLeftlabel);
     addChild(containerForLabel3, 10);
 
     auto listener3 = EventListenerTouchOneByOne::create();
@@ -320,12 +320,12 @@ void Camera3DTestDemo::onEnter()
     listener3->onTouchBegan = CC_CALLBACK_2(Camera3DTestDemo::onTouchesRotateLeft, this);
     listener3->onTouchEnded = CC_CALLBACK_2(Camera3DTestDemo::onTouchesRotateLeftEnd, this);
 
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener3, rotateleftlabel);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener3, _RotateLeftlabel);
 
     auto containerForLabel4 = Node::create();
-    rotaterightlabel = Label::createWithTTF(ttfConfig,"rotate right");
-    rotaterightlabel->setPosition(s.width-50, VisibleRect::top().y-240);
-    containerForLabel4->addChild(rotaterightlabel);
+    _RotateRightlabel = Label::createWithTTF(ttfConfig,"rotate right");
+    _RotateRightlabel->setPosition(s.width-50, VisibleRect::top().y-240);
+    containerForLabel4->addChild(_RotateRightlabel);
     addChild(containerForLabel4, 10);
 
     auto listener4 = EventListenerTouchOneByOne::create();
@@ -334,7 +334,7 @@ void Camera3DTestDemo::onEnter()
     listener4->onTouchBegan = CC_CALLBACK_2(Camera3DTestDemo::onTouchesRotateRight, this);
     listener4->onTouchEnded = CC_CALLBACK_2(Camera3DTestDemo::onTouchesRotateRightEnd, this);
 
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener4, rotaterightlabel);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener4, _RotateRightlabel);
     //auto label1 = Label::createWithTTF(ttfConfig,"zoom out");
     //auto menuItem1 = MenuItemLabel::create(label1, CC_CALLBACK_1(Camera3DTestDemo::scaleCameraCallback,this,1));
     //auto label2 = Label::createWithTTF(ttfConfig,"zoom in");
