@@ -611,25 +611,51 @@ void Camera3DTestDemo::updateCamera(float fDelta)
         }
         if(_bZoomOut == true)
         {
-            if(_camera&& _cameraType!=CameraType::FirstCamera)
+            if(_camera)
             {
-                Vec3 cameraPos = _camera->getPosition3D();
-                if(cameraPos.length() <= 300)
+                if(_cameraType == CameraType::ThirdCamera)
                 {
-                    cameraPos += cameraPos.getNormalized();
-                    _camera->setPosition3D(cameraPos);
+                    Vec3 lookDir = _camera->getPosition3D() - _sprite3D->getPosition3D();
+                    Vec3 cameraPos = _camera->getPosition3D();
+                    if(lookDir.length() <= 300)
+                    {
+                        cameraPos += lookDir.getNormalized();
+                        _camera->setPosition3D(cameraPos);
+                    }
+                }
+                else if(_cameraType == CameraType::FreeCamera)
+                {
+                    Vec3 cameraPos = _camera->getPosition3D();
+                    if(cameraPos.length() <= 300)
+                    {
+                        cameraPos += cameraPos.getNormalized();
+                        _camera->setPosition3D(cameraPos);
+                    }
                 }
             }
         }
         if(_bZoomIn == true)
         {
-            if(_camera&& _cameraType!=CameraType::FirstCamera)
+           if(_camera)
             {
-                Vec3 cameraPos = _camera->getPosition3D();
-                if(cameraPos.length() >= 50)
+                if(_cameraType == CameraType::ThirdCamera)
                 {
-                    cameraPos -= cameraPos.getNormalized();
-                    _camera->setPosition3D(cameraPos);
+                    Vec3 lookDir = _camera->getPosition3D() - _sprite3D->getPosition3D();
+                    Vec3 cameraPos = _camera->getPosition3D();
+                    if(lookDir.length() >= 50)
+                    {
+                        cameraPos -= lookDir.getNormalized();
+                        _camera->setPosition3D(cameraPos);
+                    }
+                }
+                else if(_cameraType == CameraType::FreeCamera)
+                {
+                    Vec3 cameraPos = _camera->getPosition3D();
+                    if(cameraPos.length() >= 50)
+                    {
+                        cameraPos -= cameraPos.getNormalized();
+                        _camera->setPosition3D(cameraPos);
+                    }
                 }
             }
         }
