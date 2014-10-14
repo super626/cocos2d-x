@@ -23,14 +23,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "base/CCPlatformConfig.h"
+#include "platform/CCPlatformConfig.h"
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT) ||  (CC_TARGET_PLATFORM == CC_PLATFORM_WP8) 
 
 #include "cocos2d.h"
 #include "platform/CCDevice.h"
 #include "platform/CCFileUtils.h"
 #include "platform/winrt/CCFreeTypeFont.h"
-#include "CCStdC.h"
+#include "platform/CCStdC.h"
 
 using namespace Windows::Graphics::Display;
 using namespace Windows::Devices::Sensors;
@@ -53,6 +53,14 @@ void Device::setAccelerometerEnabled(bool isEnabled)
 {
     static Windows::Foundation::EventRegistrationToken sToken;
     static bool sEnabled = false;
+
+    // we always need to reset the accelerometer
+    if (sAccelerometer)
+    {
+        sAccelerometer->ReadingChanged -= sToken;
+        sAccelerometer = nullptr;
+        sEnabled = false;
+    }
 
 	if (isEnabled)
 	{
@@ -118,17 +126,6 @@ void Device::setAccelerometerEnabled(bool isEnabled)
             cocos2d::GLViewImpl::sharedOpenGLView()->QueueEvent(event);
 		});
 	}
-	else
-	{
-        if (sAccelerometer)
-        {
-            sAccelerometer->ReadingChanged -= sToken;
-            sAccelerometer = nullptr;
-        }
-
-        sEnabled = false;
-	}
-
 }
 
 void Device::setAccelerometerInterval(float interval)
@@ -161,6 +158,10 @@ Data Device::getTextureDataForText(const char * text, const FontDefinition& text
     }
 
     return ret;
+}
+
+void Device::setKeepScreenOn(bool value)
+{
 }
 
 NS_CC_END

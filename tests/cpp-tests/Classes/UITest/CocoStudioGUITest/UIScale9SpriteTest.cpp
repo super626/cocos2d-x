@@ -318,6 +318,48 @@ bool UIS9FrameNameSpriteSheetRotated::init()
     return false;
 }
 
+bool UIS9FrameNameSpriteSheetCropped::init()
+{
+    if (UIScene::init()) {
+        auto winSize = Director::getInstance()->getWinSize();
+        float x = winSize.width / 2;
+        float y = 0 + (winSize.height / 2);
+        
+        SpriteFrameCache::getInstance()->addSpriteFramesWithFile(s_s9s_blocks9_plist);
+        
+        auto blocks = ui::Scale9Sprite::createWithSpriteFrameName("blocks9c.png");
+        
+        blocks->setPosition(Vec2(x, y));
+        
+        this->addChild(blocks);
+        
+        return true;
+    }
+    
+    return false;
+}
+
+bool UIS9FrameNameSpriteSheetCroppedRotated::init()
+{
+    if (UIScene::init()) {
+        auto winSize = Director::getInstance()->getWinSize();
+        float x = winSize.width / 2;
+        float y = 0 + (winSize.height / 2);
+        
+        SpriteFrameCache::getInstance()->addSpriteFramesWithFile(s_s9s_blocks9_plist);
+        
+        auto blocks = ui::Scale9Sprite::createWithSpriteFrameName("blocks9cr.png");
+        
+        blocks->setPosition(Vec2(x, y));
+        
+        this->addChild(blocks);
+        
+        return true;
+    }
+    
+    return false;
+}
+
 
 bool UIS9BatchNodeScaledNoInsets::init()
 {
@@ -568,8 +610,11 @@ bool UIS9CascadeOpacityAndColor::init()
         rgba->addChild(blocks_scaled_with_insets);
         auto actions = Sequence::create(FadeIn::create(1),
                                         TintTo::create(1, 0, 255, 0),
-                                        TintTo::create(1, 255, 255, 255),
-                                        FadeOut::create(1),
+                                        TintTo::create(1, 255, 0, 255),
+                                        CallFunc::create([=](){
+                                            rgba->setCascadeColorEnabled(false);
+                                            rgba->setCascadeOpacityEnabled(false);
+                                        }),
                                         nullptr);
         auto repeat = RepeatForever::create(actions);
         rgba->runAction(repeat);

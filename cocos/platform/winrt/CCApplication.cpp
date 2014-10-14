@@ -22,11 +22,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#include "CCApplication.h"
+#include "platform/CCPlatformConfig.h"
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WINRT
 #include "platform/winrt/CCGLViewImpl.h"
 #else
-#include "platform/wp8/CCGLViewImpl.h"
+#include "platform/wp8/CCGLViewImpl-wp8.h"
 #endif
 #include "base/CCDirector.h"
 #include <algorithm>
@@ -54,7 +54,8 @@ Application * Application::sm_pSharedApplication = 0;
 // sharedApplication pointer
 Application * s_pSharedApplication = 0;
 
-Application::Application()
+Application::Application() :
+m_openURLDelegate(nullptr)
 {
     m_nAnimationInterval.QuadPart = 0;
     CC_ASSERT(! sm_pSharedApplication);
@@ -175,6 +176,19 @@ LanguageType Application::getCurrentLanguage()
 Application::Platform  Application::getTargetPlatform()
 {
     return Platform::OS_WP8;
+}
+
+bool Application::openURL(const std::string &url)
+{
+    if (m_openURLDelegate)
+    {
+        m_openURLDelegate(PlatformStringFromString(url));
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 void Application::setResourceRootPath(const std::string& rootResDir)

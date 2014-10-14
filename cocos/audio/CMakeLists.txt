@@ -1,52 +1,55 @@
-# architecture
-#if ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-#set(ARCH_DIR "64-bit")
-#else()
-#set(ARCH_DIR "32-bit")
-#endif()
+
+if(WINDOWS AND NOT BUILD_STATIC)
+  ADD_DEFINITIONS (-D_EXPORT_DLL_)
+endif()
 
 if(WINDOWS)
-  set(AUDIO_SRC
-    win32/SimpleAudioEngine.cpp
-    win32/MciPlayer.cpp
-	  win32/MciPlayer.h
+  set(COCOS_AUDIO_SRC
+    audio/win32/SimpleAudioEngine.cpp
+    audio/win32/MciPlayer.cpp
+	  audio/win32/MciPlayer.h
   )
 
 elseif(LINUX)
-  set(AUDIO_SRC
-    linux/SimpleAudioEngineFMOD.cpp
-    linux/FmodAudioPlayer.cpp
-	  linux/FmodAudioPlayer.h
-	  linux/AudioPlayer.h
+  set(COCOS_AUDIO_SRC
+    audio/linux/SimpleAudioEngineFMOD.cpp
+    audio/linux/FmodAudioPlayer.cpp
+	  audio/linux/FmodAudioPlayer.h
+	  audio/linux/AudioPlayer.h
   )
 
-  include_directories( ../../external/linux-specific/fmod/include/${ARCH_DIR} )
+  include_directories( ../external/linux-specific/fmod/include/${ARCH_DIR} )
 
+elseif(MACOSX)
+    # split it in _C and non C
+    # because C files needs to be compiled with C compiler and not C++
+    # compiler
+    set(COCOS_AUDIO_SRC_C
+        audio/mac/CDAudioManager.m
+        audio/mac/CDOpenALSupport.m
+        audio/mac/CocosDenshion.m
+        audio/mac/SimpleAudioEngine_objc.m
+       )
+    set(COCOS_AUDIO_SRC
+        ${COCOS_AUDIO_SRC_C}
+        audio/mac/SimpleAudioEngine.mm
+        audio/mac/CDXMacOSXSupport.mm
+       )
+    SET_SOURCE_FILES_PROPERTIES(
+        ${COCOS_AUDIO_SRC_C}
+        PROPERTIES LANGUAGE C
+    )
 endif()
 
-add_library(audio STATIC
-  ${AUDIO_SRC}
-  include/Export.h
-  include/SimpleAudioEngine.h
-)
-
 if(LINUX)
-
   if ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     set(FMOD_LIB "fmodex64")
   else()
     set(FMOD_LIB "fmodex")
   endif()
-
-  target_link_libraries(audio ${FMOD_LIB})
+  set(AUDIO_LIB ${FMOD_LIB})
 elseif(WINDOWS)
-  target_link_libraries(audio Winmm)
+  set(AUDIO_LIB Winmm)
 endif()
 
-set_target_properties(audio
-    PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-)
-
-
+include_directories( audio/include )

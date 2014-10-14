@@ -3,6 +3,7 @@ include_directories(
 )
 
 set(COCOS_2D_SRC
+
   2d/CCActionCamera.cpp
   2d/CCActionCatmullRom.cpp
   2d/CCAction.cpp
@@ -69,4 +70,5 @@ set(COCOS_2D_SRC
   2d/CCTransitionPageTurn.cpp
   2d/CCTransitionProgress.cpp
   2d/CCTweenFunction.cpp
+
 )

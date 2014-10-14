@@ -24,27 +24,27 @@
 # ****************************************************************************/
 
 cmake_minimum_required(VERSION 2.8)
-project (Cocos2dx)
+project (Cocos2d-X)
 
 # The version number
-set(Cocos2dxSamples_VERSION_MAJOR 3)
-set(Cocos2dxSamples_VERSION_MINOR 1)
+set(COCOS2D_X_VERSION 3.3.0-beta0)
 
-include(build/BuildHelpers.CMakeLists.txt)
+include(cmake/BuildHelpers.CMakeLists.txt)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 message(${BUILDING_STRING})
 
 option(USE_CHIPMUNK "Use chipmunk for physics library" ON)
 option(USE_BOX2D "Use box2d for physics library" OFF)
+option(BUILD_STATIC "Build static libraries" ON)
 option(DEBUG_MODE "Debug or release?" ON)
 option(BUILD_EXTENSIONS "Build extension library" ON)
 option(BUILD_EDITOR_SPINE "Build editor support for spine" ON)
 option(BUILD_EDITOR_COCOSTUDIO "Build editor support for cocostudio" ON)
 option(BUILD_EDITOR_COCOSBUILDER "Build editor support for cocosbuilder" ON)
-option(BUILD_EXTERN_LIBS "Build Box2d, Chipmunk, Tinyxml2 from source" ON)
-option(BUILD_CppTests "Build TestCpp samples" ON)
-option(BUILD_LIBS_LUA "Build lua libraries" ON)
-option(BUILD_LuaTests "Build TestLua samples" ON)
+option(BUILD_CPP_TESTS "Build TestCpp samples" ON)
+option(BUILD_LUA_LIBS "Build lua libraries" ON)
+option(BUILD_LUA_TESTS "Build TestLua samples" ON)
 
 if(DEBUG_MODE)
   set(CMAKE_BUILD_TYPE DEBUG)
@@ -55,6 +55,7 @@ endif(DEBUG_MODE)
 set(CMAKE_C_FLAGS_DEBUG "-DCOCOS2D_DEBUG=1")
 set(CMAKE_CXX_FLAGS_DEBUG ${CMAKE_C_FLAGS_DEBUG})
 
+# Compiler options
 if(MSVC)
   ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS
                   -wd4251 -wd4244 -wd4334 -wd4005 -wd4820 -wd4710
@@ -63,17 +64,41 @@ else()
   set(CMAKE_C_FLAGS_DEBUG "-g -Wall -DCOCOS2D_DEBUG=1")
   set(CMAKE_CXX_FLAGS_DEBUG ${CMAKE_C_FLAGS_DEBUG})
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-exceptions -std=c99")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -std=c++11")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -std=c++11 -Wno-deprecated-declarations -Wno-reorder")
+  if(CLANG)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+  endif()
 endif(MSVC)
 
+if(BUILD_STATIC)
+ set (BUILD_TYPE STATIC)
+else()
+ set (BUILD_TYPE SHARED)
+endif()
+
+# Some macro definitions
 if(WINDOWS)
-  ADD_DEFINITIONS (-D_USRDLL -DCOCOS2DXWIN32_EXPORTS -D_WINDOWS -DWIN32)
+
+  if(BUILD_STATIC)
+    ADD_DEFINITIONS (-DCC_STATIC)
+  else()
+    ADD_DEFINITIONS (-D_USRDLL -D_EXPORT_DLL_ -D_USEGUIDLL -D_USREXDLL -D_USRSTUDIODLL)
+  endif()
+
+  ADD_DEFINITIONS (-DCOCOS2DXWIN32_EXPORTS -D_WINDOWS -DWIN32)
   set(PLATFORM_FOLDER win32)
 elseif(MACOSX)
+  ADD_DEFINITIONS (-DCC_TARGET_OS_MAC)
+  ADD_DEFINITIONS (-DUSE_FILE32API)
   set(PLATFORM_FOLDER mac)
-else(LINUX)
+elseif(LINUX)
   ADD_DEFINITIONS(-DLINUX)
   set(PLATFORM_FOLDER linux)
+elseif(ANDROID)
+  ADD_DEFINITIONS (-DUSE_FILE32API)
+  set(PLATFORM_FOLDER android)
+else()
+  message( FATAL_ERROR "Unsupported platform, CMake will exit" )
 endif()
 
 if(MINGW)
@@ -88,175 +113,117 @@ if(MINGW)
   endif()
 endif()
 
-if(USE_CHIPMUNK)
-  message("Using chipmunk ...")
-  add_definitions(-DCC_ENABLE_CHIPMUNK_INTEGRATION=1)
-elseif(USE_BOX2D)
-  message("Using box2d ...")
-  add_definitions(-DCC_ENABLE_BOX2D_INTEGRATION=1)
-else(USE_CHIPMUNK)
-  message(FATAL_ERROR "Must choose a physics library.")
-endif(USE_CHIPMUNK)
-
 # architecture
 if ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-set(ARCH_DIR "64-bit")
+  set(ARCH_DIR "64-bit")
+elseif ( CMAKE_SIZEOF_VOID_P EQUAL 4 )
+  set(ARCH_DIR "32-bit")
 else()
-set(ARCH_DIR "32-bit")
+  message( FATAL_ERROR "Unsupported architecture, CMake will exit" )
 endif()
+
 
 include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${PLATFORM_INCLUDE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/cocos
-  ${CMAKE_CURRENT_SOURCE_DIR}/cocos/platform/desktop
+  ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/cocos/platform/${PLATFORM_FOLDER}
-  ${CMAKE_CURRENT_SOURCE_DIR}/cocos/audio/include
-  ${CMAKE_CURRENT_SOURCE_DIR}/cocos/editor-support
-  ${CMAKE_CURRENT_SOURCE_DIR}/cocos/scripting/lua-bindings/auto
-  ${CMAKE_CURRENT_SOURCE_DIR}/cocos/scripting/lua-bindings/manual
   ${CMAKE_CURRENT_SOURCE_DIR}/extensions
   ${CMAKE_CURRENT_SOURCE_DIR}/external
-  ${CMAKE_CURRENT_SOURCE_DIR}/external/tinyxml2
-  ${CMAKE_CURRENT_SOURCE_DIR}/external/unzip
-  ${CMAKE_CURRENT_SOURCE_DIR}/external/edtaa3func
-  ${CMAKE_CURRENT_SOURCE_DIR}/external/chipmunk/include/chipmunk
-  ${CMAKE_CURRENT_SOURCE_DIR}/external/jpeg/include/${PLATFORM_FOLDER}
-  ${CMAKE_CURRENT_SOURCE_DIR}/external/png/include/${PLATFORM_FOLDER}
-  ${CMAKE_CURRENT_SOURCE_DIR}/external/tiff/include/${PLATFORM_FOLDER}
-  ${CMAKE_CURRENT_SOURCE_DIR}/external/webp/include/${PLATFORM_FOLDER}
-  ${CMAKE_CURRENT_SOURCE_DIR}/external/glfw3/include/${PLATFORM_FOLDER}
-  ${CMAKE_CURRENT_SOURCE_DIR}/external/freetype2/include/${PLATFORM_FOLDER}
-  ${CMAKE_CURRENT_SOURCE_DIR}/external/websockets/include/${PLATFORM_FOLDER}
-  ${CMAKE_CURRENT_SOURCE_DIR}/external/xxhash
-  ${CMAKE_CURRENT_SOURCE_DIR}/external/xxtea
 )
 
-if(MSVC)
-  include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/${PLATFORM_FOLDER}-specific/gles/include/OGLES
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/${PLATFORM_FOLDER}-specific/icon/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/${PLATFORM_FOLDER}-specific/zlib/include
-    external/curl/include/${PLATFORM_FOLDER}
-  )
-elseif(MACOSX)
-  include_directories(
-   ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/include/${PLATFORM_FOLDER}
-  )
-elseif(LINUX)
-  include_directories(
-    /usr/include
-    /usr/include/GLFW
-    /usr/local/include/GLFW
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/${PLATFORM_FOLDER}-specific/fmod/include/${ARCH_DIR}
-  )
-endif()
-
-
-if(MSVC)
-
-  link_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/jpeg/prebuilt/${PLATFORM_FOLDER}
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/tiff/prebuilt/${PLATFORM_FOLDER}
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/png/prebuilt/${PLATFORM_FOLDER}
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/freetype2/prebuilt/${PLATFORM_FOLDER}
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/prebuilt/${PLATFORM_FOLDER}
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/${PLATFORM_FOLDER}-specific/icon/prebuilt
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/${PLATFORM_FOLDER}-specific/zlib/prebuilt
-  )
-
-elseif(LINUX)
-
-  link_directories(
+# Specific Link Directories
+if(LINUX)
+  set(PLATFORM_LINK_DIR
     /usr/local/lib
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/jpeg/prebuilt/${PLATFORM_FOLDER}/${ARCH_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/tiff/prebuilt/${PLATFORM_FOLDER}/${ARCH_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/webp/prebuilt/${PLATFORM_FOLDER}/${ARCH_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/png/prebuilt/${PLATFORM_FOLDER}/${ARCH_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/freetype2/prebuilt/${PLATFORM_FOLDER}/${ARCH_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/websockets/prebuilt/${PLATFORM_FOLDER}/${ARCH_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/external/${PLATFORM_FOLDER}-specific/fmod/prebuilt/${ARCH_DIR}
   )
+  set(PLATFORM_FOLDER_ARCH
+      ${PLATFORM_FOLDER}/${ARCH_DIR}
+  )
+elseif(NOT MINGW)
+  set(PLATFORM_FOLDER_ARCH
+    ${PLATFORM_FOLDER}
+  )
+  set(PLATFORM_LINK_DIR
+   ${CMAKE_CURRENT_SOURCE_DIR}/external/glfw3/prebuilt/${PLATFORM_FOLDER_ARCH}
+  )
+endif()
+
+
+# NB
+# we need to return these to libraries to their official state rather than 
+# having our custom cocos2d namespace so that we may use system versions if 
+# the platform provides them. It is very important that this
+# is done before we make prebuilt versions of these two libs
+
+include_directories(
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/../external/unzip
+  ${CMAKE_CURRENT_SOURCE_DIR}/../external/xxhash
+
+)
+
+
+if(NOT MINGW)
+
+  include_directories(
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/tinyxml2
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/chipmunk/include/chipmunk
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/box2d/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/jpeg/include/${PLATFORM_FOLDER}
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/png/include/${PLATFORM_FOLDER}
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/tiff/include/${PLATFORM_FOLDER}
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/webp/include/${PLATFORM_FOLDER}
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/glfw3/include/${PLATFORM_FOLDER}
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/freetype2/include/${PLATFORM_FOLDER}
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/websockets/include/${PLATFORM_FOLDER}
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/include/${PLATFORM_FOLDER}
+
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/freetype2/include/${PLATFORM_FOLDER}/freetype2
+  )
+
+#todo: fix location of freetype includes for linux android on cocos prebuilt repo
+#i.e we should not need to include an extra dir of /freetype2
+
+  link_directories(
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/tinyxml2/prebuilt/${PLATFORM_FOLDER_ARCH}
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/jpeg/prebuilt/${PLATFORM_FOLDER_ARCH}
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/tiff/prebuilt/${PLATFORM_FOLDER_ARCH}
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/webp/prebuilt/${PLATFORM_FOLDER_ARCH}
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/png/prebuilt/${PLATFORM_FOLDER_ARCH}
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/freetype2/prebuilt/${PLATFORM_FOLDER_ARCH}
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/websockets/prebuilt/${PLATFORM_FOLDER_ARCH}
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/chipmunk/prebuilt/${PLATFORM_FOLDER_ARCH}
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/box2d/prebuilt/${PLATFORM_FOLDER_ARCH}
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/curl/prebuilt/${PLATFORM_FOLDER_ARCH}
+
+  )
+
 
 endif()
 
-if(BUILD_EXTERN_LIBS)
-# chipmunk library
-add_subdirectory(external/chipmunk/src)
 
-# box2d library
-add_subdirectory(external/Box2D)
-endif()
-
-# unzip library
-add_subdirectory(external/unzip)
-
-if(BUILD_EXTERN_LIBS)
-# tinyxml2 library
-add_subdirectory(external/tinyxml2)
-endif()
-
-# xxhash library
-add_subdirectory(external/xxhash)
-
-# audio
-add_subdirectory(cocos/audio)
-
-# cocos2d library
+# libcocos2d.a
 add_subdirectory(cocos)
 
-# network library
-add_subdirectory(cocos/network)
-
-# ui library
-add_subdirectory(cocos/ui)
-
-# sqlite3 library
-add_subdirectory(cocos/storage)
-
-if(BUILD_EXTENSIONS)
-# extensions
-add_subdirectory(extensions)
-endif(BUILD_EXTENSIONS)
-
-## Editor Support
-
-if(BUILD_EDITOR_SPINE)
-# spine
-add_subdirectory(cocos/editor-support/spine)
-endif(BUILD_EDITOR_SPINE)
-
-if(BUILD_EDITOR_COCOSBUILDER)
-# cocosbuilder
-add_subdirectory(cocos/editor-support/cocosbuilder)
-endif(BUILD_EDITOR_COCOSBUILDER)
-
-if(BUILD_EDITOR_COCOSTUDIO)
-# cocostudio
-add_subdirectory(cocos/editor-support/cocostudio)
-endif(BUILD_EDITOR_COCOSTUDIO)
+# build cpp tests
+if(BUILD_CPP_TESTS)
+  add_subdirectory(tests/cpp-empty-test)
+  add_subdirectory(tests/cpp-tests)
+endif(BUILD_CPP_TESTS)
 
 ## Scripting
-if(BUILD_LIBS_LUA)
-# lua
-add_subdirectory(external/lua/lua)
+if(BUILD_LUA_LIBS)
+    add_subdirectory(cocos/scripting/lua-bindings)
 
-# tolua
-add_subdirectory(external/lua/tolua)
+  # build lua tests
+  if(BUILD_LUA_TESTS)
+    add_subdirectory(tests/lua-tests/project)
+    add_subdirectory(tests/lua-empty-test/project)
+  endif(BUILD_LUA_TESTS)
 
-# luabinding
-add_subdirectory(cocos/scripting/lua-bindings)
-
-# xxtea
-add_subdirectory(external/xxtea)
-endif(BUILD_LIBS_LUA)
-
-# build tests
-if(BUILD_CppTests)
-add_subdirectory(tests/cpp-empty-test)
-add_subdirectory(tests/cpp-tests)
-endif(BUILD_CppTests)
-
-if(BUILD_LuaTests)
-add_subdirectory(tests/lua-tests/project)
-add_subdirectory(tests/lua-empty-test/project)
-endif(BUILD_LuaTests)
+endif(BUILD_LUA_LIBS)

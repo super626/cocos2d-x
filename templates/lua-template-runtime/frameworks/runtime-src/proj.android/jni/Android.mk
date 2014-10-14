@@ -6,7 +6,8 @@ LOCAL_MODULE := cocos2dlua_shared
 
 LOCAL_MODULE_FILENAME := libcocos2dlua
 
-LOCAL_SRC_FILES := \
+LOCAL_SRC_FILES := hellolua/main.cpp \
+hellolua/Runtime_android.cpp \
 ../../Classes/protobuf-lite/google/protobuf/io/coded_stream.cc \
 ../../Classes/protobuf-lite/google/protobuf/stubs/common.cc \
 ../../Classes/protobuf-lite/google/protobuf/extension_set.cc \
@@ -26,11 +27,10 @@ LOCAL_SRC_FILES := \
 ../../Classes/runtime/Shine_png.cpp \
 ../../Classes/runtime/Runtime.cpp \
 ../../Classes/runtime/Protos.pb.cc \
+../../Classes/runtime/lua_debugger.c \
 ../../Classes/VisibleRect.cpp \
 ../../Classes/AppDelegate.cpp \
-../../Classes/ConfigParser.cpp \
-lua/Runtime_android.cpp \
-lua/main.cpp
+../../Classes/ConfigParser.cpp
 
 
 LOCAL_C_INCLUDES := \
@@ -39,13 +39,8 @@ $(LOCAL_PATH)/../../Classes/runtime \
 $(LOCAL_PATH)/../../Classes \
 $(LOCAL_PATH)/../../../cocos2d-x/external
 
-LOCAL_STATIC_LIBRARIES := curl_static_prebuilt
-
-LOCAL_WHOLE_STATIC_LIBRARIES := cocos2d_lua_static
-LOCAL_WHOLE_STATIC_LIBRARIES += cocosdenshion_lua_static
-LOCAL_WHOLE_STATIC_LIBRARIES += cocos_network_static
+LOCAL_STATIC_LIBRARIES := cocos2d_lua_static
 
 include $(BUILD_SHARED_LIBRARY)
 
 $(call import-module,scripting/lua-bindings/proj.android)
-

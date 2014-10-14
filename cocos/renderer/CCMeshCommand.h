@@ -26,10 +26,9 @@
 #define _CC_MESHCOMMAND_H_
 
 #include <unordered_map>
-#include "CCRenderCommand.h"
+#include "renderer/CCRenderCommand.h"
 #include "renderer/CCGLProgram.h"
 #include "math/CCMath.h"
-#include "CCRenderCommandPool.h"
 
 NS_CC_BEGIN
 
@@ -62,6 +61,8 @@ public:
     void setMatrixPalette(const Vec4* matrixPalette) { _matrixPalette = matrixPalette; }
     
     void setMatrixPaletteSize(int size) { _matrixPaletteSize = size; }
+
+    void setLightMask(unsigned int lightmask) { _lightMask = lightmask; }
     
     void execute();
     
@@ -70,7 +71,7 @@ public:
     void batchDraw();
     void postBatchDraw();
     
-    void genMaterialID(GLuint texID, void* glProgramState, void* mesh, const BlendFunc& blend);
+    void genMaterialID(GLuint texID, void* glProgramState, GLuint vertexBuffer, GLuint indexBuffer, const BlendFunc& blend);
     
     uint32_t getMaterialID() const { return _materialID; }
     
@@ -85,11 +86,15 @@ protected:
     
     // apply renderstate
     void applyRenderState();
+
+    void setLightUniforms();
     
     //restore to all false
     void restoreRenderState();
     
     void MatrixPalleteCallBack( GLProgram* glProgram, Uniform* uniform);
+
+    void setLightUniformNames();
 
     GLuint _textureID;
     GLProgramState* _glProgramState;
@@ -121,7 +126,9 @@ protected:
 
     // ModelView transform
     Mat4 _mv;
-    
+
+    unsigned int _lightMask;
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_WP8)
     EventListenerCustom* _rendererRecreatedListener;
 #endif

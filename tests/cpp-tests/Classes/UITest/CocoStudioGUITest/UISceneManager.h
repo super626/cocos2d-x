@@ -37,6 +37,13 @@ enum
     kUIButtonTest_Title,
     kUIButtonTest_RemoveSelf,
     kUIButtonTestSwitchScale9,
+    kUIButtonTestZoomScale,
+    kUIButtonTextOnly,
+    kUIButtonIgnoreContentSizeTest,
+    kUIButtonTitleEffectTest,
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) || (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_TIZEN) || (CC_TARGET_PLATFORM == CC_PLATFORM_WP8)
+    kUIEditBoxTest,
+#endif
     kUICheckBoxTest,
     kUISliderTest,
     kUISliderTest_Scale9,
@@ -73,9 +80,12 @@ enum
     kUIScrollViewTest_Horizontal,
     kUIScrollViewTest_Both,
     kUIScrollViewTest_ScrollToPercentBothDirection,
-    kUIScrollViewTest_ScrollToPercentBothDirection_Bounce,    
+    kUIScrollViewTest_ScrollToPercentBothDirection_Bounce,
+    kUIScrollViewNestTest,
     kUIPageViewTest,
     kUIPageViewButtonTest,
+    kUIPageViewCustomScrollThreshold,
+    kUIPageViewTouchPropagationTest,
     kUIListViewTest_Vertical,
     kUIListViewTest_Horizontal,
     kUIWidgetAddNodeTest,
@@ -89,12 +99,17 @@ enum
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     kUIVideoPlayerTest,
 #endif
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+    KWebViewTest,
+#endif
     kUIScale9SpriteTest,
     kUIScale9SpriteHierarchialTest,
     kUIScale9SpriteTouchTest,
     kUIS9BatchNodeBasic,
     kUIS9FrameNameSpriteSheet,
     kUIS9FrameNameSpriteSheetRotated,
+    kUIS9FrameNameSpriteSheetCropped,
+    kUIS9FrameNameSpriteSheetCroppedRotated,
     kUIS9BatchNodeScaledNoInsets,
     kUIS9FrameNameSpriteSheetScaledNoInsets,
     kUIS9FrameNameSpriteSheetRotatedScaledNoInsets,

@@ -30,11 +30,12 @@ THE SOFTWARE.
 #include "base/CCCamera.h"
 #include "base/CCEventDispatcher.h"
 #include "base/CCEventListenerCustom.h"
-#include "2d/CCLayer.h"
-#include "2d/CCSprite.h"
-#include "2d/CCSpriteBatchNode.h"
-#include "physics/CCPhysicsWorld.h"
+#include "renderer/CCRenderer.h"
 #include "deprecated/CCString.h"
+
+#if CC_USE_PHYSICS
+#include "physics/CCPhysicsWorld.h"
+#endif
 
 NS_CC_BEGIN
 
@@ -77,7 +78,7 @@ bool Scene::initWithSize(const Size& size)
 
 Scene* Scene::create()
 {
-    Scene *ret = new Scene();
+    Scene *ret = new (std::nothrow) Scene();
     if (ret && ret->init())
     {
         ret->autorelease();
@@ -92,7 +93,7 @@ Scene* Scene::create()
 
 Scene* Scene::createWithSize(const Size& size)
 {
-    Scene *ret = new Scene();
+    Scene *ret = new (std::nothrow) Scene();
     if (ret && ret->initWithSize(size))
     {
         ret->autorelease();
@@ -114,6 +115,52 @@ Scene* Scene::getScene() const
 {
     // FIX ME: should use const_case<> to fix compiling error
     return const_cast<Scene*>(this);
+}
+
+void Scene::onProjectionChanged(EventCustom* event)
+{
+    if (_defaultCamera)
+    {
+        _defaultCamera->initDefault();
+    }
+}
+
+void Scene::render(Renderer* renderer)
+{
+    auto director = Director::getInstance();
+    Camera* defaultCamera = nullptr;
+    for (const auto& camera : _cameras)
+    {
+        Camera::_visitingCamera = camera;
+        if (Camera::_visitingCamera->getCameraFlag() == CameraFlag::DEFAULT)
+        {
+            defaultCamera = Camera::_visitingCamera;
+            continue;
+        }
+        
+        director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
+        director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION, Camera::_visitingCamera->getViewProjectionMatrix());
+        
+        //visit the scene
+        visit(renderer, Mat4::IDENTITY, 0);
+        renderer->render();
+        
+        director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
+    }
+    //draw with default camera
+    if (defaultCamera)
+    {
+        Camera::_visitingCamera = defaultCamera;
+        director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
+        director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION, Camera::_visitingCamera->getViewProjectionMatrix());
+        
+        //visit the scene
+        visit(renderer, Mat4::IDENTITY, 0);
+        renderer->render();
+        
+        director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
+    }
+    Camera::_visitingCamera = nullptr;
 }
 
 #if CC_USE_PHYSICS
@@ -140,7 +187,7 @@ void Scene::update(float delta)
 
 Scene* Scene::createWithPhysics()
 {
-    Scene *ret = new Scene();
+    Scene *ret = new (std::nothrow) Scene();
     if (ret && ret->initWithPhysics())
     {
         ret->autorelease();
@@ -190,14 +237,6 @@ void Scene::addChildToPhysicsWorld(Node* child)
         };
         
         addToPhysicsWorldFunc(child);
-    }
-}
-
-void Scene::onProjectionChanged(EventCustom* event)
-{
-    if (_defaultCamera)
-    {
-        _defaultCamera->initDefault();
     }
 }
 

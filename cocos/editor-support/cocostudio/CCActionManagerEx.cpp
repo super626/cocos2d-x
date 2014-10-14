@@ -23,7 +23,6 @@ THE SOFTWARE.
 ****************************************************************************/
 
 #include "cocostudio/CCActionManagerEx.h"
-#include "cocostudio/DictionaryHelper.h"
 #include "cocostudio/CocoLoader.h"
 
 using namespace cocos2d;
@@ -35,7 +34,7 @@ static ActionManagerEx* sharedActionManager = nullptr;
 ActionManagerEx* ActionManagerEx::getInstance()
 {
 	if (!sharedActionManager) {
-		sharedActionManager = new ActionManagerEx();
+		sharedActionManager = new (std::nothrow) ActionManagerEx();
 	}
 	return sharedActionManager;
 }
@@ -68,13 +67,13 @@ void ActionManagerEx::initWithDictionary(const char* jsonName,const rapidjson::V
 	cocos2d::Vector<ActionObject*> actionList;
 	int actionCount = DICTOOL->getArrayCount_json(dic, "actionlist");
 	for (int i=0; i<actionCount; i++) {
-		ActionObject* action = new ActionObject();
+		ActionObject* action = new (std::nothrow) ActionObject();
 		action->autorelease();
 		const rapidjson::Value &actionDic = DICTOOL->getDictionaryFromArray_json(dic, "actionlist", i);
 		action->initWithDictionary(actionDic,root);
 		actionList.pushBack(action);
 	}
-	_actionDic.insert(std::pair<std::string, cocos2d::Vector<ActionObject*>>(fileName, actionList));
+	_actionDic[fileName] = actionList;
 }
     
     void ActionManagerEx::initWithBinary(const char* file,
@@ -101,7 +100,7 @@ void ActionManagerEx::initWithDictionary(const char* jsonName,const rapidjson::V
         {
             int actionCount = actionNode->GetChildNum();
             for (int i = 0; i < actionCount; ++i) {
-                ActionObject* action = new ActionObject();
+                ActionObject* action = new (std::nothrow) ActionObject();
                 action->autorelease();
                 
                 action->initWithBinary(cocoLoader, actionNode->GetChildArray(cocoLoader), root);
@@ -109,7 +108,7 @@ void ActionManagerEx::initWithDictionary(const char* jsonName,const rapidjson::V
                 actionList.pushBack(action);
             }
         }
-        _actionDic.insert(std::pair<std::string, cocos2d::Vector<ActionObject*>>(fileName, actionList));
+        _actionDic[fileName] = actionList;
         
     }
 
@@ -159,8 +158,8 @@ void ActionManagerEx::releaseActions()
     for (iter = _actionDic.begin(); iter != _actionDic.end(); iter++)
     {
         cocos2d::Vector<ActionObject*> objList = iter->second;
-        int listCount = objList.size();
-        for (int i = 0; i < listCount; i++) {
+        ssize_t listCount = objList.size();
+        for (ssize_t i = 0; i < listCount; i++) {
             ActionObject* action = objList.at(i);
             if (action != nullptr) {
                 action->stop();
