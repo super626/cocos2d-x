@@ -265,7 +265,7 @@ void Camera3DTestDemo::onEnter()
     menuItem6->setPosition(VisibleRect::left().x+100, VisibleRect::top().y -100);
     menuItem7->setPosition(VisibleRect::left().x+100, VisibleRect::top().y -150);
     addChild(menu, 0);
-    schedule(CC_SCHEDULE_SELECTOR(Camera3DTestDemo::updateCamera), 0.0f);
+    schedule(schedule_selector(Camera3DTestDemo::updateCamera), 0.0f);
     if (_camera == nullptr)
     {
         _camera=Camera::createPerspective(60, (GLfloat)s.width/s.height, 1, 1000);
@@ -554,18 +554,11 @@ void CameraClipDemo::SwitchViewCallback(Ref* sender, CameraType cameraType)
     _cameraType = cameraType;
     if(_cameraType==CameraType::FirstCamera)
     {
-        //Vec3 newFaceDir;
-        //_sprite3D->getWorldToNodeTransform().getForwardVector(&newFaceDir);
-        //newFaceDir.normalize();
-        //_cameraFirst->setPosition3D(Vec3(0,35,0) + _sprite3D->getPosition3D());
-        //_cameraFirst->lookAt(_sprite3D->getPosition3D() + newFaceDir*50, Vec3(0, 1, 0));
         _cameraFirst->setCameraFlag(CameraFlag::USER1);
         _cameraThird->setCameraFlag(CameraFlag::USER8);
     }
     else if(_cameraType==CameraType::ThirdCamera)
     {
-        //_cameraThird->setPosition3D(Vec3(0, 130, 130) + _sprite3D->getPosition3D());
-        //_cameraThird->lookAt(_sprite3D->getPosition3D(), Vec3(0,1,0));
         _cameraThird->setCameraFlag(CameraFlag::USER1);
         _cameraFirst->setCameraFlag(CameraFlag::USER8);
     }
@@ -601,22 +594,15 @@ void CameraClipDemo::onEnter()
     menuItem1->setPosition(VisibleRect::left().x+100, VisibleRect::top().y -100);
     menuItem2->setPosition(VisibleRect::left().x+100, VisibleRect::top().y -150);
     addChild(menu, 0);
-    schedule(CC_SCHEDULE_SELECTOR(CameraClipDemo::update), 0.0f);
+    schedule(schedule_selector(CameraClipDemo::update), 0.0f);
     if (_cameraFirst == nullptr)
     {
         _cameraFirst=Camera::createPerspective(30, (GLfloat)s.width/s.height, 10, 1000);
-        //_cameraFirst->setCameraFlag(CameraFlag::USER1);
-        
-        //_cameraFirst->setRotation3D(Vec3(90,0,0));
-        //AttachNode* attachNode = _sprite3D->getAttachNode("Bip001 Neck");
-        
-        //attachNode->addChild(_cameraFirst);
         _layer3D->addChild(_cameraFirst);
     }
     if (_cameraThird == nullptr)
     {
         _cameraThird=Camera::createPerspective(60, (GLfloat)s.width/s.height, 1, 1000);
-        //_cameraThird->setCameraFlag(CameraFlag::USER1);
         _layer3D->addChild(_cameraThird);
     }
     
@@ -633,9 +619,7 @@ void CameraClipDemo::onEnter()
     {
         line->drawLine(Vec3(5*j, 0, -gridNum*girdSize),Vec3(5*j,0,gridNum*girdSize),Color4F(0,0,1,1));
     }
-//    //draw y
-//    line->drawLine(Vec3(0, -50, 0),Vec3(0,0,0),Color4F(0,0.5,0,1));
-//    line->drawLine(Vec3(0, 0, 0),Vec3(0,50,0),Color4F(0,1,0,1));
+
     _layer3D->addChild(line);
     
     _drawAABB = DrawLine3D::create();
@@ -648,7 +632,6 @@ void CameraClipDemo::onEnter()
             for (int z = -num; z< num; z++) {
                 auto sprite = Sprite3D::create("Sprite3DTest/boss.c3b");
                 sprite->setPosition3D( Vec3( x*30, y*30, z*30) );
-                //sprite->setPosition3D( Vec3( 0, 30, 50) );
                 sprite->setRotation3D(Vec3(90,0,0));
                 objects.push_back(sprite);
                 _layer3D->addChild(sprite);
@@ -667,9 +650,7 @@ void CameraClipDemo::onEnter()
     
     SwitchViewCallback(this,CameraType::FirstCamera);
     drawCameraFrustum();
-    
-    //_cameraFirst->enableFrustumCull(true, true);
-    //_cameraFirst->isVisible(sprite->getAABB());
+
     _layer3D->setCameraMask(2);
 }
 void CameraClipDemo::onExit()
