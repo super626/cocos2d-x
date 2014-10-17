@@ -493,6 +493,10 @@ void Sprite3D::removeAllAttachNode()
 
 void Sprite3D::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
 {
+    // frustum cull
+    if(Camera::getVisitingCamera() && !Camera::getVisitingCamera()->visibleInFrustum(this->getAABB()))
+        return;
+    
     if (_skeleton)
         _skeleton->updateBoneMatrix();
     

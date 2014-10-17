@@ -22,75 +22,61 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#ifndef __CC_RAY_H_
-#define __CC_RAY_H_
+#ifndef __CC_FRUSTUM_H_
+#define __CC_FRUSTUM_H_
 
+#include "base/ccMacros.h"
 #include "math/CCMath.h"
+#include "3d/3dExport.h"
 #include "3d/CCAABB.h"
 #include "3d/CCOBB.h"
 #include "3d/CCPlane.h"
-#include "3d/3dExport.h"
 
 NS_CC_BEGIN
 
-class CC_3D_DLL Ray
+class Camera;
+class Frustum
 {
+    friend class Camera;
 public:
     /**
-     * Constructor.
+     * Constructor & Destructor.
      */
-    Ray();
+    Frustum(): _bInit(false), _bClipZ(true){}
+    ~Frustum(){}
 
     /**
-     * Constructor.
+     * init frustum from camera.
      */
-    Ray(const Ray& ray);
-    
-    /**
-     * Constructs a new ray initialized to the specified values.
-     *
-     * @param origin The ray's origin.
-     * @param direction The ray's direction.
-     */
-    Ray(const Vec3& origin, const Vec3& direction);
+    bool initFrustum(const Camera* pCamera);
 
     /**
-     * Destructor.
+     * is aabb out of frustum.
      */
-    ~Ray();
+    bool isOutFrustum(const AABB& aabb) const;
+    /**
+     * is obb out of frustum
+     */
+    bool isOutFrustum(const OBB& obb) const;
 
     /**
-     * Check whether this ray intersects the specified bounding box.
+     * get & set z clip. if bclipZ == true use near and far plane
      */
-    bool intersects(const AABB& aabb) const;
+    void setClipZ(bool bclipZ) { _bClipZ = bclipZ; }
+    bool isClipZ() { return _bClipZ; }
 
+    const Plane* getPlane()const {return &_plane[0];}
+protected:
     /**
-     * Check whether this ray intersects the specified obb.
+     * create clip plane
      */
-    bool intersects(const OBB& obb) const;
+    void createPlane(const Camera* pcamera);
 
-    float dist(const Plane& plane) const;
-	Vec3 intersects(const Plane& plane) const;
-    
-    /**
-     * Sets this ray to the specified values.
-     *
-     * @param origin The ray's origin.
-     * @param direction The ray's direction.
-     */
-    void set(const Vec3& origin, const Vec3& direction);
-
-    /**
-     * Transforms this ray by the given transformation matrix.
-     *
-     * @param matrix The transformation matrix to transform by.
-     */
-    void transform(const Mat4& matrix);
-
-    Vec3 _origin;        // The ray origin position.
-    Vec3 _direction;     // The ray direction vector.
+    Plane _plane[6];             // clip plane, left, right, top, bottom, near, far
+    bool _bClipZ;                   //use near and far clip plane
+    bool _bInit;
 };
 
 NS_CC_END
 
-#endif
+#endif//__CC_FRUSTUM_H_
