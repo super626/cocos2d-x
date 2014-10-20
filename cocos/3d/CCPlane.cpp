@@ -68,9 +68,9 @@ void Plane::initPlane(const Vec3& p1, const Vec3& p2, const Vec3& p3)
 
 void Plane::initPlane(const Vec3& normal, float dist)
 {
-    _normal = normal;
-    _normal.normalize();
-    _dist = dist;
+    float oneOverLength = 1 / normal.length();
+    _normal = normal * oneOverLength;
+    _dist = dist * oneOverLength;
 }
 
 void Plane::initPlane(const Vec3& normal, const Vec3& point)

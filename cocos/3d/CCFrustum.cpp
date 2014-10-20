@@ -78,48 +78,15 @@ bool Frustum::isOutFrustum(const OBB& obb) const
 
 void Frustum::createPlane(const Camera* pcamera)
 {
-    auto size = Director::getInstance()->getWinSize();
-    Vec3 nearP0, nearP1, nearP2, nearP3;
-    Vec3 farP0, farP1, farP2, farP3;
-    Vec3 src = Vec3(0,0,0);
-    pcamera->unproject(size, &src, &nearP0);
-    
-    src = Vec3(0,size.height,0);
-    pcamera->unproject(size, &src, &nearP1);
-    
-    src = Vec3(size.width,size.height,0);
-    pcamera->unproject(size, &src, &nearP2);
-    
-    src = Vec3(size.width,0,0);
-    pcamera->unproject(size, &src, &nearP3);
-    
-    src = Vec3(0,0,1);
-    pcamera->unproject(size, &src, &farP0);
-    
-    src = Vec3(0,size.height,1);
-    pcamera->unproject(size, &src, &farP1);
-    
-    src = Vec3(size.width,size.height,1);
-    pcamera->unproject(size, &src, &farP2);
-    
-    src = Vec3(size.width,0,1);
-    pcamera->unproject(size, &src, &farP3);
-    
-    _plane[0].initPlane(nearP0, farP0, farP1);
-    _plane[1].initPlane(nearP3, nearP2, farP2);
-    _plane[2].initPlane(nearP1, farP1, farP2);
-    _plane[3].initPlane(nearP0, nearP3, farP3);
-    _plane[4].initPlane(nearP0, nearP1, nearP2);
-    _plane[5].initPlane(farP0, farP3, farP2);
-    
-//    const Mat4& mat = pcamera->getViewProjectionMatrix();
-//    //extract frustum plane
-//    _plane[0].initPlane(-Vec3(mat.m[3] + mat.m[0], mat.m[7] + mat.m[4], mat.m[11] + mat.m[8]), (mat.m[15] + mat.m[12]));//left
-//    _plane[1].initPlane(-Vec3(mat.m[3] - mat.m[0], mat.m[7] - mat.m[4], mat.m[11] - mat.m[8]), (mat.m[15] - mat.m[12]));//right
-//    _plane[2].initPlane(-Vec3(mat.m[3] + mat.m[1], mat.m[7] + mat.m[5], mat.m[11] + mat.m[9]), (mat.m[15] + mat.m[13]));//bottom
-//    _plane[3].initPlane(-Vec3(mat.m[3] - mat.m[1], mat.m[7] - mat.m[5], mat.m[11] - mat.m[9]), (mat.m[15] - mat.m[13]));//top
-//    _plane[4].initPlane(-Vec3(mat.m[3] + mat.m[2], mat.m[7] + mat.m[6], mat.m[11] + mat.m[10]), (mat.m[15] + mat.m[14]));//near
-//    _plane[5].initPlane(-Vec3(mat.m[3] - mat.m[2], mat.m[7] - mat.m[6], mat.m[11] - mat.m[10]), (mat.m[15] - mat.m[14]));//far
+    const Mat4& mat = pcamera->getViewProjectionMatrix();
+    //ref http://www.lighthouse3d.com/tutorials/view-frustum-culling/clip-space-approach-extracting-the-planes/
+    //extract frustum plane
+    _plane[0].initPlane(-Vec3(mat.m[3] + mat.m[0], mat.m[7] + mat.m[4], mat.m[11] + mat.m[8]), (mat.m[15] + mat.m[12]));//left
+    _plane[1].initPlane(-Vec3(mat.m[3] - mat.m[0], mat.m[7] - mat.m[4], mat.m[11] - mat.m[8]), (mat.m[15] - mat.m[12]));//right
+    _plane[2].initPlane(-Vec3(mat.m[3] + mat.m[1], mat.m[7] + mat.m[5], mat.m[11] + mat.m[9]), (mat.m[15] + mat.m[13]));//bottom
+    _plane[3].initPlane(-Vec3(mat.m[3] - mat.m[1], mat.m[7] - mat.m[5], mat.m[11] - mat.m[9]), (mat.m[15] - mat.m[13]));//top
+    _plane[4].initPlane(-Vec3(mat.m[3] + mat.m[2], mat.m[7] + mat.m[6], mat.m[11] + mat.m[10]), (mat.m[15] + mat.m[14]));//near
+    _plane[5].initPlane(-Vec3(mat.m[3] - mat.m[2], mat.m[7] - mat.m[6], mat.m[11] - mat.m[10]), (mat.m[15] - mat.m[14]));//far
 }
 
 NS_CC_END
