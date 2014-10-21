@@ -74,6 +74,10 @@ cocos2d.cpp \
 2d/CCTransitionPageTurn.cpp \
 2d/CCTransitionProgress.cpp \
 2d/CCTweenFunction.cpp \
+3d/CCPlane.cpp\
+3d/CCAABB.cpp\
+3d/CCOBB.cpp\
+3d/CCFrustum.cpp\
 platform/CCGLView.cpp \
 platform/CCFileUtils.cpp \
 platform/CCSAXParser.cpp \
