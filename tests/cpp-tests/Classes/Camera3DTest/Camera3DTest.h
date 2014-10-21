@@ -156,39 +156,23 @@ public:
     // overrides
     virtual std::string title() const override;
     virtual std::string subtitle() const override;
-    void addNewSpriteWithCoords(Vec3 p,std::string fileName,bool playAnimation=false,float scale=1.0f,bool bindCamera=false);
-    void onTouchesBegan(const std::vector<Touch*>& touches, cocos2d::Event  *event);
-    void onTouchesMoved(const std::vector<Touch*>& touches, cocos2d::Event  *event);
-    void onTouchesEnded(const std::vector<Touch*>& touches, cocos2d::Event  *event);
-    
-    void SwitchViewCallback(Ref* sender,CameraType cameraType);
-    void update(float fDelta);
-    
-    void calculateRay(Ray& ray, const Camera& camera, const Vec2& location);
-    
-    // draw Camera Frustum
-    void drawCameraFrustum();
-    
-    void moveRole(float elapsedTime);
-    void moveCamera(float elapsedTime);
-    void updateState(float elapsedTime);
-    bool isState(unsigned int state,unsigned int bit) const;
     void reachEndCallBack();
+    void switchViewCallback(Ref* sender,CameraType cameraType);
+    void update(float fDelta);
+    void drawCameraFrustum();
+    void initCamera();
     
 protected:
     std::string    _title;
+    Label*         _labelDrawCall;
     Layer*         _layer3D;
-    Sprite3D*      _sprite3D;
     std::vector<Sprite3D*> objects;
-    Vec3           _targetPos;
     CameraType     _cameraType;
-    unsigned int   _curState;
     Camera*        _cameraFirst;
     Camera*        _cameraThird;
-    MoveTo* _moveAction;
+    MoveBy*         _moveAction;
     DrawLine3D* _drawAABB;
     DrawLine3D* _drawFrustum;
-    Plane _land;
 };
 
 class Camera3DTestScene : public TestScene

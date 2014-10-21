@@ -31,7 +31,7 @@
 
 NS_CC_BEGIN
 
-class Plane
+class CC_3D_DLL Plane
 {
 public:
     enum POINT_CLASSIFICATION

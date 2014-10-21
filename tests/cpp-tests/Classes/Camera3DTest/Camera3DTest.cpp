@@ -525,16 +525,19 @@ bool Camera3DTestDemo::isState(unsigned int state,unsigned int bit) const
 // CameraClipDemo
 CameraClipDemo::CameraClipDemo(void)
 : BaseTest()
+, _labelDrawCall(nullptr)
+, _layer3D(nullptr)
 , _cameraFirst(nullptr)
 , _cameraThird(nullptr)
+, _moveAction(nullptr)
+, _drawAABB(nullptr)
+, _drawFrustum(nullptr)
 {
 }
 CameraClipDemo::~CameraClipDemo(void)
 {
 }
-void CameraClipDemo::reachEndCallBack()
-{
-}
+
 std::string CameraClipDemo::title() const
 {
     return "Testing Camera";
@@ -542,10 +545,10 @@ std::string CameraClipDemo::title() const
 
 std::string CameraClipDemo::subtitle() const
 {
-    return "";
+    return "Camera Frustum Clipping";
 }
 
-void CameraClipDemo::SwitchViewCallback(Ref* sender, CameraType cameraType)
+void CameraClipDemo::switchViewCallback(Ref* sender, CameraType cameraType)
 {
     if(_cameraType==cameraType)
     {
@@ -554,23 +557,21 @@ void CameraClipDemo::SwitchViewCallback(Ref* sender, CameraType cameraType)
     _cameraType = cameraType;
     if(_cameraType==CameraType::FirstCamera)
     {
+        _drawFrustum->clear();
         _cameraFirst->setCameraFlag(CameraFlag::USER1);
         _cameraThird->setCameraFlag(CameraFlag::USER8);
+        _cameraFirst->enableFrustumCull(true, true);
     }
     else if(_cameraType==CameraType::ThirdCamera)
     {
         _cameraThird->setCameraFlag(CameraFlag::USER1);
         _cameraFirst->setCameraFlag(CameraFlag::USER8);
+        _cameraThird->enableFrustumCull(false, false);
     }
-    moveCamera(0);
-    _cameraFirst->enableFrustumCull(true, true);
-    _cameraThird->enableFrustumCull(false, false);
-    
 }
 void CameraClipDemo::onEnter()
 {
     BaseTest::onEnter();
-    _sprite3D=nullptr;
     auto s = Director::getInstance()->getWinSize();
     auto listener = EventListenerTouchAllAtOnce::create();
     listener->onTouchesBegan = CC_CALLBACK_2(CameraClipDemo::onTouchesBegan, this);
@@ -580,24 +581,28 @@ void CameraClipDemo::onEnter()
     auto layer3D=Layer::create();
     addChild(layer3D,0);
     _layer3D=layer3D;
-    _curState=State_None;
-    addNewSpriteWithCoords( Vec3(0,0,0),"Sprite3DTest/girl.c3b",true,0.2,true);
-    TTFConfig ttfConfig("fonts/arial.ttf", 20);
 
+    TTFConfig ttfConfig("fonts/arial.ttf", 20);
     auto label1 = Label::createWithTTF(ttfConfig,"third person");
-    auto menuItem1 = MenuItemLabel::create(label1, CC_CALLBACK_1(CameraClipDemo::SwitchViewCallback,this,CameraType::ThirdCamera));
+    auto menuItem1 = MenuItemLabel::create(label1, CC_CALLBACK_1(CameraClipDemo::switchViewCallback,this,CameraType::ThirdCamera));
     auto label2 = Label::createWithTTF(ttfConfig,"first person");
-    auto menuItem2 = MenuItemLabel::create(label2, CC_CALLBACK_1(CameraClipDemo::SwitchViewCallback,this,CameraType::FirstCamera));
+    auto menuItem2 = MenuItemLabel::create(label2, CC_CALLBACK_1(CameraClipDemo::switchViewCallback,this,CameraType::FirstCamera));
     auto menu = Menu::create(menuItem1,menuItem2,NULL);
     
     menu->setPosition(Vec2::ZERO);
-    menuItem1->setPosition(VisibleRect::left().x+100, VisibleRect::top().y -100);
-    menuItem2->setPosition(VisibleRect::left().x+100, VisibleRect::top().y -150);
+    menuItem1->setPosition(VisibleRect::left().x+70, VisibleRect::top().y -50);
+    menuItem2->setPosition(VisibleRect::left().x+70, VisibleRect::top().y -80);
     addChild(menu, 0);
+    
+    _labelDrawCall = Label::createWithTTF(ttfConfig,"In Frustum Num: ");
+    _labelDrawCall->setPosition(VisibleRect::rightTop().x-80, VisibleRect::rightTop().y -50);
+    addChild(_labelDrawCall, 0);
+    
     schedule(schedule_selector(CameraClipDemo::update), 0.0f);
+    
     if (_cameraFirst == nullptr)
     {
-        _cameraFirst=Camera::createPerspective(30, (GLfloat)s.width/s.height, 10, 1000);
+        _cameraFirst=Camera::createPerspective(30, (GLfloat)s.width/s.height, 10, 200);
         _layer3D->addChild(_cameraFirst);
     }
     if (_cameraThird == nullptr)
@@ -625,14 +630,16 @@ void CameraClipDemo::onEnter()
     _drawAABB = DrawLine3D::create();
     _layer3D->addChild(_drawAABB);
     
+    // add some objects to 3d layer
     int num = 5;
     objects.clear();
-    for (int x = -num; x < num; x++) {
-        for (int y = 0; y < num; y++) {
-            for (int z = -num; z< num; z++) {
+    for (int x = -num; x < num; x++)
+    {
+        for (int j = 0; j < num; j++)
+        {
+            for (int z = -num; z < num; z++) {
                 auto sprite = Sprite3D::create("Sprite3DTest/boss.c3b");
-                sprite->setPosition3D( Vec3( x*30, y*30, z*30) );
-                sprite->setRotation3D(Vec3(90,0,0));
+                sprite->setPosition3D( Vec3( x*30, j*30, z*30) );
                 objects.push_back(sprite);
                 _layer3D->addChild(sprite);
                 
@@ -646,13 +653,11 @@ void CameraClipDemo::onEnter()
     _drawFrustum = DrawLine3D::create();
     _layer3D->addChild(_drawFrustum);
     
-    _land = Plane(Vec3::UNIT_Y, Vec3::UNIT_X);
-    
-    SwitchViewCallback(this,CameraType::FirstCamera);
-    drawCameraFrustum();
-
+    switchViewCallback(this,CameraType::FirstCamera);
+    initCamera();
     _layer3D->setCameraMask(2);
 }
+
 void CameraClipDemo::onExit()
 {
     BaseTest::onExit();
@@ -689,98 +694,18 @@ void CameraClipDemo::backCallback(Ref* sender)
     Director::getInstance()->replaceScene(s);
     s->release();
 }
-void CameraClipDemo::addNewSpriteWithCoords(Vec3 p,std::string fileName,bool playAnimation,float scale,bool bindCamera)
-{
-    
-    auto sprite = Sprite3D::create(fileName);
-    _layer3D->addChild(sprite);
-    float globalZOrder=sprite->getGlobalZOrder();
-    sprite->setPosition3D( Vec3( p.x, p.y,p.z) );
-    //sprite->setRotation3D( Vec3( 0, 180, 0) );
-    sprite->setGlobalZOrder(globalZOrder);
-    if(playAnimation)
-    {
-        auto animation = Animation3D::create(fileName,"Take 001");
-        if (animation)
-        {
-            auto animate = Animate3D::create(animation);
-            sprite->runAction(RepeatForever::create(animate));
-        }
-    }
-    if(bindCamera)
-    {
-        _sprite3D=sprite;
-    }
-    sprite->setScale(scale);
-    
-}
-void CameraClipDemo::onTouchesBegan(const std::vector<Touch*>& touches, cocos2d::Event  *event)
-{
-//    for ( auto &item: touches )
-//    {
-//        auto touch = item;
-//        auto location = touch->getLocation();
-//        
-//    }
-}
-void CameraClipDemo::onTouchesMoved(const std::vector<Touch*>& touches, cocos2d::Event  *event)
-{
-//    if(touches.size()==1)
-//    {
-//        auto touch = touches[0];
-//        auto location = touch->getLocation();
-//        Point newPos = touch->getPreviousLocation()-location;
-//        if(_cameraType==CameraType::FirstCamera)
-//        {
-//            Vec3 cameraDir;
-//            Vec3 cameraRightDir;
-//            _cameraFirst->getNodeToWorldTransform().getForwardVector(&cameraDir);
-//            cameraDir.normalize();
-//            cameraDir.y=0;
-//            _cameraFirst->getNodeToWorldTransform().getRightVector(&cameraRightDir);
-//            cameraRightDir.normalize();
-//            cameraRightDir.y=0;
-//            Vec3 cameraPos=  _cameraFirst->getPosition3D();
-//            cameraPos+=cameraDir*newPos.y*0.1;
-//            cameraPos+=cameraRightDir*newPos.x*0.1;
-//            _cameraFirst->setPosition3D(cameraPos);
-//            if(_sprite3D &&  _cameraType==CameraType::FirstCamera)
-//            {
-//                _sprite3D->setPosition3D(Vec3(_cameraFirst->getPositionX(),0,_cameraFirst->getPositionZ()));
-//                _targetPos=_sprite3D->getPosition3D();
-//            }
-//        }
-//    }
-}
 
-void CameraClipDemo::onTouchesEnded(const std::vector<Touch*>& touches, cocos2d::Event  *event)
+void CameraClipDemo::reachEndCallBack()
 {
-    for ( auto &item: touches )
-    {
-        auto touch = item;
-        auto location = touch->getLocationInView();
-        if(_sprite3D)
-        {
-            Camera* cameraActive = nullptr;
-            if (_cameraType == CameraType::FirstCamera)
-            {
-                cameraActive = _cameraFirst;
-            }
-            else if (_cameraType == CameraType::ThirdCamera)
-            {
-                cameraActive = _cameraThird;
-            }
-            else
-            {
-                CCLOG("invalide camera type");
-                return;
-            }
-            
-            Ray ray;
-            calculateRay(ray, *cameraActive, location);
-            _targetPos = ray.intersects(_land);
-        }
-    }
+    _cameraFirst->stopActionByTag(100);
+    auto inverse = (MoveTo*)_moveAction->reverse();
+    inverse->retain();
+    _moveAction->release();
+    _moveAction = inverse;
+    auto rot = RotateBy::create(1.f, Vec3(0.f, 180.f, 0.f));
+    auto seq = Sequence::create(rot, _moveAction, CallFunc::create(CC_CALLBACK_0(CameraClipDemo::reachEndCallBack, this)), nullptr);
+    seq->setTag(100);
+    _cameraFirst->runAction(seq);
 }
 
 void CameraClipDemo::drawCameraFrustum()
@@ -789,9 +714,6 @@ void CameraClipDemo::drawCameraFrustum()
     auto size = Director::getInstance()->getWinSize();
     
     Color4F color(1.f, 1.f, 0.f, 1);
-
-    //Frustum frustum;
-    //frustum.initFrustum(_cameraFirst);
  
     // top-left
     Vec3 tl_0,tl_1;
@@ -835,163 +757,45 @@ void CameraClipDemo::drawCameraFrustum()
     _drawFrustum->drawLine(tr_1, br_1, color);
     _drawFrustum->drawLine(br_1, bl_1, color);
     _drawFrustum->drawLine(bl_1, tl_1, color);
+}
+
+void CameraClipDemo::initCamera()
+{
+    if (_cameraThird)
+    {
+        _cameraFirst->setPosition3D(Vec3(-100,0,0));
+        _cameraFirst->lookAt(Vec3(1000,0,0), Vec3(0, 1, 0));
+        _moveAction = MoveTo::create(4.f, Vec2(100, 0));
+        _moveAction->retain();
+        auto seq = Sequence::create(_moveAction, CallFunc::create(CC_CALLBACK_0(CameraClipDemo::reachEndCallBack, this)), nullptr);
+        seq->setTag(100);
+        _cameraFirst->runAction(seq);
+    }
     
-    Plane far(tl_1, tr_1, bl_1);
-    Vec3 normal = far.getNormal();
-    normal.normalize();
-    _drawFrustum->drawLine(Vec3::ZERO, normal * 300, color);
-}
-
-void CameraClipDemo::moveRole(float elapsedTime)
-{
-    if(_sprite3D)
+    if (_cameraThird)
     {
-        Vec3 curPos=  _sprite3D->getPosition3D();
-        Vec3 newFaceDir = _targetPos - curPos;
-        newFaceDir.y = 0.0f;
-        newFaceDir.normalize();
-        Vec3 offset = newFaceDir * 25.0f * elapsedTime;
-        curPos+=offset;
-        _sprite3D->setPosition3D(curPos);
-    }
-}
-
-void CameraClipDemo::moveCamera(float elapsedTime)
-{
-    if(_sprite3D)
-    {
-        
-//        offset.x=offset.x;
-//        offset.z=offset.z;
-        
-        // move camera
-        //if(_cameraType==CameraType::ThirdCamera)
-        //{
-        //    Vec3 cameraPos= _cameraThird->getPosition3D();
-        //    cameraPos.x+=offset.x;
-        //    cameraPos.z+=offset.z;
-        Mat4 mat = _sprite3D->getNodeToWorldTransform();
-        //mat.rotateY(180);
-        Vec3 forward;
-        mat.getForwardVector(&forward);
-        forward.normalize();
-        
-        _cameraThird->setPosition3D(_sprite3D->getPosition3D() + Vec3(0, 130, 130));
-        _cameraThird->lookAt(_sprite3D->getPosition3D(), Vec3(0, 1, 0));
-        //}
-        
-        _cameraFirst->setPosition3D(_sprite3D->getPosition3D() + Vec3(0,35,0));
-        _cameraFirst->lookAt(_sprite3D->getPosition3D() + forward*-1000, Vec3(0, 1, 0));
-    }
-}
-void CameraClipDemo::updateState(float elapsedTime)
-{
-    if(_sprite3D)
-    {
-        Vec3 curPos=  _sprite3D->getPosition3D();
-        Vec3 curFaceDir;
-        _sprite3D->getNodeToWorldTransform().getForwardVector(&curFaceDir);
-        curFaceDir=-curFaceDir;
-        curFaceDir.normalize();
-        Vec3 newFaceDir = _targetPos - curPos;
-        newFaceDir.y = 0.0f;
-        newFaceDir.normalize();
-        float cosAngle = std::fabs(Vec3::dot(curFaceDir,newFaceDir) - 1.0f);
-        float dist = curPos.distanceSquared(_targetPos);
-        if(dist<=4.0f)
-        {
-            if(cosAngle<=0.01f)
-                _curState = State_Idle;
-            else
-                _curState = State_Rotate;
-        }
-        else
-        {
-            if(cosAngle>0.01f)
-                _curState = State_Rotate | State_Move;
-            else
-                _curState = State_Move;
-        }
+        _cameraThird->setPosition3D(Vec3(0, 130, 130));
+        _cameraThird->lookAt(Vec3(0,0,0), Vec3(0, 1, 0));
     }
 }
 
 
 void CameraClipDemo::update(float fDelta)
 {
-    return;
-    if(_sprite3D)
+    static unsigned long prevCalls = 0;
+    unsigned long drawCall = Director::getInstance()->getRenderer()->getDrawnBatches() - 10;
+    if( drawCall != prevCalls )
     {
-        //if( _cameraType==CameraType::ThirdCamera)
-        //{
-        updateState(fDelta);
-        
-        if(isState(_curState,State_Move))
-        {
-            moveRole(fDelta);
-            if(isState(_curState,State_Rotate))
-            {
-                Vec3 curPos = _sprite3D->getPosition3D();
-                Vec3 newFaceDir = _targetPos - curPos;
-                newFaceDir.y = 0;
-                newFaceDir.normalize();
-                Vec3 up;
-                _sprite3D->getNodeToWorldTransform().getUpVector(&up);
-                up.normalize();
-                Vec3 right;
-                Vec3::cross(-newFaceDir,up,&right);
-                right.normalize();
-                Vec3 pos = Vec3(0,0,0);
-                Mat4 mat;
-                mat.m[0] = right.x;
-                mat.m[1] = right.y;
-                mat.m[2] = right.z;
-                mat.m[3] = 0.0f;
-                
-                mat.m[4] = up.x;
-                mat.m[5] = up.y;
-                mat.m[6] = up.z;
-                mat.m[7] = 0.0f;
-                
-                mat.m[8]  = newFaceDir.x;
-                mat.m[9]  = newFaceDir.y;
-                mat.m[10] = newFaceDir.z;
-                mat.m[11] = 0.0f;
-                
-                mat.m[12] = pos.x;
-                mat.m[13] = pos.y;
-                mat.m[14] = pos.z;
-                mat.m[15] = 1.0f;
-                _sprite3D->setAdditionalTransform(&mat);
-            }
-            moveCamera(fDelta);
-        }
-        
-        if( _cameraType==CameraType::ThirdCamera)
-        {
-            //drawCameraFrustum();
-        }
+        char szDrawCall[255];
+        sprintf(szDrawCall, "In Frustum Num: %6lu", drawCall);
+            _labelDrawCall->setString(szDrawCall);
+    }
+    if( _cameraType==CameraType::ThirdCamera)
+    {
+        drawCameraFrustum();
     }
 }
 
-void CameraClipDemo::calculateRay(Ray& ray, const Camera& camera, const Vec2& location)
-{
-    Vec3 nearPoint, farPoint;
-    
-    Vec3 src = Vec3(location.x, location.y, 0.f);
-    auto size = Director::getInstance()->getWinSize();
-    _cameraThird->unproject(size, &src, &nearPoint);
-    
-    src = Vec3(location.x, location.y, 1.f);
-    _cameraThird->unproject(size, &src, &farPoint);
-    Vec3 direction(farPoint - nearPoint);
-    
-    ray.set(nearPoint, direction);
-}
-
-bool CameraClipDemo::isState(unsigned int state,unsigned int bit) const
-{
-    return (state & bit) == bit;
-}
 
 void Camera3DTestScene::runThisTest()
 {
@@ -999,3 +803,5 @@ void Camera3DTestScene::runThisTest()
     addChild(layer);
     Director::getInstance()->replaceScene(this);
 }
+
+

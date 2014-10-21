@@ -35,7 +35,7 @@
 NS_CC_BEGIN
 
 class Camera;
-class Frustum
+class CC_3D_DLL Frustum
 {
     friend class Camera;
 public:
