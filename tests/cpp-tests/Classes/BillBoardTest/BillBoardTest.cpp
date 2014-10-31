@@ -93,11 +93,13 @@ BillBoardTest::BillBoardTest()
     for (unsigned int i = 0; i < 4; ++i)
     {
         Layer *layer = Layer::create();
-        auto billboard = BillBoard::create(imgs[(unsigned int)(CCRANDOM_0_1() * 1 + 0.5)]);
+        auto billboard = BillBoard::create();
+        auto sprite = Sprite::create(imgs[(unsigned int)(CCRANDOM_0_1() * 1 + 0.5)]);
+        billboard->addChild(sprite);
         billboard->setScale(0.5f);
         billboard->setPosition3D(Vec3(0.0f, 0.0f,  CCRANDOM_MINUS1_1() * 150.0f));
-        billboard->setBlendFunc(cocos2d::BlendFunc::ALPHA_NON_PREMULTIPLIED);
-        billboard->setOpacity(CCRANDOM_0_1() * 128 + 128);
+        sprite->setBlendFunc(cocos2d::BlendFunc::ALPHA_NON_PREMULTIPLIED);
+        sprite->setOpacity(CCRANDOM_0_1() * 128 + 128);
         _billboards.push_back(billboard);
         layer->addChild(billboard);
         _layerBillBorad->addChild(layer);
@@ -105,12 +107,16 @@ BillBoardTest::BillBoardTest()
     }
 
     {
-        auto billboard = BillBoard::create("Images/Icon.png");
+        auto billboard = BillBoard::create();
+        auto sprite = Sprite::create("Images/Icon.png");
+        billboard->addChild(sprite);
         billboard->setScale(0.2f);
         billboard->setPosition3D(Vec3(0.0f, 30.0f, 0.0f));
 
-        auto billboard2 = BillBoard::create("Images/r2.png");
+        auto billboard2 = BillBoard::create();
+        auto sprite2 = Sprite::create("Images/r2.png");
         billboard2->setPosition3D(Vec3(0.0f, 0.0f, 100.0f));
+        billboard2->addChild(sprite2);
         billboard->addChild(billboard2);
         _billboards.push_back(billboard);
         _billboards.push_back(billboard2);
@@ -194,10 +200,12 @@ void BillBoardTest::addNewBillBoradWithCoords(Vec3 p)
     std::string imgs[3] = {"Images/Icon.png", "Images/r2.png"};
     for (unsigned int i = 0; i < 10; ++i)
     {
-        auto billborad = BillBoard::create(imgs[(unsigned int)(CCRANDOM_0_1() * 1 + 0.5)]);
+        auto billborad = BillBoard::create();
+        auto sprite = Sprite::create(imgs[(unsigned int)(CCRANDOM_0_1() * 1 + 0.5)]);
         billborad->setScale(0.5f);
+        billborad->addChild(sprite);
         billborad->setPosition3D(Vec3(p.x, p.y,  -150.0f + 30 * i));
-        billborad->setBlendFunc(cocos2d::BlendFunc::ALPHA_NON_PREMULTIPLIED);
+        sprite->setBlendFunc(cocos2d::BlendFunc::ALPHA_NON_PREMULTIPLIED);
         billborad->setOpacity(CCRANDOM_0_1() * 128 + 128);
         _layerBillBorad->addChild(billborad);
         _billboards.push_back(billborad);
@@ -207,7 +215,9 @@ void BillBoardTest::addNewAniBillBoradWithCoords(Vec3 p)
 {
     for (unsigned int i = 0; i < 10; ++i)
     {
-        auto billboradAni = BillBoard::create("Images/grossini.png");
+        auto billboradAni = BillBoard::create();
+        auto sprite = Sprite::create("Images/grossini.png");
+        billboradAni->addChild(sprite);
         billboradAni->setScale(0.5f);
         billboradAni->setPosition3D(Vec3(p.x, p.y,  -150.0f + 30 * i));
         _layerBillBorad->addChild(billboradAni);
@@ -224,8 +234,8 @@ void BillBoardTest::addNewAniBillBoradWithCoords(Vec3 p)
         animation->setRestoreOriginalFrame(true);
 
         auto action = Animate::create(animation);
-        billboradAni->runAction(RepeatForever::create(action));
-        billboradAni->setBlendFunc(cocos2d::BlendFunc::ALPHA_NON_PREMULTIPLIED);
+        sprite->runAction(RepeatForever::create(action));
+        sprite->setBlendFunc(cocos2d::BlendFunc::ALPHA_NON_PREMULTIPLIED);
         billboradAni->setOpacity(CCRANDOM_0_1() * 128 + 128);
         _billboards.push_back(billboradAni);
     }

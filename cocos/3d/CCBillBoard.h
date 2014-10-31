@@ -65,7 +65,7 @@ CC_CONSTRUCTOR_ACCESS:
     virtual ~BillBoard();
 
 protected:
-    Mat4 billBoardTransform(const Mat4 &transform);
+    Mat4 getBillBoardTransform(const Mat4 &transform);
     Mat4 _camWorldMat;
     Mat4 _mvTransform;
     Mat4 _billboardTransform;

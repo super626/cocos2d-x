@@ -77,7 +77,9 @@ void BillBoard::visit(Renderer *renderer, const Mat4& parentTransform, uint32_t 
     {
         return;
     }
-
+    //force update
+    _transformUpdated = true;
+    _contentSizeDirty = true;
     uint32_t flags = processParentFlags(parentTransform, parentFlags);
 
     // IMPORTANT:
@@ -89,7 +91,7 @@ void BillBoard::visit(Renderer *renderer, const Mat4& parentTransform, uint32_t 
 
     bool visibleByCamera = isVisitableByVisitingCamera();
 
-    _modelViewTransform = billBoardTransform(_modelViewTransform);
+    _modelViewTransform = getBillBoardTransform(_modelViewTransform);
 
 
     int i = 0;
@@ -101,7 +103,8 @@ void BillBoard::visit(Renderer *renderer, const Mat4& parentTransform, uint32_t 
         for( ; i < _children.size(); i++ )
         {
             auto node = _children.at(i);
-
+            //FIX ME ,may overwrite user's setting
+            node->setGlobalZOrder(-_zDepthInView);
             if ( node && node->getLocalZOrder() < 0 )
                 node->visit(renderer, _modelViewTransform, flags);
             else
@@ -127,7 +130,7 @@ void BillBoard::visit(Renderer *renderer, const Mat4& parentTransform, uint32_t 
     // _orderOfArrival = 0;
 }
 
-cocos2d::Mat4 BillBoard::billBoardTransform(const Mat4 &transform)
+cocos2d::Mat4 BillBoard::getBillBoardTransform(const Mat4 &transform)
 {
     auto camera = Camera::getVisitingCamera();
 
