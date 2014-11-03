@@ -25,13 +25,13 @@
 #ifndef __CCBILLBOARD_H__
 #define __CCBILLBOARD_H__
 
-#include "2d/CCNode.h"
+#include "2d/CCSprite.h"
 NS_CC_BEGIN
 
 /**
  * Inherit from Sprite, achieve BillBoard.
  */
-class CC_DLL BillBoard : public Node
+class CC_DLL BillBoard : public Sprite
 {
 public:
 
@@ -49,6 +49,38 @@ public:
      * @return An autoreleased BillBoard object.
      */
     static BillBoard* create(Mode mode = Mode::VIEW_POINT_ORIENTED);
+
+    /**
+     * Creates a BillBoard with an image filename.
+     *
+     * After creation, the rect of BillBoard will be the size of the image,
+     * and the offset will be (0,0).
+     *
+     * @param   filename A path to image file, e.g., "scene1/monster.png"
+     * @return  An autoreleased BillBoard object.
+     */
+    static BillBoard* create(const std::string& filename, Mode mode = Mode::VIEW_POINT_ORIENTED);
+
+    /**
+     * Creates a BillBoard with an image filename and a rect.
+     *
+     * @param   filename A path to image file, e.g., "scene1/monster.png"
+     * @param   rect     A subrect of the image file
+     * @return  An autoreleased BillBoard object
+     */
+    static BillBoard* create(const std::string& filename, const Rect& rect, Mode mode = Mode::VIEW_POINT_ORIENTED);
+
+
+
+    /**
+     * Creates a BillBoard with a Texture2D object.
+     *
+     * After creation, the rect will be the size of the texture, and the offset will be (0,0).
+     *
+     * @param   texture    A pointer to a Texture2D object.
+     * @return  An autoreleased BillBoard object
+     */
+    static BillBoard* createWithTexture(Texture2D *texture, Mode mode = Mode::VIEW_POINT_ORIENTED);
 
     /** Set the billboard rotation mode. */
     void setMode(Mode mode);

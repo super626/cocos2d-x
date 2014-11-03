@@ -58,6 +58,32 @@ BillBoard* BillBoard::create(Mode mode)
     return nullptr;
 }
 
+BillBoard* BillBoard::create(const std::string& filename, Mode mode /*= Mode::VIEW_POINT_ORIENTED*/)
+{
+    BillBoard *billborad = new (std::nothrow) BillBoard();
+    if (billborad && billborad->initWithFile(filename))
+    {
+        billborad->_mode = mode;
+        billborad->autorelease();
+        return billborad;
+    }
+    CC_SAFE_DELETE(billborad);
+    return nullptr;
+}
+
+BillBoard* BillBoard::create(const std::string& filename, const Rect& rect, Mode mode /*= Mode::VIEW_POINT_ORIENTED*/)
+{
+    BillBoard *billborad = new (std::nothrow) BillBoard();
+    if (billborad && billborad->initWithFile(filename, rect))
+    {
+        billborad->_mode = mode;
+        billborad->autorelease();
+        return billborad;
+    }
+    CC_SAFE_DELETE(billborad);
+    return nullptr;
+}
+
 
 void BillBoard::setMode( Mode mode )
 {
@@ -188,6 +214,19 @@ cocos2d::Mat4 BillBoard::getBillBoardTransform(const Mat4 &transform)
         _camWorldMat = camWorldMat;
     }
     return _billboardTransform;
+}
+
+BillBoard* BillBoard::createWithTexture(Texture2D *texture, Mode mode /*= Mode::VIEW_POINT_ORIENTED*/)
+{
+    BillBoard *billborad = new (std::nothrow) BillBoard();
+    if (billborad && billborad->initWithTexture(texture))
+    {
+        billborad->_mode = mode;
+        billborad->autorelease();
+        return billborad;
+    }
+    CC_SAFE_DELETE(billborad);
+    return nullptr;
 }
 
 NS_CC_END
