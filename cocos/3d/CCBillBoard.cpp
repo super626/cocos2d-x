@@ -43,12 +43,10 @@ BillBoard::~BillBoard()
 {
 }
 
-
-
-BillBoard* BillBoard::create(Mode mode)
+BillBoard* BillBoard::createWithTexture(Texture2D *texture, Mode mode /*= Mode::VIEW_POINT_ORIENTED*/)
 {
     BillBoard *billborad = new (std::nothrow) BillBoard();
-    if (billborad && billborad->init())
+    if (billborad && billborad->initWithTexture(texture))
     {
         billborad->_mode = mode;
         billborad->autorelease();
@@ -84,6 +82,18 @@ BillBoard* BillBoard::create(const std::string& filename, const Rect& rect, Mode
     return nullptr;
 }
 
+BillBoard* BillBoard::create(Mode mode)
+{
+    BillBoard *billborad = new (std::nothrow) BillBoard();
+    if (billborad && billborad->init())
+    {
+        billborad->_mode = mode;
+        billborad->autorelease();
+        return billborad;
+    }
+    CC_SAFE_DELETE(billborad);
+    return nullptr;
+}
 
 void BillBoard::setMode( Mode mode )
 {
@@ -156,6 +166,16 @@ void BillBoard::visit(Renderer *renderer, const Mat4& parentTransform, uint32_t 
     // _orderOfArrival = 0;
 }
 
+void BillBoard::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
+{
+    //FIXME: frustum culling here
+    {
+        _quadCommand.init(_zDepthInView, _texture->getName(), getGLProgramState(), _blendFunc, &_quad, 1, _billboardTransform);
+        _quadCommand.setTransparent(true);
+        renderer->addCommand(&_quadCommand);
+    }
+}
+
 cocos2d::Mat4 BillBoard::getBillBoardTransform(const Mat4 &transform)
 {
     auto camera = Camera::getVisitingCamera();
@@ -215,18 +235,4 @@ cocos2d::Mat4 BillBoard::getBillBoardTransform(const Mat4 &transform)
     }
     return _billboardTransform;
 }
-
-BillBoard* BillBoard::createWithTexture(Texture2D *texture, Mode mode /*= Mode::VIEW_POINT_ORIENTED*/)
-{
-    BillBoard *billborad = new (std::nothrow) BillBoard();
-    if (billborad && billborad->initWithTexture(texture))
-    {
-        billborad->_mode = mode;
-        billborad->autorelease();
-        return billborad;
-    }
-    CC_SAFE_DELETE(billborad);
-    return nullptr;
-}
-
 NS_CC_END
