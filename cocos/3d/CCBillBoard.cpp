@@ -43,7 +43,7 @@ BillBoard::~BillBoard()
 {
 }
 
-BillBoard* BillBoard::createWithTexture(Texture2D *texture, Mode mode)
+BillBoard* BillBoard::createWithTexture(Texture2D *texture, Mode mode /*= Mode::VIEW_POINT_ORIENTED*/)
 {
     BillBoard *billborad = new (std::nothrow) BillBoard();
     if (billborad && billborad->initWithTexture(texture))
@@ -56,8 +56,7 @@ BillBoard* BillBoard::createWithTexture(Texture2D *texture, Mode mode)
     return nullptr;
 }
 
-
-BillBoard* BillBoard::create(const std::string& filename, Mode mode)
+BillBoard* BillBoard::create(const std::string& filename, Mode mode /*= Mode::VIEW_POINT_ORIENTED*/)
 {
     BillBoard *billborad = new (std::nothrow) BillBoard();
     if (billborad && billborad->initWithFile(filename))
@@ -70,7 +69,7 @@ BillBoard* BillBoard::create(const std::string& filename, Mode mode)
     return nullptr;
 }
 
-BillBoard* BillBoard::create(const std::string& filename, const Rect& rect, Mode mode)
+BillBoard* BillBoard::create(const std::string& filename, const Rect& rect, Mode mode /*= Mode::VIEW_POINT_ORIENTED*/)
 {
     BillBoard *billborad = new (std::nothrow) BillBoard();
     if (billborad && billborad->initWithFile(filename, rect))
@@ -96,11 +95,93 @@ BillBoard* BillBoard::create(Mode mode)
     return nullptr;
 }
 
+void BillBoard::setMode( Mode mode )
+{
+    _mode = mode;
+    _modeDirty = true;
+}
+
+BillBoard::Mode BillBoard::getMode() const
+{
+    return _mode;
+}
+
+void BillBoard::visit(Renderer *renderer, const Mat4& parentTransform, uint32_t parentFlags)
+{
+    // quick return if not visible. children won't be drawn.
+    if (!_visible)
+    {
+        return;
+    }
+    //force update
+    _transformUpdated = true;
+    _contentSizeDirty = true;
+    uint32_t flags = processParentFlags(parentTransform, parentFlags);
+
+    // IMPORTANT:
+    // To ease the migration to v3.0, we still support the Mat4 stack,
+    // but it is deprecated and your code should not rely on it
+    Director* director = Director::getInstance();
+    director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+    director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, _modelViewTransform);
+
+    bool visibleByCamera = isVisitableByVisitingCamera();
+
+    _modelViewTransform = getBillBoardTransform(_modelViewTransform);
+
+
+    int i = 0;
+
+    if(!_children.empty())
+    {
+        sortAllChildren();
+        // draw children zOrder < 0
+        for( ; i < _children.size(); i++ )
+        {
+            auto node = _children.at(i);
+            //FIX ME ,may overwrite user's setting
+            node->setGlobalZOrder(-_zDepthInView);
+            if ( node && node->getLocalZOrder() < 0 )
+                node->visit(renderer, _modelViewTransform, flags);
+            else
+                break;
+        }
+        // self draw
+        if (visibleByCamera)
+            this->draw(renderer, _modelViewTransform, flags);
+
+        for(auto it=_children.cbegin()+i; it != _children.cend(); ++it)
+            (*it)->visit(renderer, _modelViewTransform, flags);
+    }
+    else if (visibleByCamera)
+    {
+        this->draw(renderer, _modelViewTransform, flags);
+    }
+
+    director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+
+    // FIX ME: Why need to set _orderOfArrival to 0??
+    // Please refer to https://github.com/cocos2d/cocos2d-x/pull/6920
+    // reset for next frame
+    // _orderOfArrival = 0;
+}
+
 void BillBoard::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
 {
+    //FIXME: frustum culling here
+    {
+        _quadCommand.init(_zDepthInView, _texture->getName(), getGLProgramState(), _blendFunc, &_quad, 1, _billboardTransform);
+        _quadCommand.setTransparent(true);
+        renderer->addCommand(&_quadCommand);
+    }
+}
+
+cocos2d::Mat4 BillBoard::getBillBoardTransform(const Mat4 &transform)
+{
     auto camera = Camera::getVisitingCamera();
-    
+
     const Mat4& camWorldMat = camera->getNodeToWorldTransform();
+    // only calculate when the matrices changed
     if (memcmp(_camWorldMat.m, camWorldMat.m, sizeof(float) * 16) != 0 || memcmp(_mvTransform.m, transform.m, sizeof(float) * 16) != 0 || _modeDirty)
     {
         Vec3 anchorPoint(_anchorPointInPoints.x , _anchorPointInPoints.y , 0.0f);
@@ -117,7 +198,7 @@ void BillBoard::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
             camWorldMat.transformVector(Vec3(0.0f, 0.0f, -1.0f), &camDir);
             break;
         default:
-                CCASSERT(false, "invalid billboard mode");
+            CCASSERT(false, "invalid billboard mode");
             break;
         }
         _modeDirty = false;
@@ -152,24 +233,6 @@ void BillBoard::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
         _mvTransform = transform;
         _camWorldMat = camWorldMat;
     }
-
-    //FIXME: frustum culling here
-    {
-        _quadCommand.init(_zDepthInView, _texture->getName(), getGLProgramState(), _blendFunc, &_quad, 1, _billboardTransform);
-        _quadCommand.setTransparent(true);
-        renderer->addCommand(&_quadCommand);
-    }
+    return _billboardTransform;
 }
-
-void BillBoard::setMode( Mode mode )
-{
-    _mode = mode;
-    _modeDirty = true;
-}
-
-BillBoard::Mode BillBoard::getMode() const
-{
-    return _mode;
-}
-
 NS_CC_END

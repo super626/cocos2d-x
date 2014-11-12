@@ -26,7 +26,6 @@
 #define __CCBILLBOARD_H__
 
 #include "2d/CCSprite.h"
-
 NS_CC_BEGIN
 
 /**
@@ -71,7 +70,9 @@ public:
      */
     static BillBoard* create(const std::string& filename, const Rect& rect, Mode mode = Mode::VIEW_POINT_ORIENTED);
 
-     /**
+
+
+    /**
      * Creates a BillBoard with a Texture2D object.
      *
      * After creation, the rect will be the size of the texture, and the offset will be (0,0).
@@ -88,16 +89,16 @@ public:
     Mode getMode() const;
 
     //override
-    /** draw BillBoard object */
-    virtual void draw(Renderer *renderer, const Mat4 &transform, uint32_t flags) override;
+    virtual void visit(Renderer *renderer, const Mat4& parentTransform, uint32_t parentFlags) override;
 
+    virtual void draw(Renderer *renderer, const Mat4 &transform, uint32_t flags) override;
 
 CC_CONSTRUCTOR_ACCESS:
     BillBoard();
     virtual ~BillBoard();
 
 protected:
-
+    Mat4 getBillBoardTransform(const Mat4 &transform);
     Mat4 _camWorldMat;
     Mat4 _mvTransform;
     Mat4 _billboardTransform;
