@@ -292,6 +292,7 @@ bool Bundle3D::loadObj(MeshDatas& meshdatas, MaterialDatas& materialdatas, NodeD
 
             meshdata->subMeshIndices.push_back(it.mesh.indices);
             meshdata->subMeshIds.push_back(str);
+            meshdata->subMeshAABB.push_back(calculateAABB(meshdata->vertex, meshdata->getPerVertexSize(), it.mesh.indices));
             auto node = new (std::nothrow) NodeData();
             auto modelnode = new (std::nothrow) ModelData();
             modelnode->matrialId = str;
