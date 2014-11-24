@@ -96,6 +96,14 @@ BillBoard* BillBoard::create(Mode mode)
     return nullptr;
 }
 
+
+void BillBoard::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
+{
+    _quadCommand.init(_zDepthInView, _texture->getName(), getGLProgramState(), _blendFunc, &_quad, 1, _billboardTransform);
+    _quadCommand.setTransparent(true);
+    renderer->addCommand(&_quadCommand);
+}
+
 void BillBoard::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t parentFlags)
 {
     // quick return if not visible. children won't be drawn.
@@ -222,5 +230,7 @@ BillBoard::Mode BillBoard::getMode() const
 {
     return _mode;
 }
+
+
 
 NS_CC_END

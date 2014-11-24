@@ -88,6 +88,10 @@ public:
     Mode getMode() const;
 
     //override
+    /** draw BillBoard object */
+    virtual void draw(Renderer *renderer, const Mat4 &transform, uint32_t flags) override;
+
+    //override
     virtual void visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags) override;
 
 CC_CONSTRUCTOR_ACCESS:
