@@ -291,8 +291,8 @@ bool Bundle3D::loadObj(MeshDatas& meshdatas, MaterialDatas& materialdatas, NodeD
             materialdatas.materials.push_back(materialdata);
 
             meshdata->subMeshIndices.push_back(it.mesh.indices);
-            meshdata->subMeshIds.push_back(str);
             meshdata->subMeshAABB.push_back(calculateAABB(meshdata->vertex, meshdata->getPerVertexSize(), it.mesh.indices));
+            meshdata->subMeshIds.push_back(str);
             auto node = new (std::nothrow) NodeData();
             auto modelnode = new (std::nothrow) ModelData();
             modelnode->matrialId = str;
@@ -1292,18 +1292,23 @@ bool Bundle3D::loadMaterialDataJson_0_1(MaterialDatas& materialdatas)
     NMaterialData materialData;
     const rapidjson::Value& material_data_array = _jsonReader[MATERIAL];
 
-    const rapidjson::Value& material_data_array_0 = material_data_array[(rapidjson::SizeType)0];
-
-    const rapidjson::Value& material_data_base_array = material_data_array_0[BASE];
-
-    const rapidjson::Value& material_data_base_array_0 = material_data_base_array[(rapidjson::SizeType)0];
-    NTextureData  textureData;
-    // set texture
-    textureData.filename =_modelPath + material_data_base_array_0[FILENAME].GetString();
-    textureData.type= NTextureData::Usage::Diffuse;
-    textureData.id="";
-    materialData.textures.push_back(textureData);
-    materialdatas.materials.push_back(materialData);
+    if (material_data_array.Size() > 0)
+    {
+        const rapidjson::Value& material_data_array_0 = material_data_array[(rapidjson::SizeType)0];
+        if (material_data_array_0.HasMember(BASE))
+        {
+            const rapidjson::Value& material_data_base_array = material_data_array_0[BASE];
+            const rapidjson::Value& material_data_base_array_0 = material_data_base_array[(rapidjson::SizeType)0];
+            NTextureData  textureData;
+            // set texture
+            textureData.filename =_modelPath + material_data_base_array_0[FILENAME].GetString();
+            textureData.type= NTextureData::Usage::Diffuse;
+            textureData.id="";
+            materialData.textures.push_back(textureData);
+            materialdatas.materials.push_back(materialData);
+        }
+    }
+    
     return true;
 }
 
@@ -1428,7 +1433,7 @@ bool Bundle3D::loadAnimationDataBinary(const std::string& id, Animation3DData* a
     }
     
     unsigned int animNum = 1;
-    if( _version == "0.1"|| _version == "0.2" || _version == "0.3"|| _version == "0.4")
+    if( _version == "0.3"|| _version == "0.4")
     {
         if (!_binaryReader.read(&animNum))
         {
@@ -2008,10 +2013,10 @@ cocos2d::AABB Bundle3D::calculateAABB( const std::vector<float>& vertex, int str
     AABB aabb;
     stride /= 4;
     for(const auto& it : index)
-    {
-        Vec3 point = Vec3(vertex[it * stride ], vertex[ it * stride + 1], vertex[it * stride + 2 ]);
-        aabb.updateMinMax(&point, 1);
-    }
+        {
+            Vec3 point = Vec3(vertex[it * stride ], vertex[ it * stride + 1], vertex[it * stride + 2 ]);
+            aabb.updateMinMax(&point, 1);
+        }
     return aabb;
 }
 
