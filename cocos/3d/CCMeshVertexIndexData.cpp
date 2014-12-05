@@ -31,6 +31,7 @@
 #include "3d/CCObjLoader.h"
 #include "3d/CCSprite3DMaterial.h"
 #include "3d/CCMesh.h"
+#include "3d/CCBundle3D.h"
 
 #include "base/ccMacros.h"
 #include "base/CCEventCustom.h"
@@ -102,14 +103,19 @@ MeshVertexData* MeshVertexData::create(const MeshData& meshdata)
         vertexdata->_vertexBuffer->updateVertices((void*)&meshdata.vertex[0], (int)meshdata.vertex.size() * 4 / vertexdata->_vertexBuffer->getSizePerVertex(), 0);
     }
     
-
+    bool needCalcAABB = meshdata.subMeshAABB.empty()? true: false;
+    AABB aabb;
     for (size_t i = 0; i < meshdata.subMeshIndices.size(); i++) {
 
         auto& index = meshdata.subMeshIndices[i];
         auto indexBuffer = IndexBuffer::create(IndexBuffer::IndexType::INDEX_TYPE_SHORT_16, (int)(index.size()));
         indexBuffer->updateIndices(&index[0], (int)index.size(), 0);
         std::string id = (i < meshdata.subMeshIds.size() ? meshdata.subMeshIds[i] : "");
-        MeshIndexData* indexdata = MeshIndexData::create(id, vertexdata, indexBuffer, meshdata.subMeshAABB[i]);
+        if (needCalcAABB)
+            aabb = Bundle3D::calculateAABB(meshdata.vertex, meshdata.getPerVertexSize(), index);
+        else
+            aabb = meshdata.subMeshAABB[i];
+        MeshIndexData* indexdata = MeshIndexData::create(id, vertexdata, indexBuffer, aabb);
         vertexdata->_indexs.pushBack(indexdata);
     }
     
