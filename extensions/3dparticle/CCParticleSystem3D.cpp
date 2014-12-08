@@ -29,134 +29,164 @@
 
 NS_CC_BEGIN
 
-float Particle3D::DEFAULT_TTL = 10.0f;
-float Particle3D::DEFAULT_MASS = 1.0f;
-
-void Particle3D::setOwnDimensions( float newWidth, float newHeight, float newDepth )
+Particle3D::Particle3D()
+: position(Vec3::ZERO)
+, positionInWorld(Vec3::ZERO)
+, color(Vec4::ONE)
+, lb_uv(Vec2::ZERO)
+, rt_uv(Vec2::ONE)
+, width(1.0f)
+, height(1.0f)
+, depth(1.0f)
+, depthInView(0.0f)
+, zRotation(0.0f)
 {
-    ownDimensions = true;
-    if (newWidth)
-        width = newWidth;
-    if (newHeight)
-        height = newHeight;
-    if (newDepth)
-        depth = newDepth;
-    calculateBoundingSphereRadius();
-    //parentEmitter->getParentTechnique()->_notifyParticleResized();
+
 }
 
-void Particle3D::calculateBoundingSphereRadius()
+Particle3D::~Particle3D()
 {
-    //radius = 0.5 * Math::Sqrt(width*width + height*height + depth*depth);
-    radius = 0.5f * std::max(depth, std::max(width, height)); // approximation
+
 }
 
-void Particle3D::initForEmission()
-{
-		eventFlags = 0;
-		timeFraction = 0.0f;
-		/*	Note, that this flag must only be set as soon as the particle is emitted. As soon as the particle has
-			been moved once, the flag must be removed again.
-		*/
-		addEventFlags(Particle3D::PEF_EMITTED);
 
-		// Reset freeze flag
-		freezed = false;
+ParticlePool::ParticlePool()
+{
+
 }
 
-//-----------------------------------------------------------------------
+ParticlePool::~ParticlePool()
+{
 
-const float ParticleSystem3D::DEFAULT_WIDTH = 50;
-const float ParticleSystem3D::DEFAULT_HEIGHT = 50;
-const float ParticleSystem3D::DEFAULT_DEPTH = 50;
+}
+
+Particle3D* ParticlePool::createParticle()
+{
+    if (_locked.empty()) return nullptr;
+    Particle3D* p = _locked.front();
+    _released.push_back(p);
+    _locked.erase(_locked.begin());
+    //_released.splice(_released.end(), _locked, _locked.begin());
+    return p;
+}
+
+void ParticlePool::lockLatestParticle()
+{
+    _locked.push_back(*_releasedIter);
+    _releasedIter = _released.erase(_releasedIter);
+    if (_releasedIter != _released.begin() && _releasedIter != _released.end())
+    {
+        --_releasedIter;
+    }
+}
+
+void ParticlePool::lockAllParticles()
+{
+    //_locked.splice(_locked.end(), _released);
+    _locked.insert(_locked.end(), _released.begin(), _released.end());
+    _released.clear();
+    _releasedIter = _released.begin();
+}
+
+Particle3D* ParticlePool::getFirst()
+{
+    _releasedIter = _released.begin();
+    if (_releasedIter == _released.end()) return nullptr;
+    return *_releasedIter;
+}
+
+Particle3D* ParticlePool::getNext()
+{
+    if (_releasedIter == _released.end()) return nullptr;
+    ++_releasedIter;
+    if (_releasedIter == _released.end()) return nullptr;
+    return *_releasedIter;
+}
+
+void ParticlePool::addParticle( Particle3D *particle )
+{
+    _locked.push_back(particle);
+}
+
+bool ParticlePool::empty() const
+{
+    return _released.empty();
+}
+
+void ParticlePool::removeAllParticles( bool needDelete /*= false*/ )
+{
+    lockAllParticles();
+    if (needDelete){
+        for (auto iter : _locked){
+            delete iter;
+        }
+        _locked.clear();
+    }
+    else{
+        _locked.clear();
+    }
+}
+
+const ParticlePool::PoolList& ParticlePool::getActiveParticleList() const
+{
+    return _released;
+}
 
 ParticleSystem3D::ParticleSystem3D()
 : _emitter(nullptr)
 , _render(nullptr)
-, _prepared(false)
 , _aliveParticlesCnt(0)
+, _particleQuota(0)
 , _state(State::STOP)
-, _particleSystemScaleVelocity(0.0f)
-, _defaultWidth(DEFAULT_WIDTH)
-, _defaultHeight(DEFAULT_HEIGHT)
-, _defaultDepth(DEFAULT_DEPTH)
 , _blend(BlendFunc::ALPHA_NON_PREMULTIPLIED)
+, _keepLocal(false)
 {
     
 }
 ParticleSystem3D::~ParticleSystem3D()
 {
-    stop();
-	unPrepared();
-
+    stopParticle();
+    removeAllAffector();
     CC_SAFE_RELEASE(_emitter);
     CC_SAFE_RETAIN(_render);
 }
 
-void ParticleSystem3D::start()
+void ParticleSystem3D::startParticle()
 {
     if (_state != State::RUNNING)
     {
-		if (_emitter)
-			_emitter->notifyStart();
-
-		for (auto& it : _affectors) {
-			it->notifyStart();
-		}
-
-		if (_render)
-			_render->notifyStart();
-
+        if (_render)
+            _render->notifyStart();
+        
         scheduleUpdate();
         _state = State::RUNNING;
-        _timeElapsedSinceStart = 0.0f;
     }
 }
 
-void ParticleSystem3D::stop()
+void ParticleSystem3D::stopParticle()
 {
     if (_state != State::STOP)
     {
-		if (_emitter)
-			_emitter->notifyStop();
-
-		for (auto& it : _affectors) {
-			it->notifyStop();
-		}
-
-		if (_render)
-			_render->notifyStop();
-
+        if (_render)
+            _render->notifyStop();
+        
         unscheduleUpdate();
         _state = State::STOP;
     }
 }
 
-void ParticleSystem3D::pause()
+void ParticleSystem3D::pauseParticle()
 {
     if (_state == State::RUNNING)
     {
-		if (_emitter)
-			_emitter->notifyPause();
-
-		for (auto& it : _affectors) {
-			it->notifyPause();
-		}
         _state = State::PAUSE;
     }
 }
 
-void ParticleSystem3D::resume()
+void ParticleSystem3D::resumeParticle()
 {
     if (_state == State::PAUSE)
     {
-		if (_emitter)
-			_emitter->notifyResume();
-
-		for (auto& it : _affectors) {
-			it->notifyResume();
-		}
-
         _state = State::RUNNING;
     }
 }
@@ -166,6 +196,7 @@ void ParticleSystem3D::setEmitter(Particle3DEmitter* emitter)
     if (_emitter != emitter)
     {
         CC_SAFE_RELEASE(_emitter);
+        emitter->_particleSystem = this;
         _emitter = emitter;
         CC_SAFE_RETAIN(_emitter);
     }
@@ -183,8 +214,9 @@ void ParticleSystem3D::setRender(Particle3DRender* render)
 
 void ParticleSystem3D::addAffector(Particle3DAffector* affector)
 {
-    if (std::find(_affectors.begin(), _affectors.end(), affector) != _affectors.end()){
+    if (affector && std::find(_affectors.begin(), _affectors.end(), affector) == _affectors.end()){
         affector->_particleSystem = this;
+        affector->retain();
         _affectors.push_back(affector);
     }
 }
@@ -198,12 +230,15 @@ void ParticleSystem3D::removeAffector(int index)
 void ParticleSystem3D::removeAllAffector()
 {
     //release all affectors
+    for (auto it : _affectors) {
+        it->release();
+    }
     _affectors.clear();
 }
 
 Particle3DAffector* ParticleSystem3D::getAffector(int index)
 {
-    CCASSERT((unsigned int)index < _affectors.size(), "wrong index");
+    CCASSERT(index < _affectors.size(), "wrong index");
     return _affectors[index];
 }
 
@@ -211,14 +246,21 @@ void ParticleSystem3D::update(float delta)
 {
     if (_state != State::RUNNING)
         return;
+    
+    Particle3D *particle = _particlePool.getFirst();
+    while (particle)
+    {
+        if (_emitter)
+        {
+            _emitter->updateEmitter(particle, delta);
+        }
 
-	prepared();
-	emitParticles(_timeElapsedSinceStart);
-	preUpdator(_timeElapsedSinceStart);
-	updator(_timeElapsedSinceStart);
-	postUpdator(_timeElapsedSinceStart);
+        for (auto& it : _affectors) {
+            it->updateAffector(particle, delta);
+        }
 
-    _timeElapsedSinceStart += delta;
+        particle = _particlePool.getNext();
+    }
 }
 
 void ParticleSystem3D::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
@@ -239,179 +281,14 @@ const BlendFunc &ParticleSystem3D::getBlendFunc() const
     return _blend;
 }
 
-const std::vector<Particle3D*>& ParticleSystem3D::getParticles()
+void ParticleSystem3D::setParticleQuota( unsigned short quota )
 {
-    return _particles;
+    _particleQuota = quota;
 }
 
-float ParticleSystem3D::getParticleSystemScaleVelocity() const
+unsigned short ParticleSystem3D::getParticleQuota() const
 {
-    return _particleSystemScaleVelocity;
-}
-
-void ParticleSystem3D::rotationOffset( Vec3& pos )
-{
-    Mat4 rotMat;
-    Mat4::createRotation(_rotationOffset, &rotMat);
-    pos = _rotationCentre + rotMat * (pos - _rotationCentre);
-}
-
-void ParticleSystem3D::prepared()
-{
-	if (!_prepared){
-		if (_emitter && _emitter->isEnabled())
-			_emitter->prepare();
-
-		for (auto& it : _affectors) {
-			if (it->isEnabled())
-				it->prepare();
-		}
-		_prepared = true;
-	}
-}
-
-void ParticleSystem3D::unPrepared()
-{
-	if (_emitter && _emitter->isEnabled())
-		_emitter->unPrepare();
-
-	for (auto& it : _affectors) {
-		if (it->isEnabled())
-			it->unPrepare();
-	}
-}
-
-void ParticleSystem3D::preUpdator( float elapsedTime )
-{
-	if (_emitter && _emitter->isEnabled())
-		_emitter->preUpdateEmitter(elapsedTime);
-
-	for (auto& it : _affectors) {
-		if (it->isEnabled())
-			it->preUpdateAffector(elapsedTime);
-	}
-}
-
-void ParticleSystem3D::updator( float elapsedTime )
-{
-	bool firstActiveParticle = true; // The first non-expired particle
-	for (auto iter : _particles){
-		Particle3D *particle = iter;
-		if (!isExpired(particle, elapsedTime))
-		{
-			particle->timeFraction = (particle->totalTimeToLive - particle->timeToLive) / particle->totalTimeToLive;
-
-			if (_emitter && _emitter->isEnabled())
-				_emitter->updateEmitter(particle, elapsedTime);
-
-			for (auto& it : _affectors) {
-				if (it->isEnabled()){
-					if (firstActiveParticle)
-						it->firstParticleUpdate(particle, elapsedTime);
-					it->updateAffector(particle, elapsedTime);
-				}
-			}
-
-			//need update render?
-
-			//processMotion(Particle* particle, Real timeElapsed, bool firstParticle)
-
-			firstActiveParticle = false;
-		}
-
-		if (particle->hasEventFlags(Particle3D::PEF_EXPIRED))
-		{
-			particle->setEventFlags(0);
-			particle->addEventFlags(Particle3D::PEF_EXPIRED);
-		}
-		else
-		{
-			particle->setEventFlags(0);
-		}
-
-		particle->timeToLive -= elapsedTime;
-	}
-}
-
-void ParticleSystem3D::postUpdator( float elapsedTime )
-{
-	if (_emitter && _emitter->isEnabled())
-		_emitter->postUpdateEmitter(elapsedTime);
-
-	for (auto& it : _affectors) {
-		if (it->isEnabled())
-			it->postUpdateAffector(elapsedTime);
-	}
-}
-
-void ParticleSystem3D::emitParticles( float elapsedTime )
-{
-	if (!_emitter || !_emitter->isEnabled()) return;
-
-	unsigned short requested = _emitter->calculateRequestedParticles(elapsedTime);
-	float timePoint = 0.0f;
-	float timeInc = elapsedTime / requested;
-
-	for (unsigned short i = 0; i < requested; ++i)
-	{
-		Particle3D *particle = _particles[i];
-		particle->initForEmission();
-		_emitter->initParticleForEmission(particle);
-
-		particle->direction = (/*getDerivedOrientation() * */particle->direction);
-		particle->originalDirection = (/*getDerivedOrientation() * */particle->originalDirection);
-
-		for (auto& it : _affectors) {
-			if (it->isEnabled())
-				it->initParticleForEmission(particle);
-		}
-
-		particle->position += (particle->direction * _particleSystemScaleVelocity * timePoint);
-		// Increment time fragment
-		timePoint += timeInc;
-	}
-}
-
-const float ParticleSystem3D::getDefaultWidth( void ) const
-{
-	return _defaultWidth;
-}
-
-void ParticleSystem3D::setDefaultWidth( const float width )
-{
-	_defaultWidth = width;
-}
-
-const float ParticleSystem3D::getDefaultHeight( void ) const
-{
-	return _defaultHeight;
-}
-
-void ParticleSystem3D::setDefaultHeight( const float height )
-{
-	_defaultHeight = height;
-}
-
-const float ParticleSystem3D::getDefaultDepth( void ) const
-{
-	return _defaultDepth;
-}
-
-void ParticleSystem3D::setDefaultDepth( const float depth )
-{
-	_defaultDepth = depth;
-}
-
-bool ParticleSystem3D::isExpired( Particle3D* particle, float timeElapsed )
-{
-	bool expired = particle->timeToLive < timeElapsed;
-	if (expired)
-	{
-		// Set the flag to indicate that the particle has been expired
-		particle->addEventFlags(Particle3D::PEF_EXPIRED);
-	}
-
-	return expired;
+    return _particleQuota;
 }
 
 NS_CC_END
