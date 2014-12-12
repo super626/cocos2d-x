@@ -136,7 +136,7 @@ Please refer to this document: [ReadMe](../README.md)
 
 # Highlights of v3.3rc2
 * Support for android arm64 architecture, all test cases run on Nexus 9
-* Cocostudio Reader: Replace [Protobuffer](https://github.com/google/protobuf) by [FlatBuffer](https://github.com/google/flatbuffers)
+* Cocos Studio Reader: Replace [Protobuffer](https://github.com/google/protobuf) by [FlatBuffer](https://github.com/google/flatbuffers)
 
 # Notes of v3.3rc1
 
@@ -211,7 +211,7 @@ require "cocos.init"
 * Application: added openURL()
 * Added `AssetsManagerEx`, it is an enhancement version of `AssetsManager`
 * TileMap: supported staggered tile map
-* Added `ClippingRectangNode`, it is more effecient for renctangle clipping
+* Added `ClippingRectangleNode`, it is more efficient for renctangle clipping
 * Node: schedule/unschedule lambda functions
 * Facebook platform support in `plugin` on iOS and Android, all features has been added, but the API needs to be polished with Facebook guys
 
@@ -323,7 +323,7 @@ You can refer to [this document](http://www.cocos2d-x.org/wiki/Integrate_the_Fac
 * 3d: `BillBoard`
 * audio: new audio is added on iOS and Android
 * DrawNode: added as many functions as `DrawPrimitive`, and `DrawPrimitive` is deprecated
-* Renderer: added `trianle command`
+* Renderer: added `triangle command`
 * UI: added `WebView` on iOS and Android
 * Many other small features added and many bugs fixed
 
@@ -422,13 +422,13 @@ Full test case please refer to `tests/cpp-tests/Classes/NewAudioEngineTest/NewAu
 
 # Highlights of v3.3alpha0
 
-* 3d: `Camera`, 'Reskin', 'Attachment', 'Better support for FBX', 'New fbx-conv', `AABB`, `OBB` and `Ray`
+* 3d: `Camera`, `Reskin`, `Attachment`, `Better support for FBX`, `New fbx-conv`, `AABB`, `OBB` and `Ray`
 * ui: added `Scale9Sprite`
 * FileUitls: added `isDirectoryExist()`, `createDirectory()`, `removeDirectory()`, `removeFile()`, `renameFile()` and `getFileSize()`
 * Device: added `setKeepScreenOn()` on iOS and Android 
 * Added c++11 random support
 * RenderTexture: added a call back function for `saveToFile()`
-* Primitive: Support Points, Lines and Triagles for rendering
+* Primitive: Support Points, Lines and Triangles for rendering
 * SpriteFrameCache: support loading from plist file content data
 * Added a consistent way to set GL context attributes for all platforms
 * Only two libraries in cocos2d-x, one for c++ codes, another one for lua-binding codes
