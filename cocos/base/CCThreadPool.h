@@ -141,7 +141,7 @@ inline ThreadPool::ThreadPool()
     //start();
 }
 
-void ThreadPool::start()
+inline void ThreadPool::start()
 {
     if (!_stop)
         return;
@@ -169,7 +169,7 @@ void ThreadPool::start()
                               );
 }
 
-void ThreadPool::stop()
+inline void ThreadPool::stop()
 {
     if (!_stop)
     {
