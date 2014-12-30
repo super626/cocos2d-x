@@ -168,11 +168,11 @@ public:
     State getState() const { return _state; }
 
     bool isKeepLocal(void) const { return _keepLocal; }
-    void setKeepLocal(bool keepLocal) { _keepLocal = keepLocal; }
+    void setKeepLocal(bool keepLocal);
 
      /** Enables or disables the system.
      */
-    void setEnabled (bool enabled) { _isEnabled = enabled; }
+    void setEnabled (bool enabled);
     
     bool isEnabled(void) const { return _isEnabled; }
 

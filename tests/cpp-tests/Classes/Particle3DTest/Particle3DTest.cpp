@@ -456,9 +456,8 @@ bool Particle3DLineStreakDemo::init()
 
     auto rootps = PUParticleSystem3D::create("lineStreak.pu");
     rootps->setCameraMask((unsigned short)CameraFlag::USER1);
-    auto rotate = RotateBy::create(5.0f, Vec3(0.0f, 0.0f, 100.0f));
-    rootps->setScale(2.0f);
-    rootps->runAction(RepeatForever::create(Sequence::create(rotate, nullptr)));
+    rootps->setScale(5.0f);
+    //rootps->runAction(RepeatForever::create(Sequence::create(rotate, nullptr)));
     rootps->startParticle();
     this->addChild(rootps);
 

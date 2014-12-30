@@ -265,7 +265,8 @@ void PUParticle3DMaterialPassTranslator::translate( PUScriptCompiler* compiler, 
             }
             else if (prop->name == matToken[TOKEN_MAT_BLEND])
             {
-                if (passValidateProperty(compiler, prop, matToken[TOKEN_MAT_BLEND], VAL_STRING))
+                //if (passValidateProperty(compiler, prop, matToken[TOKEN_MAT_BLEND], VAL_STRING))
+                if (!prop->values.empty())
                 {
                     std::string val;
                     if(getString(*prop->values.front(), &val))

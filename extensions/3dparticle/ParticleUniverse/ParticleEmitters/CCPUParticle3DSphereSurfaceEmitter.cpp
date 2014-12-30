@@ -78,17 +78,15 @@ void PUParticle3DSphereSurfaceEmitter::initParticleDirection(PUParticle3D* parti
         // the sphere surface emitter.
         float angle = 0.0f;
         generateAngle(angle);
-        Mat4 rotMat;
-        Mat4::createRotation(static_cast<PUParticleSystem3D *>(_particleSystem)->getDerivedOrientation(), &rotMat);
         if (angle != 0.0f)
         {
             //particle->direction = _randomVector.randomDeviant(angle, mUpVector);
-            particle->direction = rotMat * PUParticle3DUtil::randomDeviant(_randomVector, angle, _upVector);
+            particle->direction = PUParticle3DUtil::randomDeviant(_randomVector, angle, _upVector);
             particle->originalDirection = particle->direction;
         }
         else
         {
-            particle->direction = rotMat * _randomVector;
+            particle->direction = _randomVector;
             particle->originalDirection = particle->direction;
         }
     }

@@ -53,12 +53,11 @@ void PUParticleSystem3DTranslator::translate(PUScriptCompiler* compiler, PUAbstr
         //}
         obj->context = _system;
         _system->setName(obj->name);
-        
         for(PUAbstractNodeList::iterator i = obj->children.begin(); i != obj->children.end(); ++i)
         {
-            //if((*i)->type == ANT_PROPERTY)
-            //{
-            //	PUPropertyAbstractNode* prop = reinterpret_cast<PUPropertyAbstractNode*>((*i));
+            if((*i)->type == ANT_PROPERTY)
+            {
+                PUPropertyAbstractNode* prop = reinterpret_cast<PUPropertyAbstractNode*>((*i));
             //	if (prop->name == token[TOKEN_PS_ITERATION_INTERVAL])
             //	{
             //		// Property: iteration_interval
@@ -187,18 +186,18 @@ void PUParticleSystem3DTranslator::translate(PUScriptCompiler* compiler, PUAbstr
             //			}
             //		}
             //	}
-            //	else if (prop->name == token[TOKEN_KEEP_LOCAL])
-            //	{
-            //		// Property: keep_local
-            //		if (passValidateProperty(compiler, prop, token[TOKEN_KEEP_LOCAL], VAL_BOOL))
-            //		{
-            //			bool val;
-            //			if(getBoolean(prop->values.front(), &val))
-            //			{
-            //				mSystem->setKeepLocal(val);
-            //			}
-            //		}
-            //	}
+                if (prop->name == token[TOKEN_KEEP_LOCAL])
+                {
+                    // Property: keep_local
+                    if (passValidateProperty(compiler, prop, token[TOKEN_KEEP_LOCAL], VAL_BOOL))
+                    {
+                        bool val;
+                        if(getBoolean(*prop->values.front(), &val))
+                        {
+                            _system->setKeepLocal(val);
+                        }
+                    }
+                }
             //	else if (prop->name == token[TOKEN_PS_TIGHT_BOUNDING_BOX])
             //	{
             //		// Property: tight_bounding_box
@@ -246,8 +245,8 @@ void PUParticleSystem3DTranslator::translate(PUScriptCompiler* compiler, PUAbstr
             //	{
             //		errorUnexpectedProperty(compiler, prop);
             //	}
-            //}
-            /*else*/ if((*i)->type == ANT_OBJECT)
+            }
+            else if((*i)->type == ANT_OBJECT)
             {
                 processNode(compiler, *i);
             }
@@ -256,7 +255,6 @@ void PUParticleSystem3DTranslator::translate(PUScriptCompiler* compiler, PUAbstr
                 errorUnexpectedToken(compiler, *i);
             }
         }
-    
 }
 
 

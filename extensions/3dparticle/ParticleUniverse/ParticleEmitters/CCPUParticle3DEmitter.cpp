@@ -183,9 +183,12 @@ void PUParticle3DEmitter::initParticlePosition( PUParticle3D* particle )
 
 const Vec3& PUParticle3DEmitter::getDerivedPosition()
 {
-    if (static_cast<PUParticleSystem3D *>(_particleSystem)) 
-    {
-        _particleSystem->getNodeToWorldTransform().transformPoint(_position, &_derivedPosition);
+    PUParticleSystem3D *ps = static_cast<PUParticleSystem3D *>(_particleSystem);
+    if (ps){
+        Mat4 rotMat;
+        Mat4::createRotation(ps->getDerivedOrientation(), &rotMat);
+        _derivedPosition = ps->getDerivedPosition() + rotMat * Vec3(_position.x * _emitterScale.x, _position.y * _emitterScale.y, _position.z * _emitterScale.z);
+        //_particleSystem->getNodeToWorldTransform().transformPoint(_position, &_derivedPosition);
     }
     else
         _derivedPosition = Vec3::ZERO;
@@ -214,15 +217,13 @@ void PUParticle3DEmitter::initParticleDirection( PUParticle3D* particle )
     // Use the default way of initialising the particle direction
     float angle = 0.0f;
     generateAngle(angle);
-    Mat4 rotMat;
-    Mat4::createRotation(static_cast<PUParticleSystem3D *>(_particleSystem)->getDerivedOrientation(), &rotMat);
     if (angle != 0.0f)
     {
-        particle->direction = rotMat * PUParticle3DUtil::randomDeviant(_particleDirection, angle, _upVector);
+        particle->direction = PUParticle3DUtil::randomDeviant(_particleDirection, angle, _upVector);
     }
     else
     {
-        particle->direction = rotMat * _particleDirection;
+        particle->direction = _particleDirection;
     }
     particle->originalDirection = particle->direction;
     particle->originalDirectionLength = particle->direction.length();

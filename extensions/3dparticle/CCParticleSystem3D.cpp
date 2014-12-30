@@ -289,4 +289,14 @@ unsigned int ParticleSystem3D::getParticleQuota() const
     return _particleQuota;
 }
 
+void ParticleSystem3D::setKeepLocal( bool keepLocal )
+{
+    _keepLocal = keepLocal;
+}
+
+void ParticleSystem3D::setEnabled( bool enabled )
+{
+    _isEnabled = enabled;
+}
+
 NS_CC_END

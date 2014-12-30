@@ -33,6 +33,7 @@
 #include "renderer/CCVertexIndexBuffer.h"
 #include "base/CCDirector.h"
 #include "3d/CCSprite3D.h"
+#include "3d/CCMesh.h"
 #include "2d/CCCamera.h"
 
 NS_CC_BEGIN
@@ -100,6 +101,7 @@ void PUParticle3DQuadRender::render(Renderer* renderer, const Mat4 &transform, P
         up.normalize();
         Vec3::cross(up, _commonDir, &right);
         right.normalize();
+        backward = _commonDir;
     }
 
     for (auto iter : activeParticleList)
@@ -108,7 +110,7 @@ void PUParticle3DQuadRender::render(Renderer* renderer, const Mat4 &transform, P
         determineUVCoords(particle);
         if (_type == ORIENTED_SELF){
             Vec3 direction;
-            transform.transformVector(particle->direction, &direction);
+            transform.transformVector(-particle->direction, &direction);
             up = direction;
             up.normalize();
             Vec3::cross(direction, backward, &right);
@@ -118,22 +120,33 @@ void PUParticle3DQuadRender::render(Renderer* renderer, const Mat4 &transform, P
         Vec3 halfheight = particle->heightInWorld * 0.5f * up;
         //transform.transformPoint(particle->position, &position);
         position = particle->positionInWorld;
-        Mat4::createRotation(backward, particle->zRotation, &pRotMat);
-        _posuvcolors[vertexindex].position = (position + pRotMat * (- halfwidth - halfheight + halfwidth * offsetX + halfheight * offsetY));
+        float costheta = cosf(-particle->zRotation);
+        float sintheta = sinf(-particle->zRotation);
+        Vec2 texOffset = particle->lb_uv + 0.5f * (particle->rt_uv - particle->lb_uv);
+        Vec2 val;
+        val = Vec2((particle->lb_uv.x - texOffset.x), (particle->lb_uv.y - texOffset.y));
+        val = Vec2(val.x * costheta - val.y * sintheta, val.x * sintheta + val.y * costheta);
+        _posuvcolors[vertexindex].position = (position + (- halfwidth - halfheight + halfwidth * offsetX + halfheight * offsetY));
         _posuvcolors[vertexindex].color = particle->color;
-        _posuvcolors[vertexindex].uv = Vec2(particle->lb_uv);
+        _posuvcolors[vertexindex].uv = Vec2(val.x + texOffset.x, val.y + texOffset.y);
 
-        _posuvcolors[vertexindex + 1].position = (position + pRotMat * (halfwidth - halfheight + halfwidth * offsetX + halfheight * offsetY));
+        val = Vec2(particle->rt_uv.x - texOffset.x, particle->lb_uv.y - texOffset.y);
+        val = Vec2(val.x * costheta - val.y * sintheta, val.x * sintheta + val.y * costheta);
+        _posuvcolors[vertexindex + 1].position = (position + (halfwidth - halfheight + halfwidth * offsetX + halfheight * offsetY));
         _posuvcolors[vertexindex + 1].color = particle->color;
-        _posuvcolors[vertexindex + 1].uv = Vec2(particle->rt_uv.x, particle->lb_uv.y);
+        _posuvcolors[vertexindex + 1].uv = Vec2(val.x + texOffset.x, val.y + texOffset.y);
         
-        _posuvcolors[vertexindex + 2].position = (position + pRotMat * (- halfwidth + halfheight + halfwidth * offsetX + halfheight * offsetY));
+        val = Vec2(particle->lb_uv.x - texOffset.x, particle->rt_uv.y - texOffset.y);
+        val = Vec2(val.x * costheta - val.y * sintheta, val.x * sintheta + val.y * costheta);
+        _posuvcolors[vertexindex + 2].position = (position + (- halfwidth + halfheight + halfwidth * offsetX + halfheight * offsetY));
         _posuvcolors[vertexindex + 2].color = particle->color;
-        _posuvcolors[vertexindex + 2].uv = Vec2(particle->lb_uv.x, particle->rt_uv.y);
+        _posuvcolors[vertexindex + 2].uv = Vec2(val.x + texOffset.x, val.y + texOffset.y);
         
-        _posuvcolors[vertexindex + 3].position = (position + pRotMat * (halfwidth + halfheight + halfwidth * offsetX + halfheight * offsetY));
+        val = Vec2(particle->rt_uv.x - texOffset.x, particle->rt_uv.y - texOffset.y);
+        val = Vec2(val.x * costheta - val.y * sintheta, val.x * sintheta + val.y * costheta);
+        _posuvcolors[vertexindex + 3].position = (position + (halfwidth + halfheight + halfwidth * offsetX + halfheight * offsetY));
         _posuvcolors[vertexindex + 3].color = particle->color;
-        _posuvcolors[vertexindex + 3].uv = Vec2(particle->rt_uv);
+        _posuvcolors[vertexindex + 3].uv = Vec2(val.x + texOffset.x, val.y + texOffset.y);
         
         
         _indexData[index] = vertexindex;
@@ -334,6 +347,8 @@ void PUParticle3DModelRender::render( Renderer* renderer, const Mat4 &transform,
         mat.m[12] = particle->positionInWorld.x;
         mat.m[13] = particle->positionInWorld.y;
         mat.m[14] = particle->positionInWorld.z;
+        _spriteList[i]->setColor(Color3B(particle->color.x * 255, particle->color.y * 255, particle->color.z * 255));
+        _spriteList[i]->setOpacity(particle->color.w * 255);
         _spriteList[i]->draw(renderer, mat, 0);
     }
 }

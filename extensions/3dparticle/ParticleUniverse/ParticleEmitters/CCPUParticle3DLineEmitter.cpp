@@ -207,17 +207,15 @@ void PUParticle3DLineEmitter::initParticleDirection(PUParticle3D* particle)
     {
         float angle = 0.0f;
         generateAngle(angle);
-        Mat4 rotMat;
-        Mat4::createRotation(static_cast<PUParticleSystem3D *>(_particleSystem)->getDerivedOrientation(), &rotMat);
         if (angle != 0.0f)
         {
             //particle->direction = _perpendicular.randomDeviant(angle, mUpVector);
-            particle->direction = rotMat * PUParticle3DUtil::randomDeviant(_perpendicular, angle, _upVector);
+            particle->direction = PUParticle3DUtil::randomDeviant(_perpendicular, angle, _upVector);
             particle->originalDirection = particle->direction;
         }
         else
         {
-            particle->direction = rotMat * _perpendicular;
+            particle->direction = _perpendicular;
             particle->originalDirection = particle->direction;
         }
     }

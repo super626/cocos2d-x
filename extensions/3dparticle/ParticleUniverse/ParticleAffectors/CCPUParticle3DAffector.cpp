@@ -51,8 +51,13 @@ void PUParticle3DAffector::updatePUAffector(PUParticle3D* particle, float delta)
 
 const Vec3& PUParticle3DAffector::getDerivedPosition()
 {
-    if (static_cast<PUParticleSystem3D *>(_particleSystem)) 
-        _particleSystem->getNodeToWorldTransform().transformPoint(_position, &_derivedPosition);
+    PUParticleSystem3D *ps = static_cast<PUParticleSystem3D *>(_particleSystem);
+    if (ps){
+        Mat4 rotMat;
+        Mat4::createRotation(ps->getDerivedOrientation(), &rotMat);
+        _derivedPosition = ps->getDerivedPosition() + rotMat * Vec3(_position.x * _affectorScale.x, _position.y * _affectorScale.y, _position.z * _affectorScale.z);
+        //_particleSystem->getNodeToWorldTransform().transformPoint(_position, &_derivedPosition);
+    }
     else
         _derivedPosition = Vec3::ZERO;
 

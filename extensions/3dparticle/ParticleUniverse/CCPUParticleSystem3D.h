@@ -60,7 +60,7 @@ struct CC_DLL PUParticle3D : public Particle3D
     PUParticle3DEmitter* parentEmitter;
 
     // Values that are assigned as soon as the particle is emitted (non-transformed)
-	Vec3 positionInWorld;
+    Vec3 positionInWorld;
     Vec3 originalPosition;
     Vec3 latestPosition;
     // Direction (and speed)
@@ -250,6 +250,11 @@ public:
     void setMaterialName(const std::string &name) { _matName = name; };
     const std::string getMaterialName() const { return _matName; };
 
+        /**
+     * add particle affector
+     */
+    void addEmitter(PUParticle3DEmitter* emitter);
+
 CC_CONSTRUCTOR_ACCESS:
     PUParticleSystem3D();
     virtual ~PUParticleSystem3D();
@@ -268,6 +273,9 @@ protected:
     bool initSystem(const std::string &filePath);
 
 protected:
+
+    std::vector<PUParticle3DEmitter*> _emitters;
+
     bool _prepared;
 
     float _particleSystemScaleVelocity;

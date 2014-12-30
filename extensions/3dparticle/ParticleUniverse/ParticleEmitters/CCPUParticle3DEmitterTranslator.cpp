@@ -72,7 +72,7 @@ void PUParticle3DEmitterTranslator::translate(PUScriptCompiler* compiler, PUAbst
     if (parent && parent->context)
     {
         PUParticleSystem3D* system = static_cast<PUParticleSystem3D*>(parent->context);
-        system->setEmitter(_emitter);
+        system->addEmitter(_emitter);
     }
 
     // The first value is the (optional) name

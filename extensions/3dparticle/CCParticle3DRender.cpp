@@ -189,7 +189,7 @@ Particle3DModelRender::Particle3DModelRender()
 Particle3DModelRender::~Particle3DModelRender()
 {
     for (auto iter : _spriteList){
-        iter->autorelease();
+        iter->release();
     }
 }
 

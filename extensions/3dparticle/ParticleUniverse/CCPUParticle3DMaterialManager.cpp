@@ -155,7 +155,7 @@ bool PUParticle3DMaterialCache::loadMaterialsFromSearchPaths( const std::string 
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
     for (auto iter : FileUtils::getInstance()->getSearchPaths())
     {
-        std::string fullPath = iter + fileSpec;
+        std::string fullPath = iter;
         ftw(fullPath.c_str(), iterPath, 500);
     }
 #endif
