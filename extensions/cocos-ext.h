@@ -12,6 +12,8 @@
 #include "physics-nodes/CCPhysicsDebugNode.h"
 #include "physics-nodes/CCPhysicsSprite.h"
 
+#include "Slice3D/Slice3D.h"
+
 #include "assets-manager/AssetsManager.h"
 #include "assets-manager/AssetsManagerEx.h"
 #include "assets-manager/CCEventAssetsManagerEx.h"
