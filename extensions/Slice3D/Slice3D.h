@@ -1,5 +1,5 @@
-#ifndef PATCH_3D_H
-#define PATCH_3D_H 
+#ifndef SLICE_3D_H
+#define SLICE_3D_H
 
 #include "2d/CCNode.h"
 #include "2d/CCSprite.h"

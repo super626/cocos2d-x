@@ -1941,6 +1941,10 @@
 		B37510841823ACA100B3BA6A /* CCPhysicsShapeInfo_chipmunk.h in Headers */ = {isa = PBXBuildFile; fileRef = B375104D1823AC7B00B3BA6A /* CCPhysicsShapeInfo_chipmunk.h */; };
 		B37510851823ACA100B3BA6A /* CCPhysicsWorldInfo_chipmunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B375104E1823AC7B00B3BA6A /* CCPhysicsWorldInfo_chipmunk.cpp */; };
 		B37510861823ACA100B3BA6A /* CCPhysicsWorldInfo_chipmunk.h in Headers */ = {isa = PBXBuildFile; fileRef = B375104F1823AC7B00B3BA6A /* CCPhysicsWorldInfo_chipmunk.h */; };
+		B60598BE1A5A1F5B0097D508 /* Slice3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B60598BC1A5A1F5B0097D508 /* Slice3D.cpp */; };
+		B60598BF1A5A1F5B0097D508 /* Slice3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B60598BC1A5A1F5B0097D508 /* Slice3D.cpp */; };
+		B60598C01A5A1F5B0097D508 /* Slice3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B60598BD1A5A1F5B0097D508 /* Slice3D.h */; };
+		B60598C11A5A1F5B0097D508 /* Slice3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B60598BD1A5A1F5B0097D508 /* Slice3D.h */; };
 		B60C5BD419AC68B10056FBDE /* CCBillBoard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B60C5BD219AC68B10056FBDE /* CCBillBoard.cpp */; };
 		B60C5BD519AC68B10056FBDE /* CCBillBoard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B60C5BD219AC68B10056FBDE /* CCBillBoard.cpp */; };
 		B60C5BD619AC68B10056FBDE /* CCBillBoard.h in Headers */ = {isa = PBXBuildFile; fileRef = B60C5BD319AC68B10056FBDE /* CCBillBoard.h */; };
@@ -3036,6 +3040,8 @@
 		B375104F1823AC7B00B3BA6A /* CCPhysicsWorldInfo_chipmunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCPhysicsWorldInfo_chipmunk.h; sourceTree = "<group>"; };
 		B3AF019E1842FBA400A98B85 /* b2MotorJoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = b2MotorJoint.cpp; sourceTree = "<group>"; };
 		B3AF019F1842FBA400A98B85 /* b2MotorJoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = b2MotorJoint.h; sourceTree = "<group>"; };
+		B60598BC1A5A1F5B0097D508 /* Slice3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Slice3D.cpp; path = Slice3D/Slice3D.cpp; sourceTree = "<group>"; };
+		B60598BD1A5A1F5B0097D508 /* Slice3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Slice3D.h; path = Slice3D/Slice3D.h; sourceTree = "<group>"; };
 		B60C5BD219AC68B10056FBDE /* CCBillBoard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCBillBoard.cpp; sourceTree = "<group>"; };
 		B60C5BD319AC68B10056FBDE /* CCBillBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCBillBoard.h; sourceTree = "<group>"; };
 		B63990CA1A490AFE00B07923 /* CCAsyncTaskPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCAsyncTaskPool.cpp; path = ../base/CCAsyncTaskPool.cpp; sourceTree = "<group>"; };
@@ -4485,6 +4491,7 @@
 				292DB15E19B461CA00A80320 /* ExtensionDeprecated.h */,
 				46A167D21807AF4D005B8026 /* cocos-ext.h */,
 				46A168321807AF4E005B8026 /* ExtensionMacros.h */,
+				B60598BB1A5A1F440097D508 /* Slice3D */,
 				1AAF5350180E305F000584C8 /* assets-manager */,
 				46A168331807AF4E005B8026 /* GUI */,
 				1AD71EEB180E27CF00808F54 /* physics-nodes */,
@@ -5217,6 +5224,15 @@
 			path = ../cocos/3d;
 			sourceTree = "<group>";
 		};
+		B60598BB1A5A1F440097D508 /* Slice3D */ = {
+			isa = PBXGroup;
+			children = (
+				B60598BC1A5A1F5B0097D508 /* Slice3D.cpp */,
+				B60598BD1A5A1F5B0097D508 /* Slice3D.h */,
+			);
+			name = Slice3D;
+			sourceTree = "<group>";
+		};
 		D0FD03391A3B51AA00825BB5 /* allocator */ = {
 			isa = PBXGroup;
 			children = (
@@ -5274,6 +5290,7 @@
 				38F526401A48363B000DB7F7 /* ArmatureNodeReader.h in Headers */,
 				B29A7E3119EE1B7700872B35 /* SkinnedMeshAttachment.h in Headers */,
 				15AE1B6F19AADA9900C27E9E /* GUIDefine.h in Headers */,
+				B60598C01A5A1F5B0097D508 /* Slice3D.h in Headers */,
 				15AE1A8119AAD40300C27E9E /* b2FrictionJoint.h in Headers */,
 				15AE18DD19AAD35000C27E9E /* CocoLoader.h in Headers */,
 				46A170EB1807CECA005B8026 /* CCPhysicsJoint.h in Headers */,
@@ -6266,6 +6283,7 @@
 				15AE184D19AAD30800C27E9E /* SimpleAudioEngine.h in Headers */,
 				1A01C68D18F57BE800EFE3A6 /* CCDeprecated.h in Headers */,
 				382384321A259112002C4610 /* ParticleReader.h in Headers */,
+				B60598C11A5A1F5B0097D508 /* Slice3D.h in Headers */,
 				B29A7E3619EE1B7700872B35 /* AnimationStateData.h in Headers */,
 				503DD8EA1926736A00CD74DD /* CCESRenderer-ios.h in Headers */,
 				50ABBE581925AB6F00A911A9 /* CCEventFocus.h in Headers */,
@@ -6413,6 +6431,7 @@
 				15AE1B6319AADA9900C27E9E /* UICheckBox.cpp in Sources */,
 				15EFA211198A2BB5000C57D3 /* CCProtectedNode.cpp in Sources */,
 				50ABBEB71925AB6F00A911A9 /* ccUTF8.cpp in Sources */,
+				B60598BE1A5A1F5B0097D508 /* Slice3D.cpp in Sources */,
 				15AE189819AAD33D00C27E9E /* CCMenuItemLoader.cpp in Sources */,
 				15AE1A5719AAD40300C27E9E /* b2Settings.cpp in Sources */,
 				50ABBE271925AB6F00A911A9 /* CCAutoreleasePool.cpp in Sources */,
@@ -7016,6 +7035,7 @@
 				15AE1AAA19AAD40300C27E9E /* b2World.cpp in Sources */,
 				15AE1AB019AAD40300C27E9E /* b2ChainAndPolygonContact.cpp in Sources */,
 				1A5701B2180BCB590088DEC7 /* CCFontFNT.cpp in Sources */,
+				B60598BF1A5A1F5B0097D508 /* Slice3D.cpp in Sources */,
 				1A5701B6180BCB590088DEC7 /* CCFontFreeType.cpp in Sources */,
 				292DB16019B461CA00A80320 /* ExtensionDeprecated.cpp in Sources */,
 				50ABBEAC1925AB6F00A911A9 /* ccTypes.cpp in Sources */,
