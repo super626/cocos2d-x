@@ -118,6 +118,7 @@ protected:
     float      _accTransTime; // acculate transition time
     float      _lastTime;     // last t (0 - 1)
     std::unordered_map<Bone3D*, Animation3D::Curve*> _boneCurves; //weak ref
+    std::unordered_map<Node*, Animation3D::Curve*> _nodeCurves;
 
     //sprite animates
     static std::unordered_map<Sprite3D*, Animate3D*> s_fadeInAnimates;

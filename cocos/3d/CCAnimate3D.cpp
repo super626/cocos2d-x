@@ -97,6 +97,23 @@ Animate3D* Animate3D::reverse() const
     return animate;
 }
 
+/**
+ * get child by name recursively
+ */
+Node* getChildByNameRecursively(Node* parent, const std::string &childName)
+{
+    const Vector<Node*>& children = parent->getChildren();
+    for (const auto& child : children)
+    {
+        const std::string& name = child->getName();
+        if (name == childName)
+            return static_cast<Sprite3D*>(child);
+        else
+            getChildByNameRecursively(child, childName);
+    }
+    return nullptr;
+}
+
 //! called before the action start. It will also set the target.
 void Animate3D::startWithTarget(Node *target)
 {
@@ -106,20 +123,56 @@ void Animate3D::startWithTarget(Node *target)
     ActionInterval::startWithTarget(target);
     
     _boneCurves.clear();
+    _nodeCurves.clear();
+    
     auto skin = sprite->getSkeleton();
-    bool hasCurve = false;
-    for (unsigned int  i = 0; i < skin->getBoneCount(); i++) {
-        auto bone = skin->getBoneByIndex(i);
-        auto curve = _animation->getBoneCurveByName(bone->getName());
-        if (curve)
+    if (skin->getBoneCount() > 0)
+    {
+        bool hasCurve = false;
+        for (unsigned int  i = 0; i < skin->getBoneCount(); i++) {
+            auto bone = skin->getBoneByIndex(i);
+            auto curve = _animation->getBoneCurveByName(bone->getName());
+            if (curve)
+            {
+                _boneCurves[bone] = curve;
+                hasCurve = true;
+            }
+        }
+        
+        if (!hasCurve)
         {
-            _boneCurves[bone] = curve;
-            hasCurve = true;
+            CCLOG("warning: no animation finde for the skeleton");
         }
     }
-    if (!hasCurve)
+    else
     {
-        CCLOG("warning: no animation finde for the skeleton");
+        bool hasCurve = false;
+        const std::unordered_map<std::string, Animation3D::Curve*>& boneCurves = _animation->getBoneCurves();
+        for (const auto& iter: boneCurves)
+        {
+            const std::string& name = iter.first;
+            
+            Node* node = nullptr;
+            if (sprite->getName() == name)
+                node = sprite;
+            else
+                node = getChildByNameRecursively(sprite, name);
+
+            if (node)
+            {
+                auto curve = _animation->getBoneCurveByName(name);
+                if (curve)
+                {
+                    _nodeCurves[node] = curve;
+                    hasCurve = true;
+                }
+            }
+        }
+        
+        if (!hasCurve)
+        {
+            CCLOG("warning: no key frame animation for node!!");
+        }
     }
     
     auto runningAction = s_runningAnimates.find(sprite);
@@ -206,25 +259,58 @@ void Animate3D::update(float t)
                 t = 1 - t;
             
             t = _start + t * _last;
-            for (const auto& it : _boneCurves) {
-                auto bone = it.first;
-                auto curve = it.second;
-                if (curve->translateCurve)
+            
+            Sprite3D* sprite = static_cast<Sprite3D*>(_target);
+            auto skeleton = sprite->getSkeleton();
+            if (skeleton->getBoneCount() > 0)
+            {
+                for (const auto& it : _boneCurves)
                 {
-                    curve->translateCurve->evaluate(t, transDst, EvaluateType::INT_LINEAR);
-                    trans = &transDst[0];
+                    auto bone = it.first;
+                    auto curve = it.second;
+                    if (curve->translateCurve)
+                    {
+                        curve->translateCurve->evaluate(t, transDst, EvaluateType::INT_LINEAR);
+                        trans = &transDst[0];
+                    }
+                    if (curve->rotCurve)
+                    {
+                        curve->rotCurve->evaluate(t, rotDst, EvaluateType::INT_QUAT_SLERP);
+                        rot = &rotDst[0];
+                    }
+                    if (curve->scaleCurve)
+                    {
+                        curve->scaleCurve->evaluate(t, scaleDst, EvaluateType::INT_LINEAR);
+                        scale = &scaleDst[0];
+                    }
+                    bone->setAnimationValue(trans, rot, scale, this, _weight);
                 }
-                if (curve->rotCurve)
+            }
+            else
+            {
+                for (const auto& it : _nodeCurves)
                 {
-                    curve->rotCurve->evaluate(t, rotDst, EvaluateType::INT_QUAT_SLERP);
-                    rot = &rotDst[0];
+                    auto node = it.first;
+                    auto curve = it.second;
+                    Mat4 transform;
+                    if (curve->translateCurve)
+                    {
+                        curve->translateCurve->evaluate(t, transDst, EvaluateType::INT_LINEAR);
+                        transform.translate(transDst[0], transDst[1], transDst[2]);
+                    }
+                    if (curve->rotCurve)
+                    {
+                        curve->rotCurve->evaluate(t, rotDst, EvaluateType::INT_QUAT_SLERP);
+                        Quaternion qua(rotDst[0], rotDst[1], rotDst[2], rotDst[3]);
+                        transform.rotate(qua);
+                    }
+                    if (curve->scaleCurve)
+                    {
+                        curve->scaleCurve->evaluate(t, scaleDst, EvaluateType::INT_LINEAR);
+                        transform.scale(scaleDst[0], scaleDst[1], scaleDst[2]);
+                    }
+                    node->setAdditionalTransform(&transform);
                 }
-                if (curve->scaleCurve)
-                {
-                    curve->scaleCurve->evaluate(t, scaleDst, EvaluateType::INT_LINEAR);
-                    scale = &scaleDst[0];
-                }
-                bone->setAnimationValue(trans, rot, scale, this, _weight);
             }
         }
     }
