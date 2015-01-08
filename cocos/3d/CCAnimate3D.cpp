@@ -107,7 +107,7 @@ Node* getChildByNameRecursively(Node* parent, const std::string &childName)
     {
         const std::string& name = child->getName();
         if (name == childName)
-            return static_cast<Sprite3D*>(child);
+            return child;
         else
             getChildByNameRecursively(child, childName);
     }
