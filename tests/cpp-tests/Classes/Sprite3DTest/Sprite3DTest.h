@@ -446,6 +446,17 @@ protected:
     float              _accAngle;
 };
 
+class NodeFrameAnimationTest : public Sprite3DTestDemo
+{
+public:
+    CREATE_FUNC(NodeFrameAnimationTest);
+    NodeFrameAnimationTest();
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+    
+    void addNewSpriteWithCoords(Vec2 p);
+};
+
 class Sprite3DTestScene : public TestScene
 {
 public:

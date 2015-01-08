@@ -68,7 +68,8 @@ static std::function<Layer*()> createFunctions[] =
     CL(Sprite3DReskinTest),
     CL(Sprite3DWithOBBPerfromanceTest),
     CL(Sprite3DMirrorTest),
-    CL(QuaternionTest)
+    CL(QuaternionTest),
+    CL(NodeFrameAnimationTest)
 };
 
 #define MAX_LAYER    (sizeof(createFunctions) / sizeof(createFunctions[0]))
@@ -2080,3 +2081,41 @@ void QuaternionTest::update(float delta)
     Quaternion::createFromAxisAngle(Vec3(0.f, 0.f, 1.f), _accAngle - pi * 0.5f, &quat);
     _sprite->setRotationQuat(quat);
 }
+
+/////////////////////////////////////////////
+// KeyFrameAnimate
+NodeFrameAnimationTest::NodeFrameAnimationTest()
+{
+    auto s = Director::getInstance()->getWinSize();
+    addNewSpriteWithCoords(Vec2(s.width / 2.f, s.height / 2.f));
+}
+std::string NodeFrameAnimationTest::title() const
+{
+    return "Node Frame Animation Test";
+}
+std::string NodeFrameAnimationTest::subtitle() const
+{
+    return "Jumping Ball";
+}
+
+void NodeFrameAnimationTest::addNewSpriteWithCoords(Vec2 p)
+{
+    auto s = Director::getInstance()->getWinSize();
+    
+    std::string fileName = "Sprite3DTest/ball.c3b";
+    auto sprite = Sprite3D::create(fileName);
+    sprite->setTexture("Sprite3DTest/teapot.png");
+    sprite->setScale(0.4f);
+    sprite->setPosition(Vec2(s.width / 2.f, s.height / 4.f));
+    
+    // play key frame animation
+    auto animation = Animation3D::create(fileName);
+    if (animation)
+    {
+        auto animate = Animate3D::create(animation);
+        sprite->runAction(RepeatForever::create(animate));
+    }
+    
+    addChild(sprite);
+}
+
