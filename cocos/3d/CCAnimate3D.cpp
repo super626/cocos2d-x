@@ -109,7 +109,7 @@ Node* getChildByNameRecursively(Node* parent, const std::string &childName)
         if (name == childName)
             return child;
         else
-            getChildByNameRecursively(child, childName);
+            return getChildByNameRecursively(child, childName);
     }
     return nullptr;
 }
