@@ -98,18 +98,20 @@ Animate3D* Animate3D::reverse() const
 }
 
 /**
- * get child by name recursively
+ * find child by name recursively
  */
-Node* getChildByNameRecursively(Node* parent, const std::string &childName)
+Node* findChildByNameRecursively(Node* node, const std::string &childName)
 {
-    const Vector<Node*>& children = parent->getChildren();
+    const std::string& name = node->getName();
+    if (name == childName)
+        return node;
+    
+    const Vector<Node*>& children = node->getChildren();
     for (const auto& child : children)
     {
-        const std::string& name = child->getName();
-        if (name == childName)
-            return child;
-        else
-            return getChildByNameRecursively(child, childName);
+        Node* findNode = findChildByNameRecursively(child, childName);
+        if (findNode)
+            return findNode;
     }
     return nullptr;
 }
@@ -156,7 +158,7 @@ void Animate3D::startWithTarget(Node *target)
             if (sprite->getName() == name)
                 node = sprite;
             else
-                node = getChildByNameRecursively(sprite, name);
+                node = findChildByNameRecursively(sprite, name);
 
             if (node)
             {
