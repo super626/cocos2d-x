@@ -2105,8 +2105,8 @@ void NodeFrameAnimationTest::addNewSpriteWithCoords(Vec2 p)
     std::string fileName = "Sprite3DTest/ball.c3b";
     auto sprite = Sprite3D::create(fileName);
     sprite->setTexture("Sprite3DTest/teapot.png");
-    sprite->setScale(0.4f);
-    sprite->setPosition(Vec2(s.width / 2.f, s.height / 4.f));
+    sprite->setScale(3);
+    sprite->setPosition(Vec2(s.width / 2.f, s.height / 3.f));
     
     // play key frame animation
     auto animation = Animation3D::create(fileName);
