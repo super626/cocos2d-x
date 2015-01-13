@@ -125,13 +125,14 @@ void Animate3D::startWithTarget(Node *target)
     _nodeCurves.clear();
     
     bool hasCurve = false;
-    const std::unordered_map<std::string, Animation3D::Curve*>& boneCurves = _animation->getBoneCurves();
-    for (const auto& iter: boneCurves)
+    
+    Sprite3D* sprite = dynamic_cast<Sprite3D*>(target);
+    if(sprite)
     {
-        const std::string& boneName = iter.first;
-        Sprite3D* sprite = dynamic_cast<Sprite3D*>(target);
-        if(sprite)
+        const std::unordered_map<std::string, Animation3D::Curve*>& boneCurves = _animation->getBoneCurves();
+        for (const auto& iter: boneCurves)
         {
+            const std::string& boneName = iter.first;
             auto skin = sprite->getSkeleton();
             auto bone = skin->getBoneByName(boneName);
             if (bone)
@@ -159,8 +160,13 @@ void Animate3D::startWithTarget(Node *target)
                 }
             }
         }
-        else
+    }
+    else
+    {
+        const std::unordered_map<std::string, Animation3D::Curve*>& boneCurves = _animation->getBoneCurves();
+        for (const auto& iter: boneCurves)
         {
+            const std::string& boneName = iter.first;
             Node* node = nullptr;
             if (target->getName() == boneName)
                 node = target;
@@ -176,6 +182,7 @@ void Animate3D::startWithTarget(Node *target)
                     hasCurve = true;
                 }
             }
+
         }
     }
     
