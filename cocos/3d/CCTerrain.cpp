@@ -12,22 +12,24 @@ USING_NS_CC;
 #define MAP_HEIGHT 1
 
 static const char * vertex_shader = "\
-                                    attribute vec4 a_position;\
-                                    attribute vec2 a_texCoord;\
-                                    attribute vec3 a_normal;\
-                                    \n#ifdef GL_ES\n\
-                                    varying mediump vec2 v_texCoord;\
-                                    \n#else\n\
-                                    varying vec2 v_texCoord;\
-                                    varying vec3 v_normal;\
-                                    \n#endif\n\
-                                    void main()\
-                                    {\
-                                    gl_Position = CC_MVPMatrix * a_position;\
-                                    v_texCoord = a_texCoord;\
-                                    v_normal = a_normal;\
-                                    }\
-                                    "; 
+attribute vec4 a_position;\
+attribute vec2 a_texCoord;\
+attribute vec3 a_normal;\
+\n#ifdef GL_ES\n\
+varying mediump vec2 v_texCoord;\
+varying mediump vec3 v_normal;\
+\n#else\n\
+varying vec2 v_texCoord;\
+varying vec3 v_normal;\
+\n#endif\n\
+void main()\
+{\
+gl_Position = CC_MVPMatrix * a_position;\
+v_texCoord = a_texCoord;\
+v_normal = a_normal;\
+}\
+";
+ 
 static const char * fragment_shader ="\n#ifdef GL_ES\n\
 precision lowp float;\
 \n#endif\n\
@@ -45,7 +47,7 @@ void main()\
     {\
     vec3 light_direction = vec3(-1,-1,0);\
     float lightFactor = dot(-light_direction,v_normal);\
-    if(!u_has_alpha)\
+    if(u_has_alpha<=0)\
     {\
     gl_FragColor =  texture2D(u_texture0, v_texCoord)*lightFactor;\
     }else\
@@ -55,7 +57,7 @@ void main()\
     color = texture2D(u_texture0, v_texCoord*u_detailSize[0])*blendFactor.r +\
     texture2D(u_texture1, v_texCoord*u_detailSize[1])*blendFactor.g + texture2D(u_texture2, v_texCoord*u_detailSize[2])*blendFactor.b;\n\
     float grayFactor =dot(blendFactor.rgb, vec3(1, 1, 1));\
-    color +=texture2D(u_texture3, v_texCoord*u_detailSize[3])*(1-grayFactor);\
+    color +=texture2D(u_texture3, v_texCoord*u_detailSize[3])*(1.0-grayFactor);\
     gl_FragColor = color*lightFactor;\
     }\
 }";
@@ -184,7 +186,6 @@ void cocos2d::Terrain::initHeightMap(const char * heightMap)
     int chunk_amount_x = imageWidth/_chunkSize.width;
     loadVertices();
     calculateNormal();
-  
 
     for(int m =0;m<chunk_amount_y;m++)
     {
@@ -604,7 +605,6 @@ void cocos2d::Terrain::Chunk::updateIndices()
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,vbo[1]);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(GLushort)*_lod[_currentLod].indices.size(),&_lod[_currentLod].indices[0],GL_STATIC_DRAW);
         }
-
 }
 
 void cocos2d::Terrain::Chunk::calculateAABB()
