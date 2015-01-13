@@ -121,9 +121,9 @@ protected:
     std::unordered_map<Node*, Animation3D::Curve*> _nodeCurves;
 
     //sprite animates
-    static std::unordered_map<Sprite3D*, Animate3D*> s_fadeInAnimates;
-    static std::unordered_map<Sprite3D*, Animate3D*> s_fadeOutAnimates;
-    static std::unordered_map<Sprite3D*, Animate3D*> s_runningAnimates;
+    static std::unordered_map<Node*, Animate3D*> s_fadeInAnimates;
+    static std::unordered_map<Node*, Animate3D*> s_fadeOutAnimates;
+    static std::unordered_map<Node*, Animate3D*> s_runningAnimates;
 };
 
 NS_CC_END
