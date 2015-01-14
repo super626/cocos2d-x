@@ -31,6 +31,7 @@
 #include "3d/CCRay.h"
 #include "3d/CCSprite3D.h"
 #include "renderer/CCVertexIndexBuffer.h"
+#include "3d/CCTerrain.h"
 #include "DrawNode3D.h"
 
 #include <algorithm>
@@ -58,6 +59,7 @@ static std::function<Layer*()> createFunctions[] =
     CL(Sprite3DFakeShadowTest),
     CL(Sprite3DBasicToonShaderTest),
     CL(Sprite3DLightMapTest),
+    CL(Sprite3DTerrainTest),
 #endif
     CL(Sprite3DWithSkinTest),
 #if (CC_TARGET_PLATFORM != CC_PLATFORM_WP8) && (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT)
@@ -2079,4 +2081,58 @@ void QuaternionTest::update(float delta)
     Quaternion quat;
     Quaternion::createFromAxisAngle(Vec3(0.f, 0.f, 1.f), _accAngle - pi * 0.5f, &quat);
     _sprite->setRotationQuat(quat);
+}
+
+Sprite3DTerrainTest::Sprite3DTerrainTest()
+{
+    Size visibleSize = Director::getInstance()->getVisibleSize();
+    //use custom camera
+    _camera = Camera::createPerspective(60,visibleSize.width/visibleSize.height,0.1,500);
+    _camera->setCameraFlag(CameraFlag::USER1);
+    _camera->setPosition3D(Vec3(0,30,0));
+    addChild(_camera);
+    auto teraindata =new Terrain::TerrainData("Sprite3DTest/heightmap16.jpg","Sprite3DTest/sand.jpg");
+    auto terrain = Terrain::create(*teraindata);
+    terrain->setCameraMask(2);
+    terrain->setScale(30);
+    addChild(terrain);
+    //terrain->setDrawWire(true);
+    auto listener = EventListenerTouchAllAtOnce::create();
+    listener->onTouchesMoved = CC_CALLBACK_2(Sprite3DTerrainTest::onTouchesMoved, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+}
+
+std::string Sprite3DTerrainTest::title() const 
+{
+    return "Terrain Test";
+}
+
+std::string Sprite3DTerrainTest::subtitle() const 
+{
+    return "A Terrain With Levels Of Detail";
+}
+
+void Sprite3DTerrainTest::onTouchesMoved(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event)
+{
+    if(touches.size()==1){
+        float speed = 3;
+        float delta = Director::getInstance()->getDeltaTime();
+        auto touch = touches[0];
+        auto location = touch->getLocation();
+        auto PreviousLocation = touch->getPreviousLocation();
+        Point newPos = PreviousLocation - location;
+
+        Vec3 cameraDir;
+        Vec3 cameraRightDir;
+        _camera->getNodeToWorldTransform().getForwardVector(&cameraDir);
+        cameraDir.normalize();
+        cameraDir.y=0;
+        _camera->getNodeToWorldTransform().getRightVector(&cameraRightDir);
+        cameraRightDir.normalize();
+        cameraRightDir.y=0;
+        Vec3 cameraPos=  _camera->getPosition3D();
+        cameraPos+=cameraDir*newPos.y*speed*delta;  
+        cameraPos+=cameraRightDir*newPos.x*speed*delta;
+        _camera->setPosition3D(cameraPos);   
+    }
 }

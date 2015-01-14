@@ -453,4 +453,15 @@ public:
     virtual void runThisTest();
 };
 
+class Sprite3DTerrainTest : public Sprite3DTestDemo
+{
+public:
+    CREATE_FUNC(Sprite3DTerrainTest);
+    Sprite3DTerrainTest();
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+protected:
+    void onTouchesMoved(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event);
+    Camera *_camera;
+};
 #endif
