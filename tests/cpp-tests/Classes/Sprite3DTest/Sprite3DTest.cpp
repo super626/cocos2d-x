@@ -2096,7 +2096,7 @@ Sprite3DTerrainTest::Sprite3DTerrainTest()
     terrain->setCameraMask(2);
     terrain->setScale(30);
     addChild(terrain);
-
+    //terrain->setDrawWire(true);
     auto listener = EventListenerTouchAllAtOnce::create();
     listener->onTouchesMoved = CC_CALLBACK_2(Sprite3DTerrainTest::onTouchesMoved, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
@@ -2109,7 +2109,7 @@ std::string Sprite3DTerrainTest::title() const
 
 std::string Sprite3DTerrainTest::subtitle() const 
 {
-    return " ";
+    return "A Terrain With Levels Of Detail";
 }
 
 void Sprite3DTerrainTest::onTouchesMoved(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event)
