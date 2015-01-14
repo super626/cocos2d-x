@@ -29,9 +29,9 @@
 
 NS_CC_BEGIN
 
-std::unordered_map<Sprite3D*, Animate3D*> Animate3D::s_fadeInAnimates;
-std::unordered_map<Sprite3D*, Animate3D*> Animate3D::s_fadeOutAnimates;
-std::unordered_map<Sprite3D*, Animate3D*> Animate3D::s_runningAnimates;
+std::unordered_map<Node*, Animate3D*> Animate3D::s_fadeInAnimates;
+std::unordered_map<Node*, Animate3D*> Animate3D::s_fadeOutAnimates;
+std::unordered_map<Node*, Animate3D*> Animate3D::s_runningAnimates;
 float      Animate3D::_transTime = 0.1f;
 
 //create Animate3D using Animation.
@@ -97,45 +97,114 @@ Animate3D* Animate3D::reverse() const
     return animate;
 }
 
+/**
+ * find child by name recursively
+ */
+Node* findChildByNameRecursively(Node* node, const std::string &childName)
+{
+    const std::string& name = node->getName();
+    if (name == childName)
+        return node;
+    
+    const Vector<Node*>& children = node->getChildren();
+    for (const auto& child : children)
+    {
+        Node* findNode = findChildByNameRecursively(child, childName);
+        if (findNode)
+            return findNode;
+    }
+    return nullptr;
+}
+
 //! called before the action start. It will also set the target.
 void Animate3D::startWithTarget(Node *target)
 {
-    Sprite3D* sprite = dynamic_cast<Sprite3D*>(target);
-    CCASSERT(sprite && sprite->getSkeleton() && _animation, "Animate3D apply to Sprite3D only");
-    
     ActionInterval::startWithTarget(target);
     
     _boneCurves.clear();
-    auto skin = sprite->getSkeleton();
+    _nodeCurves.clear();
+    
     bool hasCurve = false;
-    for (unsigned int  i = 0; i < skin->getBoneCount(); i++) {
-        auto bone = skin->getBoneByIndex(i);
-        auto curve = _animation->getBoneCurveByName(bone->getName());
-        if (curve)
+    
+    Sprite3D* sprite = dynamic_cast<Sprite3D*>(target);
+    if(sprite)
+    {
+        const std::unordered_map<std::string, Animation3D::Curve*>& boneCurves = _animation->getBoneCurves();
+        for (const auto& iter: boneCurves)
         {
-            _boneCurves[bone] = curve;
-            hasCurve = true;
+            const std::string& boneName = iter.first;
+            auto skin = sprite->getSkeleton();
+            auto bone = skin->getBoneByName(boneName);
+            if (bone)
+            {
+                auto curve = _animation->getBoneCurveByName(boneName);
+                _boneCurves[bone] = curve;
+                hasCurve = true;
+            }
+            else
+            {
+                Node* node = nullptr;
+                if (target->getName() == boneName)
+                    node = target;
+                else
+                    node = findChildByNameRecursively(target, boneName);
+                
+                if (node)
+                {
+                    auto curve = _animation->getBoneCurveByName(boneName);
+                    if (curve)
+                    {
+                        _nodeCurves[node] = curve;
+                        hasCurve = true;
+                    }
+                }
+            }
         }
     }
-    if (!hasCurve)
+    else
     {
-        CCLOG("warning: no animation finde for the skeleton");
+        const std::unordered_map<std::string, Animation3D::Curve*>& boneCurves = _animation->getBoneCurves();
+        for (const auto& iter: boneCurves)
+        {
+            const std::string& boneName = iter.first;
+            Node* node = nullptr;
+            if (target->getName() == boneName)
+                node = target;
+            else
+                node = findChildByNameRecursively(target, boneName);
+            
+            if (node)
+            {
+                auto curve = _animation->getBoneCurveByName(boneName);
+                if (curve)
+                {
+                    _nodeCurves[node] = curve;
+                    hasCurve = true;
+                }
+            }
+
+        }
     }
     
-    auto runningAction = s_runningAnimates.find(sprite);
+    if (!hasCurve)
+    {
+        CCLOG("warning: no key frame animation for node!!");
+    }
+    
+    auto runningAction = s_runningAnimates.find(target);
     if (runningAction != s_runningAnimates.end())
     {
         //make the running action fade out
         auto action = (*runningAction).second;
         if (action != this)
         {
-            s_fadeOutAnimates[sprite] = action;
+            s_fadeOutAnimates[target] = action;
             action->_state = Animate3D::Animate3DState::FadeOut;
             action->_accTransTime = 0.0f;
             action->_weight = 1.0f;
             action->_lastTime = 0.f;
             
-            s_fadeInAnimates[sprite] = this;
+            s_fadeInAnimates[target] = this;
             _accTransTime = 0.0f;
             _state = Animate3D::Animate3DState::FadeIn;
             _weight = 0.f;
@@ -144,7 +213,7 @@ void Animate3D::startWithTarget(Node *target)
     }
     else
     {
-        s_runningAnimates[sprite] = this;
+        s_runningAnimates[target] = this;
         _state = Animate3D::Animate3DState::Running;
         _weight = 1.0f;
     }
@@ -206,7 +275,9 @@ void Animate3D::update(float t)
                 t = 1 - t;
             
             t = _start + t * _last;
-            for (const auto& it : _boneCurves) {
+            
+            for (const auto& it : _boneCurves)
+            {
                 auto bone = it.first;
                 auto curve = it.second;
                 if (curve->translateCurve)
@@ -225,6 +296,30 @@ void Animate3D::update(float t)
                     scale = &scaleDst[0];
                 }
                 bone->setAnimationValue(trans, rot, scale, this, _weight);
+            }
+
+            for (const auto& it : _nodeCurves)
+            {
+                auto node = it.first;
+                auto curve = it.second;
+                Mat4 transform;
+                if (curve->translateCurve)
+                {
+                    curve->translateCurve->evaluate(t, transDst, EvaluateType::INT_LINEAR);
+                    transform.translate(transDst[0], transDst[1], transDst[2]);
+                }
+                if (curve->rotCurve)
+                {
+                    curve->rotCurve->evaluate(t, rotDst, EvaluateType::INT_QUAT_SLERP);
+                    Quaternion qua(rotDst[0], rotDst[1], rotDst[2], rotDst[3]);
+                    transform.rotate(qua);
+                }
+                if (curve->scaleCurve)
+                {
+                    curve->scaleCurve->evaluate(t, scaleDst, EvaluateType::INT_LINEAR);
+                    transform.scale(scaleDst[0], scaleDst[1], scaleDst[2]);
+                }
+                node->setAdditionalTransform(&transform);
             }
         }
     }
