@@ -143,11 +143,7 @@ void Animate3D::startWithTarget(Node *target)
             }
             else
             {
-                Node* node = nullptr;
-                if (target->getName() == boneName)
-                    node = target;
-                else
-                    node = findChildByNameRecursively(target, boneName);
+                auto node = findChildByNameRecursively(target, boneName);;
                 
                 if (node)
                 {
@@ -167,11 +163,7 @@ void Animate3D::startWithTarget(Node *target)
         for (const auto& iter: boneCurves)
         {
             const std::string& boneName = iter.first;
-            Node* node = nullptr;
-            if (target->getName() == boneName)
-                node = target;
-            else
-                node = findChildByNameRecursively(target, boneName);
+            auto node = findChildByNameRecursively(target, boneName);
             
             if (node)
             {
