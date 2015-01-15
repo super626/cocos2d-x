@@ -8,9 +8,7 @@ USING_NS_CC;
 #include "renderer/CCGLProgramStateCache.h"
 #include "renderer/ccGLStateCache.h"
 #include "2d/CCCamera.h"
-#define MAP_SCALE 0.1
-#define MAP_HEIGHT 1
-
+#include <stdlib.h>
 static const char * vertex_shader = "\
 attribute vec4 a_position;\
 attribute vec2 a_texCoord;\
@@ -103,12 +101,13 @@ Terrain * cocos2d::Terrain::create(TerrainData &parameter)
 bool cocos2d::Terrain::init()
 {
     _lodDistance[0]=96;
-    _lodDistance[1]=192;
-    _lodDistance[2]=294;
+    _lodDistance[1]=288;
+    _lodDistance[2]=480;
     auto shader = GLProgram::createWithByteArrays(vertex_shader,fragment_shader);
     auto state = GLProgramState::create(shader);
     setGLProgramState(state);
     setDrawWire(false);
+    setIsEnableFrustumCull(true);
     return true;
 }
 
@@ -346,6 +345,18 @@ void cocos2d::Terrain::setDrawWire(bool bool_value)
     _isDrawWire = bool_value;
 }
 
+void cocos2d::Terrain::setLODDistance(float lod_1,float lod_2,float lod_3)
+{
+    _lodDistance[0] = lod_1;
+    _lodDistance[1] = lod_2;
+    _lodDistance[2] = lod_3;
+}
+
+void cocos2d::Terrain::setIsEnableFrustumCull(bool bool_value)
+{
+    _isEnableFrustumCull = bool_value;
+}
+
 void cocos2d::Terrain::Chunk::finish()
 {
     //genearate two VBO ,the first for vertices, we just setup datas once ,won't changed at all
@@ -354,9 +365,11 @@ void cocos2d::Terrain::Chunk::finish()
 
     //only set for vertices vbo
     glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(TerrainVertexData)*vertices.size(), &vertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(TerrainVertexData)*vertices.size(), &vertices[0], GL_STREAM_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER,0);
+
+    calculateSlope();
 }
 
 void cocos2d::Terrain::Chunk::bindAndDraw()
@@ -372,6 +385,7 @@ void cocos2d::Terrain::Chunk::bindAndDraw()
 #endif
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+    updateVerticesForLOD();
     updateIndices();
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,vbo[1]);
     GL::enableVertexAttribs(GL::VERTEX_ATTRIB_FLAG_POSITION | GL::VERTEX_ATTRIB_FLAG_TEX_COORD| GL::VERTEX_ATTRIB_FLAG_NORMAL);
@@ -430,18 +444,13 @@ void cocos2d::Terrain::Chunk::updateIndices()
             ||(back&&back->_currentLod > _currentLod) || (front && front->_currentLod > _currentLod))
             //need update indices.
         {
-         //四周要比此处要粗糙，将此处缩小一圈
+         //t-junction inner 
             _lod[_currentLod].indices.clear();
             for(int i =step;i<gridY-step;i+=step)
             {
                 for(int j = step;j<gridX-step;j+=step)
-                { 
+                {  
                     int nLocIndex = i * (gridX+1) + j;
-                        if(nLocIndex>65535)
-                        {
-                            int a = 3;
-                            a++;
-                        } 
                     _lod[_currentLod].indices.push_back (nLocIndex);
                     _lod[_currentLod].indices.push_back (nLocIndex + step * (gridX+1));
                     _lod[_currentLod].indices.push_back (nLocIndex + step);
@@ -449,11 +458,13 @@ void cocos2d::Terrain::Chunk::updateIndices()
                     _lod[_currentLod].indices.push_back (nLocIndex + step);
                     _lod[_currentLod].indices.push_back (nLocIndex + step * (gridX+1));
                     _lod[_currentLod].indices.push_back (nLocIndex + step * (gridX+1) + step);
+FINISH_INNER_INDICES_SET:
+;
                 }
             }
-            //开始缝补裂缝~~~~
+            //fix T-crack
             int next_step = int(powf(2.0f, float(_currentLod+1)));
-            if(left&&left->_currentLod > _currentLod)//左侧填补
+            if(left&&left->_currentLod > _currentLod)//left
             {
                 for(int i =0;i<gridY;i+=next_step)
                 {
@@ -469,10 +480,9 @@ void cocos2d::Terrain::Chunk::updateIndices()
                         _lod[_currentLod].indices.push_back((i+next_step)*(gridX+1));
                         _lod[_currentLod].indices.push_back((i+next_step)*(gridX+1)+step);
                 }
-            }else{//不需要填补，随便画~
+            }else{
                 int start=0;
                 int end =gridY;
-                //为了防止重复画，我们需要考虑邻侧的边缘是否填补
                 if(front&&front->_currentLod > _currentLod) end -=step;
                 if(back&&back->_currentLod > _currentLod) start +=step;
                 for(int i =start;i<end;i+=step)
@@ -487,7 +497,7 @@ void cocos2d::Terrain::Chunk::updateIndices()
                 }
                 }
 
-            if(right&&right->_currentLod > _currentLod)//右侧填补
+            if(right&&right->_currentLod > _currentLod)//LEFT
             {
                 for(int i =0;i<gridY;i+=next_step)
                 {
@@ -506,7 +516,6 @@ void cocos2d::Terrain::Chunk::updateIndices()
             }else{
                 int start=0;
                 int end =gridY;
-                //为了防止重复画，我们需要考虑邻侧的边缘是否填补
                 if(front&&front->_currentLod > _currentLod) end -=step;
                 if(back&&back->_currentLod > _currentLod) start +=step;
                 for(int i =start;i<end;i+=step)
@@ -521,7 +530,7 @@ void cocos2d::Terrain::Chunk::updateIndices()
                 }
         }
 
-            if(front&&front->_currentLod > _currentLod)//前侧填补
+            if(front&&front->_currentLod > _currentLod)//front
             {
                 for(int i =0;i<gridX;i+=next_step)
                 {
@@ -539,8 +548,6 @@ void cocos2d::Terrain::Chunk::updateIndices()
                 }
             }else
             {
-                //这里我们不需要考虑邻侧是否被填补，因为无论其是否被填补，
-                //角落部分都已经被绘制(因为上面判断左右侧的代码)，所以起点和终点需要各回退一格
                 for(int i =step;i<gridX-step;i+=step)
                 {
                     _lod[_currentLod].indices.push_back((gridY-step)*(gridX+1)+i);
@@ -552,7 +559,7 @@ void cocos2d::Terrain::Chunk::updateIndices()
                     _lod[_currentLod].indices.push_back(gridY*(gridX+1)+i+step);
                 }
             }
-            if(back&&back->_currentLod > _currentLod)//背侧填补
+            if(back&&back->_currentLod > _currentLod)//back
             {
                 for(int i =0;i<gridX;i+=next_step)
                 {
@@ -569,8 +576,6 @@ void cocos2d::Terrain::Chunk::updateIndices()
                     _lod[_currentLod].indices.push_back(step*(gridX+1) +i+next_step);
                 }
             }else{
-                //这里我们不需要考虑邻侧是否被填补，因为无论其是否被填补，
-                //角落部分都已经被绘制(因为上面判断左右侧的代码)，所以起点和终点需要各回退一格
                 for(int i =step;i<gridX-step;i+=step)
                 {
                     _lod[_currentLod].indices.push_back(i);
@@ -585,7 +590,7 @@ void cocos2d::Terrain::Chunk::updateIndices()
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[1]);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(GLushort)*_lod[_currentLod].indices.size(),&_lod[_currentLod].indices[0],GL_STATIC_DRAW);
         }else{
-            //四周都没有LOD差距，直接使用原始数据
+            //No lod difference, use simple method
             _lod[_currentLod].indices.clear();
             for(int i =0;i<gridY;i+=step)
             {
@@ -615,6 +620,62 @@ void cocos2d::Terrain::Chunk::calculateAABB()
         pos.push_back(vertices[i].position);
     }
     _aabb.updateMinMax(&pos[0],pos.size());
+}
+
+void cocos2d::Terrain::Chunk::calculateSlope()
+{
+    //find max slope
+    auto lowest = vertices[0].position;
+    for(int i = 0;i<vertices.size();i++)
+    {
+        if(vertices[i].position.y< lowest.y)
+        {
+            lowest = vertices[i].position;
+        }
+    }
+    auto highest = vertices[0].position;
+    for(int i = 0;i<vertices.size();i++)
+    {
+        if(vertices[i].position.y> highest.y)
+        {
+            highest = vertices[i].position;
+        }
+    }
+auto a = Vec2(lowest.x,lowest.z);
+auto b = Vec2(highest.x,highest.z);
+float dist = a.distance(b);
+slope = (highest.y - lowest.y)/dist;
+}
+
+void cocos2d::Terrain::Chunk::updateVerticesForLOD()
+{
+vertices_tmp = vertices;
+int gridY = _size.height;
+int gridX = _size.width;
+if(_currentLod>=2 && abs(slope)>1.2)
+{
+    int step = int(powf(2.0f, float(_currentLod)));
+    for(int i =step;i<gridY-step;i+=step)
+        for(int j = step; j<gridX-step;j+=step)
+        {
+            // use linear-sample adjust vertices height
+            float height = 0;
+            float count = 0;
+            for(int n = i-step/2;n<i+step/2;n++)
+            {
+                for(int m = j-step/2;m<j+step/2;m++)
+                {
+                    float weight = (step/2 - abs(n-i))*(step/2 - abs(m-j));
+                    height += vertices[m*(gridX+1)+n].position.y;
+                    count += weight;
+                }
+            }
+            vertices_tmp[i*(gridX+1)+j].position.y = height/count;
+        }
+}
+
+glBufferData(GL_ARRAY_BUFFER, sizeof(TerrainVertexData)*vertices_tmp.size(), &vertices_tmp[0], GL_STREAM_DRAW);
+
 }
 
 cocos2d::Terrain::QuadTree::QuadTree(int x,int y,int width,int height,Terrain * terrain)
@@ -706,7 +767,7 @@ cocos2d::Terrain::TerrainData::TerrainData(const char * heightMapsrc ,const char
     this->alphaMapSrc = NULL;
     this->chunkSize = chunksize;
     this->mapHeight = mapHeight;
-    this->mapScale = mapScale;
+    this->mapScale = mapScale; 
 }
 
 cocos2d::Terrain::TerrainData::TerrainData(const char * heightMapsrc ,const char * alphamap,const DetailMap& detail1,const DetailMap& detail2,const DetailMap& detail3,const DetailMap& detail4,const Size & chunksize,float mapHeight,float mapScale)
@@ -735,6 +796,6 @@ cocos2d::Terrain::DetailMap::DetailMap(const char * detailMapSrc , float size /*
 
 cocos2d::Terrain::DetailMap::DetailMap()
 {
-   detailMapSrc = "";
+   detailMapSrc = ""; 
     detailMapSize = 35;
 }

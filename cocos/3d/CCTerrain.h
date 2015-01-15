@@ -7,7 +7,13 @@
 #include "2d/CCCamera.h"
 #include <vector>
 NS_CC_BEGIN
+
 #define MAX_CHUNKES 256
+
+/*
+ *Terrain 
+ *
+ **/
 class CC_DLL Terrain :public Node{
 public:
      struct CC_DLL DetailMap{
@@ -19,7 +25,7 @@ public:
      struct CC_DLL TerrainData
     {
         TerrainData();
-        TerrainData(const char * heightMapsrc ,const char * textureSrc,const Size & chunksize = Size(32,32),float mapHeight = 1,float mapScale = 0.1);
+        TerrainData(const char * heightMapsrc ,const char * textureSrc,const Size & chunksize = Size(32,32),float mapHeight = 2,float mapScale = 0.1);
         TerrainData(const char * heightMapsrc ,const char * alphamap,const DetailMap& detail1,const DetailMap& detail2,const DetailMap& detail3,const DetailMap& detail4,const Size & chunksize = Size(32,32),float mapHeight = 2,float mapScale = 0.1);
         Size chunkSize;
         std::string heightMapSrc;
@@ -45,6 +51,7 @@ private:
     {
         Chunk();
         std::vector<TerrainVertexData> vertices;
+        
         struct LOD{
         std::vector<GLushort > indices;
         };
@@ -55,6 +62,8 @@ private:
         void calculateAABB();
         void bindAndDraw();
         void finish();
+        void updateVerticesForLOD();
+        void calculateSlope();
         int _currentLod;
         void updateIndices();
         Chunk * left;
@@ -65,6 +74,8 @@ private:
         int pos_y;
         Terrain * _terrain;
         Size _size;
+        std::vector<TerrainVertexData> vertices_tmp;
+        float slope;
     };
     struct QuadTree
     {
@@ -98,6 +109,8 @@ public:
     float getHeight(Vec3 pos);  
     float getImageHeight(int pixel_x,int pixel_y);
     void setDrawWire(bool bool_value);
+    void setLODDistance(float lod_1,float lod_2,float lod_3);
+    void setIsEnableFrustumCull(bool bool_value);
 private:
     Terrain();
     void onDraw(const Mat4 &transform, uint32_t flags);
@@ -121,7 +134,7 @@ private:
     int imageWidth;
     int imageHeight;
     Size _chunkSize;
+    bool _isEnableFrustumCull;
 };
-
 NS_CC_END
 #endif
