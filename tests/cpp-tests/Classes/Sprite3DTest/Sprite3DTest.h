@@ -455,6 +455,9 @@ public:
     virtual std::string subtitle() const override;
     
     void addNewSpriteWithCoords(Vec2 p);
+protected:
+    std::vector<Sprite3D*> _sprites;
+    int _vectorIndex;
 };
 
 class Sprite3DTestScene : public TestScene
