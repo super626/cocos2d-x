@@ -116,6 +116,12 @@ PUParticle3D::PUParticle3D():
     depthInWorld(depth)
 {
 }
+
+PUParticle3D::~PUParticle3D()
+{
+
+}
+
 //-----------------------------------------------------------------------
 
 const float PUParticleSystem3D::DEFAULT_WIDTH = 50;
