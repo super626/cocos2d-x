@@ -1319,6 +1319,14 @@
     <ClCompile Include="..\ui\shaders\UIShaders.cpp">
       <Filter>ui\shaders</Filter>
     </ClCompile>
+    <ClCompile Include="..\3d\CCFrustum.cpp" />
+    <ClCompile Include="..\3d\CCPlane.cpp" />
+    <ClCompile Include="..\3d\CCTextureCube.cpp">
+      <Filter>3d</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3d\CCSkybox.cpp">
+      <Filter>3d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\physics\CCPhysicsBody.h">
@@ -2576,6 +2584,14 @@
     </ClInclude>
     <ClInclude Include="..\ui\shaders\UIShaders.h">
       <Filter>ui\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3d\CCFrustum.h" />
+    <ClInclude Include="..\3d\CCPlane.h" />
+    <ClInclude Include="..\3d\CCTextureCube.h">
+      <Filter>3d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3d\CCSkybox.h">
+      <Filter>3d</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
