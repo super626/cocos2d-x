@@ -70,7 +70,8 @@ static std::function<Layer*()> createFunctions[] =
     CL(Sprite3DMirrorTest),
     CL(QuaternionTest),
     CL(Sprite3DEmptyTest),
-    CL(UseCaseSprite3D)
+    CL(UseCaseSprite3D),
+    CL(DrawGeometryTest)
 };
 
 #define MAX_LAYER    (sizeof(createFunctions) / sizeof(createFunctions[0]))
@@ -2285,4 +2286,71 @@ void UseCaseSprite3D::update(float delta)
         circle->setPositionX(x);
         circle->setPositionZ(z);
     }
+}
+
+DrawGeometryTest::DrawGeometryTest()
+    : _layer3D(nullptr)
+    , _camera(nullptr)
+{
+
+}
+std::string DrawGeometryTest::title() const
+{
+    return "Draw Geometry Test";
+}
+std::string DrawGeometryTest::subtitle() const
+{
+    return "";
+}
+void DrawGeometryTest::onExit()
+{
+    BaseTest::onExit();
+    if (_camera)
+    {
+        _camera = nullptr;
+    }
+}
+void DrawGeometryTest::onEnter()
+{
+    BaseTest::onEnter();
+    auto s = Director::getInstance()->getWinSize();
+    auto layer3D=Layer::create();
+    addChild(layer3D,0);
+    _layer3D=layer3D;
+
+    if (_camera == nullptr)
+    {
+        _camera=Camera::createPerspective(60, (GLfloat)s.width/s.height, 1, 1000);
+        _camera->setCameraFlag(CameraFlag::USER1);
+        _layer3D->addChild(_camera);
+        _camera->setPosition3D(Vec3(0, 50, 50));
+        _camera->lookAt(Vec3(0,0,0));
+    }
+
+    Vec3 points[4] = {Vec3(-50,0,-10),Vec3(-30,0,-10),Vec3(-30,0,10),Vec3(-50,0,10)};
+    DrawGeometry* slice =DrawGeometry::create();
+    slice->setTexture("Sprite3DTest/dragon.png");
+    slice->drawSlice(points,Color4F(1,0,0,1));
+    _layer3D->addChild(slice);
+
+    Vec3 corners[8] = {Vec3(-20,10,0),Vec3(-10,10,0),Vec3(-10,0,0),Vec3(-20,0,0),Vec3(-20,0,-10),Vec3(-10,0,-10),Vec3(-10,10,-10),Vec3(-20,10,-10)};
+    DrawGeometry* Cube = DrawGeometry::create();
+    Cube->setTexture("Sprite3DTest/dragon.png");
+    Cube->drawCube(corners,Color4F(0,1,0,1));
+    _layer3D->addChild(Cube);
+
+    DrawGeometry* sphere =DrawGeometry::create();
+    sphere->setTexture("Sprite3DTest/dragon.png");
+    sphere->drawSphere(Vec3(20,0,0),10,50,50,Color4F(0,0,1,1));
+    _layer3D->addChild(sphere);
+
+    DrawGeometry* cylinder =DrawGeometry::create();
+    cylinder->setTexture("Sprite3DTest/dragon.png");
+    cylinder->drawCylinder(5,10,10,20,Color4F(1,1,0,1));
+    _layer3D->addChild(cylinder);
+    cylinder->setRotation3D(Vec3(0,0,90));
+
+    _layer3D->setCameraMask(2);
+
+
 }

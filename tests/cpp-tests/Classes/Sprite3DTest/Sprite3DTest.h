@@ -27,6 +27,7 @@
 
 #include "../testBasic.h"
 #include "../BaseTest.h"
+#include "../Sprite3DTest/DrawGeometry.h"
 #include <string>
 
 namespace cocos2d {
@@ -36,6 +37,7 @@ namespace cocos2d {
     class Ray;
     class DrawNode3D;
     class GLProgramState;
+    class DrawGeometry;
 }
 
 class Sprite3DTestDemo : public BaseTest
@@ -480,6 +482,22 @@ protected:
     cocos2d::Label*      _label;
     int                  _caseIdx; // use case index
     std::string          _useCaseTitles[(int)USECASE::MAX_CASE_NUM];
+};
+
+class DrawGeometryTest : public Sprite3DTestDemo
+{
+public:
+    CREATE_FUNC(DrawGeometryTest);
+    DrawGeometryTest();
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+    
+    virtual void onEnter() override;
+    virtual void onExit() override;
+
+protected:
+    Layer*       _layer3D;
+    Camera*      _camera;
 };
 
 class Sprite3DTestScene : public TestScene
