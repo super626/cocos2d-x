@@ -909,6 +909,9 @@
     <ClCompile Include="..\Classes\AllocatorTest\AllocatorTest.cpp">
       <Filter>Classes\AllocatorTest</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Sprite3DTest\DrawGeometry.cpp">
+      <Filter>Classes\Sprite3DTest</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -1669,6 +1672,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\AllocatorTest\AllocatorTest.h">
       <Filter>Classes\AllocatorTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Sprite3DTest\DrawGeometry.h">
+      <Filter>Classes\Sprite3DTest</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
