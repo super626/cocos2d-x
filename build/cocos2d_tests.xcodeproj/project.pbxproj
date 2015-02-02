@@ -810,6 +810,8 @@
 		B609E67419C18DAD003D0074 /* BillBoardTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B609E67119C18DAD003D0074 /* BillBoardTest.cpp */; };
 		B6C039D919C95D83007207DC /* LightTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6C039D719C95D83007207DC /* LightTest.cpp */; };
 		B6C039DA19C95D83007207DC /* LightTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6C039D719C95D83007207DC /* LightTest.cpp */; };
+		B6EF432D1A7F651500908B0E /* DrawGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6EF432B1A7F651500908B0E /* DrawGeometry.cpp */; };
+		B6EF432E1A7F651500908B0E /* DrawGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6EF432B1A7F651500908B0E /* DrawGeometry.cpp */; };
 		C04F935A1941B05400E9FEAB /* TileMapTest2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C04F93581941B05400E9FEAB /* TileMapTest2.cpp */; };
 		C04F935B1941B05400E9FEAB /* TileMapTest2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C04F93581941B05400E9FEAB /* TileMapTest2.cpp */; };
 		C08689C118D370C90093E810 /* background.caf in Resources */ = {isa = PBXBuildFile; fileRef = C08689C018D370C90093E810 /* background.caf */; };
@@ -1739,6 +1741,8 @@
 		B609E67219C18DAD003D0074 /* BillBoardTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BillBoardTest.h; path = BillBoardTest/BillBoardTest.h; sourceTree = "<group>"; };
 		B6C039D719C95D83007207DC /* LightTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LightTest.cpp; path = LightTest/LightTest.cpp; sourceTree = "<group>"; };
 		B6C039D819C95D83007207DC /* LightTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LightTest.h; path = LightTest/LightTest.h; sourceTree = "<group>"; };
+		B6EF432B1A7F651500908B0E /* DrawGeometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DrawGeometry.cpp; path = Sprite3DTest/DrawGeometry.cpp; sourceTree = "<group>"; };
+		B6EF432C1A7F651500908B0E /* DrawGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DrawGeometry.h; path = Sprite3DTest/DrawGeometry.h; sourceTree = "<group>"; };
 		C04F93581941B05400E9FEAB /* TileMapTest2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TileMapTest2.cpp; sourceTree = "<group>"; };
 		C04F93591941B05400E9FEAB /* TileMapTest2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileMapTest2.h; sourceTree = "<group>"; };
 		C08689C018D370C90093E810 /* background.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = background.caf; path = "../tests/cpp-tests/Resources/background.caf"; sourceTree = "<group>"; };
@@ -3868,6 +3872,8 @@
 		3E92EA7D1921A0C60094CD21 /* Sprite3DTest */ = {
 			isa = PBXGroup;
 			children = (
+				B6EF432B1A7F651500908B0E /* DrawGeometry.cpp */,
+				B6EF432C1A7F651500908B0E /* DrawGeometry.h */,
 				5EBEECAE1995247000429821 /* DrawNode3D.cpp */,
 				5EBEECAF1995247000429821 /* DrawNode3D.h */,
 				3E92EA801921A1400094CD21 /* Sprite3DTest.cpp */,
@@ -4780,6 +4786,7 @@
 				1AC35C0518CECF0C00F37B72 /* FontTest.cpp in Sources */,
 				1AC35C3718CECF0C00F37B72 /* PerformanceTest.cpp in Sources */,
 				29080D99191B595E0066F8DF /* CustomImageViewReader.cpp in Sources */,
+				B6EF432D1A7F651500908B0E /* DrawGeometry.cpp in Sources */,
 				29080DD1191B595E0066F8DF /* UISliderTest_Editor.cpp in Sources */,
 				1AC35B2718CECF0C00F37B72 /* ActionsTest.cpp in Sources */,
 				1AC35C4918CECF0C00F37B72 /* ShaderTest.cpp in Sources */,
@@ -5014,6 +5021,7 @@
 				1AC35BE818CECF0C00F37B72 /* CCControlScene.cpp in Sources */,
 				29080DAA191B595E0066F8DF /* UICheckBoxTest_Editor.cpp in Sources */,
 				1AC35B6018CECF0C00F37B72 /* DataVisitorTest.cpp in Sources */,
+				B6EF432E1A7F651500908B0E /* DrawGeometry.cpp in Sources */,
 				1AC35B5E18CECF0C00F37B72 /* CurrentLanguageTest.cpp in Sources */,
 				29080DE2191B595E0066F8DF /* UITextTest_Editor.cpp in Sources */,
 				29080DA8191B595E0066F8DF /* UICheckBoxTest.cpp in Sources */,
