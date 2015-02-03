@@ -50,6 +50,9 @@ struct CC_DLL PUParticle3D : public Particle3D
         /** Enumeration which lists a number of reserved event flags. Although custom flags can be used to
         indicate that a certain condition occurs, the first number of flags may not be used as custom flags.
     */
+
+    virtual ~PUParticle3D();
+
     enum ReservedParticleEventFlags
     {
         PEF_EXPIRED = 1<<0,
