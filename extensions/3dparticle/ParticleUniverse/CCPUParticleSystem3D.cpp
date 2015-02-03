@@ -332,30 +332,6 @@ void PUParticleSystem3D::stopParticle()
 {
     if (_state != State::STOP)
     {
-        //if (_emitter)
-        //{
-        //    auto emitter = static_cast<PUParticle3DEmitter*>(_emitter);
-        //    emitter->notifyStop();
-        //}
-        if (_render)
-            _render->notifyStop();
-
-        for (auto &it : _observers){
-            it->notifyStop();
-        }
-
-        for (auto& it : _emitters) {
-            auto emitter = static_cast<PUParticle3DEmitter*>(it);
-            emitter->notifyStop();
-        }
-
-        for (auto& it : _affectors) {
-            auto affector = static_cast<PUParticle3DAffector*>(it);
-            affector->notifyStop();
-        }
-
-        unscheduleUpdate();
-        unPrepared();
         _state = State::STOP;
     }
 
@@ -431,8 +407,33 @@ void PUParticleSystem3D::resumeParticle()
 
 void PUParticleSystem3D::update(float delta)
 {
-    if (_state != State::RUNNING || _isMarkedForEmission)
-        return;
+    if (_isMarkedForEmission) return;
+    if (_state != State::RUNNING){
+        if (_state == State::STOP && getAliveParticleCnt() <= 0){
+            if (!_emitters.empty()){
+                if (_render)
+                    _render->notifyStop();
+
+                for (auto &it : _observers){
+                    it->notifyStop();
+                }
+
+                for (auto& it : _emitters) {
+                    auto emitter = static_cast<PUParticle3DEmitter*>(it);
+                    emitter->notifyStop();
+                }
+
+                for (auto& it : _affectors) {
+                    auto affector = static_cast<PUParticle3DAffector*>(it);
+                    affector->notifyStop();
+                }
+
+                unscheduleUpdate();
+                unPrepared();
+                return;
+            }
+        }
+    }
 
     forceUpdate(delta);
 }
@@ -540,7 +541,7 @@ void PUParticleSystem3D::prepared()
         _timeElapsedSinceStart = 0.0f;
     }
 
-    notifyRescaled();
+    notifyRescaled(getDerivedScale());
 }
 
 void PUParticleSystem3D::unPrepared()
@@ -881,6 +882,7 @@ void PUParticleSystem3D::forceEmission( PUParticle3DEmitter* emitter, unsigned r
 
 void PUParticleSystem3D::executeEmitParticles( PUParticle3DEmitter* emitter, unsigned requested, float elapsedTime )
 {
+    if (_state == State::STOP) return;
     if (emitter->getEmitsType() == PUParticle3D::PT_VISUAL){
         emitParticles(_particlePool, emitter, requested, elapsedTime);
     }else if (emitter->getEmitsType() == PUParticle3D::PT_EMITTER){
@@ -947,25 +949,40 @@ PUParticle3DObserver* PUParticleSystem3D::getObserver( const std::string &name )
     return nullptr;
 }
 
-void PUParticleSystem3D::notifyRescaled()
+void PUParticleSystem3D::notifyRescaled(const Vec3 &scl)
 {
-    Vec3 scale = getDerivedScale();
-
     if (_render)
-        _render->notifyRescaled(scale);
+        _render->notifyRescaled(scl);
 
     for (auto it : _emitters) {
-        (static_cast<PUParticle3DEmitter*>(it))->notifyRescaled(scale);
+        (static_cast<PUParticle3DEmitter*>(it))->notifyRescaled(scl);
     }
 
     for (auto it : _affectors) {
-        (static_cast<PUParticle3DAffector*>(it))->notifyRescaled(scale);
+        (static_cast<PUParticle3DAffector*>(it))->notifyRescaled(scl);
     }
 
     for (auto it : _observers){
-        it->notifyRescaled(scale);
+        it->notifyRescaled(scl);
     }
 
+    for (auto &iter : _emittedEmitterParticlePool){
+        PUParticle3D *particle = static_cast<PUParticle3D *>(iter.second.getFirst());
+        while (particle)
+        {
+            static_cast<PUParticle3DEmitter*>(particle->particleEntityPtr)->notifyRescaled(scl);
+            particle = static_cast<PUParticle3D *>(iter.second.getNext());
+        }
+    }
+
+    for (auto &iter : _emittedSystemParticlePool){
+        PUParticle3D *particle = static_cast<PUParticle3D *>(iter.second.getFirst());
+        while (particle)
+        {
+            static_cast<PUParticleSystem3D*>(particle->particleEntityPtr)->notifyRescaled(scl);
+            particle = static_cast<PUParticle3D *>(iter.second.getNext());
+        }
+    }
 }
 
 void PUParticleSystem3D::initParticleForExpiration( PUParticle3D* particle, float timeElapsed )
@@ -1139,6 +1156,7 @@ void PUParticleSystem3D::removeAllListener()
 
 void PUParticleSystem3D::draw( Renderer *renderer, const Mat4 &transform, uint32_t flags )
 {
+    if (getAliveParticleCnt() <= 0) return;
     if (_render)
         _render->render(renderer, transform, this);
 
@@ -1158,10 +1176,10 @@ void PUParticleSystem3D::draw( Renderer *renderer, const Mat4 &transform, uint32
 void PUParticleSystem3D::processParticle( ParticlePool &pool, bool &firstActiveParticle, bool &firstParticle, float elapsedTime )
 {
     PUParticle3D *particle = static_cast<PUParticle3D *>(pool.getFirst());
-    Mat4 ltow = getNodeToWorldTransform();
-    Vec3 scl;
-    Quaternion rot;
-    ltow.decompose(&scl, &rot, nullptr);
+    //Mat4 ltow = getNodeToWorldTransform();
+    //Vec3 scl;
+    //Quaternion rot;
+    //ltow.decompose(&scl, &rot, nullptr);
     while (particle){
 
         if (!isExpired(particle, elapsedTime)){
@@ -1194,7 +1212,7 @@ void PUParticleSystem3D::processParticle( ParticlePool &pool, bool &firstActiveP
                     auto system = static_cast<PUParticleSystem3D *>(particle->particleEntityPtr);
                     system->setPosition3D(particle->position);
                     system->setRotationQuat(particle->orientation);
-                    system->setScaleX(scl.x);system->setScaleY(scl.y);system->setScaleZ(scl.z);
+                    //system->setScaleX(scl.x);system->setScaleY(scl.y);system->setScaleZ(scl.z);
                     system->forceUpdate(elapsedTime);
                 }
             }
@@ -1256,33 +1274,6 @@ void PUParticleSystem3D::processParticle( ParticlePool &pool, bool &firstActiveP
         firstParticle = false;
         particle = static_cast<PUParticle3D *>(pool.getNext());
     }
-}
-
-unsigned int PUParticleSystem3D::getActiveParticleSize()
-{
-    unsigned int sz = 0;
-    sz += _particlePool.getActiveDataList().size();
-
-    if (!_emittedEmitterParticlePool.empty()){
-        for (auto iter : _emittedEmitterParticlePool){
-            sz += iter.second.getActiveDataList().size();
-        }
-    }
-
-    if (_emittedSystemParticlePool.empty()) 
-        return sz;
-
-    for (auto iter : _emittedSystemParticlePool){
-        auto pool = iter.second;
-        sz += pool.getActiveDataList().size();
-        PUParticle3D *particle = static_cast<PUParticle3D *>(pool.getFirst());
-        while (particle)
-        {
-            sz += static_cast<PUParticleSystem3D*>(particle->particleEntityPtr)->getActiveParticleSize();
-            particle = static_cast<PUParticle3D *>(pool.getNext());
-        }
-    }
-    return sz;
 }
 
 bool PUParticleSystem3D::makeParticleLocal( PUParticle3D* particle )
@@ -1365,8 +1356,35 @@ void PUParticleSystem3D::calulateRotationOffset( void )
         or the orientation of the uber particle system, if this particle system is emitted itself.
     */
     Quaternion latestOrientationInverse = _latestOrientation;
-	latestOrientationInverse.inverse();
+    latestOrientationInverse.inverse();
     _rotationOffset = getDerivedOrientation() * latestOrientationInverse;
+}
+
+int PUParticleSystem3D::getAliveParticleCnt() const
+{
+    int sz = 0;
+    sz += _particlePool.getActiveDataList().size();
+
+    if (!_emittedEmitterParticlePool.empty()){
+        for (auto iter : _emittedEmitterParticlePool){
+            sz += iter.second.getActiveDataList().size();
+        }
+    }
+
+    if (_emittedSystemParticlePool.empty()) 
+        return sz;
+
+    for (auto iter : _emittedSystemParticlePool){
+        auto pool = iter.second;
+        sz += pool.getActiveDataList().size();
+        PUParticle3D *particle = static_cast<PUParticle3D *>(pool.getFirst());
+        while (particle)
+        {
+            sz += static_cast<PUParticleSystem3D*>(particle->particleEntityPtr)->getAliveParticleCnt();
+            particle = static_cast<PUParticle3D *>(pool.getNext());
+        }
+    }
+    return sz;
 }
 
 NS_CC_END

@@ -223,7 +223,7 @@ public:
         return  _particlePool;
     }
     
-    int getAliveParticleCnt() const
+    virtual int getAliveParticleCnt() const
     {
         return _aliveParticlesCnt;
     }

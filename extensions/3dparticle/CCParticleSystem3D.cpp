@@ -123,7 +123,7 @@ void ParticleSystem3D::setRender(Particle3DRender* render)
     {
         CC_SAFE_RELEASE(_render);
         _render = render;
-		_render->_particleSystem = this;
+        _render->_particleSystem = this;
         CC_SAFE_RETAIN(_render);
     }
 }
@@ -181,7 +181,7 @@ void ParticleSystem3D::update(float delta)
 
 void ParticleSystem3D::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
 {
-    if (_state != State::STOP && _render)
+    if (getAliveParticleCnt() && _render)
     {
         _render->render(renderer, transform, this);
     }
