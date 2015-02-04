@@ -228,7 +228,7 @@ void PUParticle3DQuadRender::render(Renderer* renderer, const Mat4 &transform, P
 
         GLuint texId = (_texture ? _texture->getName() : 0);
         float depthZ = -(viewMat.m[2] * transform.m[12] + viewMat.m[6] * transform.m[13] + viewMat.m[10] * transform.m[14] + viewMat.m[14]);
-        _meshCommand->init(depthZ, texId, _glProgramState, particleSystem->getBlendFunc(), _vertexBuffer->getVBO(), _indexBuffer->getVBO(), GL_TRIANGLES, GL_UNSIGNED_SHORT, index, transform);
+        _meshCommand->init(depthZ, texId, _glProgramState, particleSystem->getBlendFunc(), _vertexBuffer->getVBO(), _indexBuffer->getVBO(), GL_TRIANGLES, GL_UNSIGNED_SHORT, index, transform, 0);
         renderer->addCommand(_meshCommand);
     }
 }
@@ -649,7 +649,7 @@ void PUParticle3DBoxRender::render( Renderer* renderer, const Mat4 &transform, P
         float depthZ = -(viewMat.m[2] * transform.m[12] + viewMat.m[6] * transform.m[13] + viewMat.m[10] * transform.m[14] + viewMat.m[14]);
 
         GLuint texId = (_texture ? _texture->getName() : 0);
-        _meshCommand->init(depthZ, texId, _glProgramState, particleSystem->getBlendFunc(), _vertexBuffer->getVBO(), _indexBuffer->getVBO(), GL_TRIANGLES, GL_UNSIGNED_SHORT, index, transform);
+        _meshCommand->init(depthZ, texId, _glProgramState, particleSystem->getBlendFunc(), _vertexBuffer->getVBO(), _indexBuffer->getVBO(), GL_TRIANGLES, GL_UNSIGNED_SHORT, index, transform, 0);
         renderer->addCommand(_meshCommand);
     }
 }
@@ -784,7 +784,7 @@ void PUParticle3DSphereRender::render( Renderer* renderer, const Mat4 &transform
         float depthZ = -(viewMat.m[2] * transform.m[12] + viewMat.m[6] * transform.m[13] + viewMat.m[10] * transform.m[14] + viewMat.m[14]);
 
         GLuint texId = (_texture ? _texture->getName() : 0);
-        _meshCommand->init(depthZ, texId, _glProgramState, particleSystem->getBlendFunc(), _vertexBuffer->getVBO(), _indexBuffer->getVBO(), GL_TRIANGLES, GL_UNSIGNED_SHORT, index, transform);
+        _meshCommand->init(depthZ, texId, _glProgramState, particleSystem->getBlendFunc(), _vertexBuffer->getVBO(), _indexBuffer->getVBO(), GL_TRIANGLES, GL_UNSIGNED_SHORT, index, transform, 0);
         renderer->addCommand(_meshCommand);
     }
 }

@@ -339,7 +339,7 @@ void Particle3DTestDemo::update( float delta )
         for (auto iter : children){
             PUParticleSystem3D *child = dynamic_cast<PUParticleSystem3D *>(iter);
             if (child){
-                count += child->getActiveParticleSize();
+                count += child->getAliveParticleCnt();
             }
         }
 

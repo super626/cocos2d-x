@@ -253,6 +253,8 @@ public:
      */
     virtual void resumeParticle() override;
 
+    virtual int getAliveParticleCnt() const override;
+
     /** Returns the velocity scale, defined in the particle system, but passed to the technique for convenience.
     */
     float getParticleSystemScaleVelocity() const;
@@ -335,15 +337,13 @@ public:
     unsigned int getEmittedSystemQuota() const { return _emittedSystemQuota; };
     void setEmittedSystemQuota(unsigned int quota) { _emittedSystemQuota = quota; };
 
-    unsigned int getActiveParticleSize();
-
     PUParticleSystem3D* getParentParticleSystem()const { return _parentParticleSystem; };
 
     const ParticlePoolMap& getEmittedEmitterParticlePool() const { return _emittedEmitterParticlePool; };
     const ParticlePoolMap& getEmittedSystemParticlePool() const { return _emittedSystemParticlePool; };
 
     bool makeParticleLocal(PUParticle3D* particle);
-	void calulateRotationOffset(void);
+    void calulateRotationOffset(void);
 
     virtual PUParticleSystem3D* clone();
     virtual void copyAttributesTo (PUParticleSystem3D* system);
@@ -364,7 +364,7 @@ protected:
     void emitParticles(ParticlePool &pool, PUParticle3DEmitter* emitter, unsigned requested, float elapsedTime);
     void processParticle(ParticlePool &pool, bool &firstActiveParticle, bool &firstParticle, float elapsedTime);
     void processMotion(PUParticle3D* particle, float timeElapsed, bool firstParticle);
-    void notifyRescaled();
+    void notifyRescaled(const Vec3 &scl);
     void initParticleForEmission(PUParticle3D* particle);
     void initParticleForExpiration(PUParticle3D* particle, float timeElapsed);
     
@@ -424,11 +424,11 @@ protected:
 
     bool _isMarkedForEmission;
 
-	// Keep latest position
-	Vec3 _latestPositionDiff;
-	Vec3 _latestPosition;
+    // Keep latest position
+    Vec3 _latestPositionDiff;
+    Vec3 _latestPosition;
 
-	Quaternion _latestOrientation;
+    Quaternion _latestOrientation;
 
     PUParticleSystem3D *_parentParticleSystem;
 };

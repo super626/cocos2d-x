@@ -130,17 +130,22 @@ void PUParticle3DDoEnableComponentEventHandler::handle (PUParticleSystem3D* part
         }
         break;
 
-        //case CT_TECHNIQUE:
-        //{
-        //	// Search in this ParticleSystem for a technique with the correct name
-        //	ParticleSystem* system = particleTechnique->getParentSystem();
-        //	technique = system->getTechnique(_componentName);
-        //	if (technique)
-        //	{
-        //		technique->setEnabled(_componentEnabled);
-        //	}
-        //}
-        //break;
+        case CT_TECHNIQUE:
+        {
+            // Search in this ParticleSystem for a technique with the correct name
+            PUParticleSystem3D* system = particleSystem->getParentParticleSystem();
+            if (system){
+                auto children = system->getChildren();
+                for (auto iter : children){
+                    PUParticleSystem3D *child = static_cast<PUParticleSystem3D *>(system);
+                    if (child->getName() == _componentName){
+                        child->setEnabled(_componentEnabled);
+                        break;
+                    }
+                }
+            }
+        }
+        break;
         default:
             break;
     }

@@ -422,7 +422,7 @@ void PURibbonTrail::update( float deltaTime )
 {
     if (_needTimeUpdate){
         static float lastUpdateTime = 0.0f;
-        if (0.2f < lastUpdateTime){
+        if (0.5f < lastUpdateTime){
             timeUpdate(deltaTime);
             lastUpdateTime = 0.0f;
         }

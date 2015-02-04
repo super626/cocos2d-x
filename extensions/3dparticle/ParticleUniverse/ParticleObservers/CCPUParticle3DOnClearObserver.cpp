@@ -55,7 +55,7 @@ void PUParticle3DOnClearObserver::postUpdateObserver(float timeElapsed)
 {
     if (_continue)
     {
-        if (static_cast<PUParticleSystem3D *>(_particleSystem)->getActiveParticleSize() <= 0)
+        if (static_cast<PUParticleSystem3D *>(_particleSystem)->getAliveParticleCnt() <= 0)
         {
             /** Handle the event. Use 0 as the particle pointer. This means that not all eventhandlers
                 are suitable. If they expect a particle (and most eventhandlers do), it could
