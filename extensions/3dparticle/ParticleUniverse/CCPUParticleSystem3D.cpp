@@ -409,7 +409,9 @@ void PUParticleSystem3D::update(float delta)
 {
     if (_isMarkedForEmission) return;
     if (_state != State::RUNNING){
-        if (_state == State::STOP && getAliveParticleCnt() <= 0){
+        if (_state == State::PAUSE) 
+            return;
+        else if (_state == State::STOP && getAliveParticleCnt() <= 0){
             if (!_emitters.empty()){
                 if (_render)
                     _render->notifyStop();
