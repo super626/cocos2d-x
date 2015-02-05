@@ -78,6 +78,7 @@ static std::function<Layer*()> createFunctions[] =
     CL(Particle3DLightningBoltDemo),
     CL(Particle3DCanOfWormsDemo),
     CL(Particle3DRibbonTrailDemo),
+    CL(Particle3DWeaponTrailDemo),
 };
 
 #define MAX_LAYER    (sizeof(createFunctions) / sizeof(createFunctions[0]))
@@ -657,6 +658,24 @@ bool Particle3DRibbonTrailDemo::init()
         return false;
 
     auto rootps = PUParticleSystem3D::create("ribbonTrailTest.pu");
+    rootps->setCameraMask((unsigned short)CameraFlag::USER1);
+    rootps->startParticle();
+    this->addChild(rootps, 0, PARTICLE_SYSTEM_TAG);
+
+    return true;
+}
+
+std::string Particle3DWeaponTrailDemo::subtitle() const 
+{
+    return "WeaponTrail";
+}
+
+bool Particle3DWeaponTrailDemo::init()
+{
+    if (!Particle3DTestDemo::init()) 
+        return false;
+
+    auto rootps = PUParticleSystem3D::create("weaponTrail.pu");
     rootps->setCameraMask((unsigned short)CameraFlag::USER1);
     rootps->startParticle();
     this->addChild(rootps, 0, PARTICLE_SYSTEM_TAG);

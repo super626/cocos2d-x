@@ -8,7 +8,7 @@ system RibbonTrailTest
         {
             max_elements                        30
             ribbontrail_length                  18
-            ribbontrail_width                   0.3
+            ribbontrail_width                   0.5
             colour_change                       0.8 0.8 0.8 0.8
         }
         emitter                                 Point 
