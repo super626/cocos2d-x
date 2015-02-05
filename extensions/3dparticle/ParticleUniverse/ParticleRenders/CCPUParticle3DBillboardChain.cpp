@@ -162,7 +162,7 @@ void PUBillboardChain::setupBuffers(void)
 
         _indexBuffer = IndexBuffer::create(IndexBuffer::IndexType::INDEX_TYPE_SHORT_16, _chainCount * _maxElementsPerChain * 6);
         _indexBuffer->retain();
-        _indices.resize(_chainCount * _maxElementsPerChain * 6);
+        _indices.resize(_chainCount * _maxElementsPerChain * 6, 0);
 
         //// Create the vertex buffer (always dynamic due to the camera adjust)
         //HardwareVertexBufferSharedPtr pBuffer =
@@ -677,15 +677,16 @@ void PUBillboardChain::render( Renderer* renderer, const Mat4 &transform, Partic
     auto cameraMat = camera->getNodeToWorldTransform();
     const Mat4 &viewMat = cameraMat.getInversed();
 
-    updateVertexBuffer(cameraMat);
-    updateIndexBuffer();
-
-    if (!_vertices.empty() && !_indices.empty()){
-        float depthZ = -(viewMat.m[2] * transform.m[12] + viewMat.m[6] * transform.m[13] + viewMat.m[10] * transform.m[14] + viewMat.m[14]);
-        GLuint texId = (_texture ? _texture->getName() : 0);
-        _meshCommand->init(depthZ, texId, _glProgramState, particleSystem->getBlendFunc(), _vertexBuffer->getVBO(), _indexBuffer->getVBO(), GL_TRIANGLES, GL_UNSIGNED_SHORT, _indices.size(), transform, 0);
-        renderer->addCommand(_meshCommand);
-    }
+	if (!_chainSegmentList.empty()){
+		updateVertexBuffer(cameraMat);
+		updateIndexBuffer();
+		if (!_vertices.empty() && !_indices.empty()){
+			float depthZ = -(viewMat.m[2] * transform.m[12] + viewMat.m[6] * transform.m[13] + viewMat.m[10] * transform.m[14] + viewMat.m[14]);
+			GLuint texId = (_texture ? _texture->getName() : 0);
+			_meshCommand->init(depthZ, texId, _glProgramState, particleSystem->getBlendFunc(), _vertexBuffer->getVBO(), _indexBuffer->getVBO(), GL_TRIANGLES, GL_UNSIGNED_SHORT, _indices.size(), transform, 0);
+			renderer->addCommand(_meshCommand);
+		}
+	}
 }
 
 void PUBillboardChain::setDepthTest( bool isDepthTest )

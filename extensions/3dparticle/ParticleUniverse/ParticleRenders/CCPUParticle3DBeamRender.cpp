@@ -255,6 +255,8 @@ void PUParticle3DBeamRender::prepare()
     _billboardChain->setTextureCoordDirection(_texCoordDirection);
     setUseVertexColours(_useVertexColours);
     _billboardChain->setOtherTextureCoordRange(0.0f, 1.0f);
+    _billboardChain->setDepthTest(_depthTest);
+    _billboardChain->setDepthWrite(_depthWrite);
 
     // Create number of VisualData objects
     for (size_t i = 0; i < _quota; i++)
