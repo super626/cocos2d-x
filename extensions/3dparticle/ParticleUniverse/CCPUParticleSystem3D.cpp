@@ -193,6 +193,7 @@ PUParticleSystem3D::PUParticleSystem3D()
 }
 PUParticleSystem3D::~PUParticleSystem3D()
 {
+    stopParticle();
     unPrepared();
 
     _particlePool.removeAllDatas();
