@@ -245,6 +245,19 @@ public:
     virtual bool init() override;
 };
 
+class Particle3DWeaponTrailDemo : public Particle3DTestDemo
+{
+public:
+
+    CREATE_FUNC(Particle3DWeaponTrailDemo);
+    Particle3DWeaponTrailDemo(){};
+    virtual ~Particle3DWeaponTrailDemo(){};
+
+    virtual std::string subtitle() const override;
+
+    virtual bool init() override;
+};
+
 class Particle3DTestScene : public TestScene
 {
 public:

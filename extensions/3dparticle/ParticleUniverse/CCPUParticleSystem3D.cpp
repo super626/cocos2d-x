@@ -193,28 +193,25 @@ PUParticleSystem3D::PUParticleSystem3D()
 }
 PUParticleSystem3D::~PUParticleSystem3D()
 {
+    stopParticle();
     unPrepared();
 
     _particlePool.removeAllDatas();
 
     for (auto iter : _emittedEmitterParticlePool){
         auto pool = iter.second;
-        PUParticle3D *particle = static_cast<PUParticle3D *>(pool.getFirst());
-        while (particle)
-        {
-            particle->particleEntityPtr->release();
-            particle = static_cast<PUParticle3D *>(pool.getNext());
+        auto lockedList = pool.getUnActiveDataList();
+        for (auto iter : lockedList){
+            static_cast<PUParticle3D *>(iter)->particleEntityPtr->release();
         }
         iter.second.removeAllDatas();
     }
 
     for (auto iter : _emittedSystemParticlePool){
         auto pool = iter.second;
-        PUParticle3D *particle = static_cast<PUParticle3D *>(pool.getFirst());
-        while (particle)
-        {
-            particle->particleEntityPtr->release();
-            particle = static_cast<PUParticle3D *>(pool.getNext());
+        auto lockedList = pool.getUnActiveDataList();
+        for (auto iter : lockedList){
+            static_cast<PUParticle3D *>(iter)->particleEntityPtr->release();
         }
         iter.second.removeAllDatas();
     }

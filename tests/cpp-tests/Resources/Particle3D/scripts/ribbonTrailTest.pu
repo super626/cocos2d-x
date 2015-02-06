@@ -6,9 +6,9 @@ system RibbonTrailTest
         material                                ParticleUniverse/RibbonTrail
         renderer                                RibbonTrail
         {
-            max_elements                        60
+            max_elements                        30
             ribbontrail_length                  18
-            ribbontrail_width                   0.3
+            ribbontrail_width                   0.5
             colour_change                       0.8 0.8 0.8 0.8
         }
         emitter                                 Point 

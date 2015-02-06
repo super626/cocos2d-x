@@ -288,6 +288,8 @@ void PUParticle3DRibbonTrailRender::prepare()
         }
         //_childNode->attachObject(_trail);
         _trail->setAttachedNode(_childNode);
+        _trail->setDepthTest(_depthTest);
+        _trail->setDepthWrite(_depthWrite);
     }
 }
 

@@ -60,7 +60,7 @@ ParticleSystem3D::ParticleSystem3D()
 }
 ParticleSystem3D::~ParticleSystem3D()
 {
-    stopParticle();
+    //stopParticle();
     removeAllAffector();
     CC_SAFE_RELEASE(_emitter);
     CC_SAFE_RELEASE(_render);

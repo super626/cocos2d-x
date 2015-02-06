@@ -1,8 +1,5 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cpp-tests", "..\tests\cpp-tests\proj.win32\cpp-tests.vcxproj", "{76A39BB2-9B84-4C65-98A5-654D86B86F2A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lua-tests", "..\tests\lua-tests\project\proj.win32\lua-tests.win32.vcxproj", "{4E6A7A0E-DDD8-4BAA-8B22-C964069364ED}"
@@ -84,6 +81,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{B7C2A162-DEC9-4418-972E-240AB3CBFCAE} = {92D54E36-7916-48EF-A951-224DD3B25442}
 		{929480E7-23C0-4DF6-8456-096D71547116} = {92D54E36-7916-48EF-A951-224DD3B25442}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
 		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}
