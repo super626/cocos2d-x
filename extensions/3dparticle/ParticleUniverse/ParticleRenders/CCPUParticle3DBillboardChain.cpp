@@ -633,7 +633,7 @@ void PUBillboardChain::updateIndexBuffer(void)
 
         }
 
-        _indexBuffer->updateIndices(&_indices[0], index, 0);
+        _indexBuffer->updateIndices(&_indices[0], _indices.size(), 0);
         //_indexData->indexBuffer->unlock();
         _indexContentDirty = false;
     }
