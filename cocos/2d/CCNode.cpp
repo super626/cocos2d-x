@@ -1333,15 +1333,22 @@ void Node::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t paren
         return;
     }
 
-    uint32_t flags = processParentFlags(parentTransform, parentFlags);
-
+    bool visibleByCamera = isVisitableByVisitingCamera();
+    
+    // If current node is not visited by camera, then don't process parent flags.
+    // Note: if the node can be visited by two camera, some flag
+    //       such as _transformUpdated or _contentSizeDirty will
+    //       be reset by the first visiting camera, so some action
+    //       can't play in this case.
+    uint32_t flags = parentFlags;
+    if(visibleByCamera)
+        flags = processParentFlags(parentTransform, parentFlags);
+    
     // IMPORTANT:
     // To ease the migration to v3.0, we still support the Mat4 stack,
     // but it is deprecated and your code should not rely on it
     _director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
     _director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, _modelViewTransform);
-    
-    bool visibleByCamera = isVisitableByVisitingCamera();
 
     int i = 0;
 
