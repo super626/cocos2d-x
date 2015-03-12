@@ -588,9 +588,8 @@ void Sprite::updateTransform(void)
 void Sprite::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
 {
 #if CC_USE_CULLING
-    // Don't do calculate the culling if the transform was not updated
-    _insideBounds = (flags & FLAGS_TRANSFORM_DIRTY) ? renderer->checkVisibility(transform, _contentSize) : _insideBounds;
-
+    //FIX ME , the FLAGS_TRANSFORM_DIRTY can't track the Camera's viewMatrix changed,we need another variable or something else to cache it
+    _insideBounds = renderer->checkVisibility(transform, _contentSize);
     if(_insideBounds)
 #endif
     {
