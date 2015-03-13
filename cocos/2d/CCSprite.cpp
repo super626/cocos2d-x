@@ -37,7 +37,7 @@ THE SOFTWARE.
 #include "renderer/CCTexture2D.h"
 #include "renderer/CCRenderer.h"
 #include "base/CCDirector.h"
-
+#include "2d/CCCamera.h"
 #include "deprecated/CCString.h"
 
 
@@ -588,8 +588,18 @@ void Sprite::updateTransform(void)
 void Sprite::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
 {
 #if CC_USE_CULLING
-    //FIX ME , the FLAGS_TRANSFORM_DIRTY can't track the Camera's viewMatrix changed,we need another variable or something else to cache it
-    _insideBounds = renderer->checkVisibility(transform, _contentSize);
+    auto camera = Camera::getVisitingCamera();
+    auto tmpViewMatrixed = camera->getViewMatrix();
+    bool isViewChanged = true;
+    if(camera && memcmp(&_cameraViewMatrix,&tmpViewMatrixed,sizeof(Mat4))==0)
+    {
+        isViewChanged = false;
+    }else
+    {
+        _cameraViewMatrix = tmpViewMatrixed;
+    }
+    //check visibility only if necessary
+    _insideBounds = ((flags & FLAGS_TRANSFORM_DIRTY) || isViewChanged) ? renderer->checkVisibility(transform, _contentSize) : _insideBounds;
     if(_insideBounds)
 #endif
     {

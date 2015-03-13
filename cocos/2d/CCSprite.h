@@ -566,6 +566,8 @@ protected:
     bool _flippedY;                         /// Whether the sprite is flipped vertically or not
 
     bool _insideBounds;                     /// whether or not the sprite was inside bounds the previous frame
+
+    Mat4 _cameraViewMatrix;
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(Sprite);
 };
