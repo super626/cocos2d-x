@@ -922,6 +922,20 @@ void Label::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
     }
 }
 
+void Label::setCameraMask(unsigned short mask, bool applyChildren)
+{
+    SpriteBatchNode::setCameraMask(mask, applyChildren);
+    
+    if (_textSprite)
+    {
+        _textSprite->setCameraMask(mask, applyChildren);
+    }
+    if (_shadowNode)
+    {
+        _shadowNode->setCameraMask(mask, applyChildren);
+    }
+}
+
 void Label::createSpriteWithFontDefinition()
 {
     _currentLabelType = LabelType::STRING_TEXTURE;
@@ -930,6 +944,8 @@ void Label::createSpriteWithFontDefinition()
     texture->initWithString(_originalUTF8String.c_str(),_fontDefinition);
 
     _textSprite = Sprite::createWithTexture(texture);
+    //set camera mask using label's camera mask, because _textSprite may be null when setting camera mask to label
+    _textSprite->setCameraMask(getCameraMask());
     _textSprite->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
     this->setContentSize(_textSprite->getContentSize());
     texture->release();
@@ -1071,6 +1087,8 @@ void Label::drawTextSprite(Renderer *renderer, uint32_t parentFlags)
             {
                 _shadowNode->setBlendFunc(_blendFunc);
             }
+            //set camera mask using label's mask. Because _shadowNode may be null when setting the label's camera mask
+            _shadowNode->setCameraMask(getCameraMask());
             _shadowNode->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
             _shadowNode->setColor(_shadowColor);
             _shadowNode->setOpacity(_shadowOpacity * _displayedOpacity);
@@ -1087,7 +1105,7 @@ void Label::drawTextSprite(Renderer *renderer, uint32_t parentFlags)
 
 void Label::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags)
 {
-    if (! _visible || _originalUTF8String.empty() || !isVisitableByVisitingCamera())
+    if (! _visible || _originalUTF8String.empty())
     {
         return;
     }
@@ -1115,6 +1133,11 @@ void Label::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t pare
         _transformDirty = _inverseDirty = true;
 
         _shadowDirty = false;
+    }
+
+    if (!isVisitableByVisitingCamera())
+    {
+        return;
     }
 
     // IMPORTANT:

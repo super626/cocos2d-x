@@ -1,9 +1,15 @@
-cocos2d-x-3.5rc0 ??
+cocos2d-x-3.5rc0 Mar.13 2015
+    [NEW]           CocosStudio: add callback when loading a CSB file
     [NEW]           Particle3D: more PU feature support, observers and event handlers
+    
     [FIX]           Billboard: fix bug on transparent Billboard because of transparent queue
     [FIX]           Bundle: bug that create bundle with empty path
+    [FIX]           Camera: camera is detroyed unexpectedly when call removeAllChildren
+    [FIX]           C++: use console in `build/build_native.sh`
+    [FIX]           Label: position is wrong if it is visited by a new camera
     [FIX]           MotionStreak: can not work with MoveTo and MoveBy
-    [FIX]           Particle3D: to make path shorter, rename Particle Universe folder to PU, and files CCPUParticle3DXXX to CCPUXXX. 
+    [FIX]           MoveTo: disable reverse() because it is meaningless
+    [FIX]           Particle3D: to make path shorter, rename Particle Universe folder to PU, and files CCPUParticle3DXXX to CCPUXXX to fix compiling error on WP8
     [FIX]           Particle3D: `loadMaterialsFromSearchPaths` bug on linux platform
     [FIX]           Sprite3D: fix bug on transparent 3D Sprite because of transparent queue
 
