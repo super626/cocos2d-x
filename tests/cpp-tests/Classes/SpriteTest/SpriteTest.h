@@ -775,6 +775,17 @@ protected:
     Vec3 rotation;
 };
 
+class SpriteDefaultCameraCulling:public SpriteTestDemo
+{
+public:
+    CREATE_FUNC(SpriteDefaultCameraCulling);
+    SpriteDefaultCameraCulling();
+    virtual std::string title() const override { return "Sprite Default camera culling issue #10487"; };
+    virtual std::string subtitle() const override { return "Default Camera is Moving, you should see the Sprites"; };
+    virtual void onEnter() override;
+
+};
+
 class SpriteTestScene : public TestScene
 {
 public:
