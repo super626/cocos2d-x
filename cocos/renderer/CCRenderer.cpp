@@ -977,7 +977,7 @@ bool Renderer::checkVisibility(const Mat4 &transform, const Size &size)
     0,size.height,//tl
     size.width/2,size.height/2//centre
     };
-    auto trans = Camera::getVisitingCamera()->getViewProjectionMatrix()*transform;
+    auto trans = scene->_defaultCamera->getViewProjectionMatrix()*transform;
     //for each corners
     for(int i =0;i<4;i++)
     {
