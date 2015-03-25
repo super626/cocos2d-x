@@ -969,33 +969,35 @@ bool Renderer::checkVisibility(const Mat4 &transform, const Size &size)
     // only cull the default camera. The culling algorithm is valid for default camera.
     if (scene && scene->_defaultCamera != Camera::getVisitingCamera())
         return true;
-    
-    // half size of the screen
-    Size screen_half = Director::getInstance()->getWinSize();
-    screen_half.width /= 2;
-    screen_half.height /= 2;
 
-    float hSizeX = size.width/2;
-    float hSizeY = size.height/2;
+    float localPosArray [] ={
+    0,0,//bl
+    size.width,0,//br
+    size.width,size.height,//tr
+    0,size.height,//tl
+    size.width/2,size.height/2//centre
+    };
+    auto trans = Camera::getVisitingCamera()->getViewProjectionMatrix()*transform;
+    //for each corners
+    for(int i =0;i<4;i++)
+    {
+        // convert it to NDC 
+        Vec4 v4NDC, v4local;
+        v4local.set(localPosArray[2*i], localPosArray[2*i+1], 0, 1);
+        v4NDC = trans*v4local;
+        v4NDC.x /=v4NDC.w;
+        v4NDC.y /=v4NDC.w;
 
-    Vec4 v4world, v4local;
-    v4local.set(hSizeX, hSizeY, 0, 1);
-    transform.transformVector(v4local, &v4world);
+        //map [-1,1] to [0,1]
+        v4NDC.x = v4NDC.x*0.5 +0.5;
+        v4NDC.y = v4NDC.y*0.5 +0.5;
 
-    // center of screen is (0,0)
-    v4world.x -= screen_half.width;
-    v4world.y -= screen_half.height;
-
-    // convert content size to world coordinates
-    float wshw = std::max(fabsf(hSizeX * transform.m[0] + hSizeY * transform.m[4]), fabsf(hSizeX * transform.m[0] - hSizeY * transform.m[4]));
-    float wshh = std::max(fabsf(hSizeX * transform.m[1] + hSizeY * transform.m[5]), fabsf(hSizeX * transform.m[1] - hSizeY * transform.m[5]));
-
-    // compare if it in the positive quadrant of the screen
-    float tmpx = (fabsf(v4world.x)-wshw);
-    float tmpy = (fabsf(v4world.y)-wshh);
-    bool ret = (tmpx < screen_half.width && tmpy < screen_half.height);
-
-    return ret;
+        if((v4NDC.x>=0 &&v4NDC.x<=1)&&(v4NDC.y>=0 &&v4NDC.y<=1))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 

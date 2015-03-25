@@ -37,6 +37,7 @@
 #include "base/CCEventDispatcher.h"
 #include "base/CCEventCustom.h"
 #include "deprecated/CCString.h"
+#include "2d/CCCamera.h"
 
 NS_CC_BEGIN
 
@@ -898,7 +899,18 @@ void Label::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
     // Don't do calculate the culling if the transform was not updated
     bool transformUpdated = flags & FLAGS_TRANSFORM_DIRTY;
 #if CC_USE_CULLING
-    _insideBounds = transformUpdated ? renderer->checkVisibility(transform, _contentSize) : _insideBounds;
+    auto camera = Camera::getVisitingCamera();
+    auto tmpViewMatrixed = camera->getViewMatrix();
+    bool isViewChanged = true;
+    const_cast<Label*>(this)->updateContent();
+    if(camera && memcmp(&_cameraViewMatrix,&tmpViewMatrixed,sizeof(Mat4))==0)
+    {
+        isViewChanged = false;
+    }else
+    {
+        _cameraViewMatrix = tmpViewMatrixed;
+    }
+    _insideBounds = (transformUpdated||isViewChanged) ? renderer->checkVisibility(transform, _contentSize) : _insideBounds;
 
     if(_insideBounds)
 #endif
