@@ -133,6 +133,7 @@ static std::function<Layer*()> createFunctions[] =
 	CL(SpriteCullTest1),
 	CL(SpriteCullTest2),
     CL(Sprite3DRotationTest),
+    CL(SpriteDefaultCameraCulling),
 };
 
 #define MAX_LAYER    (sizeof(createFunctions) / sizeof(createFunctions[0]))
@@ -5121,3 +5122,29 @@ Sprite3DRotationTest::Sprite3DRotationTest()
 
 
 
+//------------------------------------------------------------------
+//
+// Sprite default camera Test
+//
+//------------------------------------------------------------------
+SpriteDefaultCameraCulling::SpriteDefaultCameraCulling()
+{
+    for(int i =0;i<20;i++)
+    {
+        auto sprite = Sprite::create("Images/grossini.png");
+        sprite->setPosition(i*sprite->getContentSize().width,200);
+        addChild(sprite);
+    }
+}
+
+void SpriteDefaultCameraCulling::onEnter()
+{
+    SpriteTestDemo::onEnter();
+    auto camera = Director::getInstance()->getRunningScene()->getCameras().front();
+    auto action_right = MoveBy::create(3,Vec3(100,0,0));
+    auto action_left = MoveBy::create(3,Vec3(-100,0,0));
+    camera->runAction(RepeatForever::create(Sequence::create(action_right,action_left,NULL)));
+    TTFConfig ttfConfig("fonts/arial.ttf", 24);
+    auto label = Label::createWithTTF(ttfConfig,"lalala");
+    addChild(label);
+}
