@@ -175,6 +175,7 @@ void Skybox::setTexture(TextureCube* texture)
     _texture = texture;
 
     getGLProgramState()->setUniformTexture("u_Env", _texture);
+    getGLProgramState()->setUniformVec4("u_color", Vec4(1.f, 1.f, 1.f, 1.f));
 }
 
 void Skybox::reload()
