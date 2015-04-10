@@ -23,16 +23,17 @@ function TerrainSimple:init()
     --use custom camera
     self._camera = cc.Camera:createPerspective(60, visibleSize.width/visibleSize.height, 0.1, 800)
     self._camera:setCameraFlag(cc.CameraFlag.USER1)
+    self._camera:setPosition3D(cc.vec3(-1,1.6,4))
     self:addChild(self._camera)
 
-    local detailMapR = { detailMapSrc = "TerrainTest/dirt.dds", detailMapSize = 35}
-    local detailMapG = { detailMapSrc = "TerrainTest/Grass2.dds", detailMapSize = 35}
-    local detailMapB = { detailMapSrc = "TerrainTest/road.dds", detailMapSize = 35}
+    local detailMapR = { detailMapSrc = "TerrainTest/dirt.jpg", detailMapSize = 35}
+    local detailMapG = { detailMapSrc = "TerrainTest/Grass2.jpg", detailMapSize = 35}
+    local detailMapB = { detailMapSrc = "TerrainTest/road.jpg", detailMapSize = 35}
     local detailMapA = { detailMapSrc = "TerrainTest/GreenSkin.jpg", detailMapSize = 35}
     local terrainData = { heightMapSrc = "TerrainTest/heightmap16.jpg", alphaMapSrc = "TerrainTest/alphamap.png" , detailMaps = {detailMapR, detailMapG, detailMapB, detailMapA}, _detailMapAmount = 4 }
 
     self._terrain = cc.Terrain:create(terrainData,cc.Terrain.CrackFixedType.SKIRT)
-    self._terrain:setLODDistance(1000.2, 6.4, 9.6)
+    self._terrain:setLODDistance(3.2, 6.4, 9.6)
     self._terrain:setMaxDetailMapAmount(4)
     self:addChild(self._terrain)
     self._terrain:setCameraMask(2)
@@ -284,9 +285,9 @@ function TerrainWalkThru:init()
     self._camera:setCameraFlag(cc.CameraFlag.USER1)
     self:addChild(self._camera)
 
-    local detailMapR = { detailMapSrc = "TerrainTest/dirt.dds", detailMapSize = 35}
-    local detailMapG = { detailMapSrc = "TerrainTest/Grass2.dds", detailMapSize = 10}
-    local detailMapB = { detailMapSrc = "TerrainTest/road.dds", detailMapSize = 35}
+    local detailMapR = { detailMapSrc = "TerrainTest/dirt.jpg", detailMapSize = 35}
+    local detailMapG = { detailMapSrc = "TerrainTest/Grass2.jpg", detailMapSize = 10}
+    local detailMapB = { detailMapSrc = "TerrainTest/road.jpg", detailMapSize = 35}
     local detailMapA = { detailMapSrc = "TerrainTest/GreenSkin.jpg", detailMapSize = 20}
     local terrainData = { heightMapSrc = "TerrainTest/heightmap16.jpg", alphaMapSrc = "TerrainTest/alphamap.png" , detailMaps = {detailMapR, detailMapG, detailMapB, detailMapA}, _detailMapAmount = 4, mapHeight = 40.0, mapScale = 2.0 }
 
