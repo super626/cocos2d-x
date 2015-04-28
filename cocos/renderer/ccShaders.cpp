@@ -74,6 +74,7 @@ NS_CC_BEGIN
 #include "ccShader_Label_outline.frag"
 
 //
+#include "ccShader_3D_Position.vert"
 #include "ccShader_3D_PositionTex.vert"
 #include "ccShader_3D_Color.frag"
 #include "ccShader_3D_ColorTex.frag"

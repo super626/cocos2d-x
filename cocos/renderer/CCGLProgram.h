@@ -189,6 +189,10 @@ public:
 
     /**Built in shader used for 3D, support Position vertex attribute, with color specified by a uniform.*/
     static const char* SHADER_3D_POSITION;
+    
+    static const char* SHADER_3D_SKINPOSITION;
+    static const char* SHADER_3D_SKINPOSITION_NORMAL;
+    
     /**Built in shader used for 3D, support Position and Texture vertex attribute, with color specified by a uniform.*/
     static const char* SHADER_3D_POSITION_TEXTURE;
     /**
