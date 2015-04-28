@@ -61,6 +61,7 @@ enum {
     kShaderType_3DSkinPositionTex,
     kShaderType_3DPositionNormal,
     kShaderType_3DPositionNormalTex,
+    kShaderType_3DSkinPositionNormal,
     kShaderType_3DSkinPositionNormalTex,
     kShaderType_3DParticleTex,
     kShaderType_3DParticleColor,
@@ -241,6 +242,10 @@ void GLProgramCache::loadDefaultGLPrograms()
     loadDefaultGLProgram(p, kShaderType_3DPositionNormalTex);
     _programs.insert( std::make_pair(GLProgram::SHADER_3D_POSITION_NORMAL_TEXTURE, p) );
 
+    p = new GLProgram();
+    loadDefaultGLProgram(p, kShaderType_3DSkinPositionNormal);
+    _programs.insert(std::make_pair(GLProgram::SHADER_3D_SKINPOSITION_NORMAL, p));
+    
     p = new GLProgram();
     loadDefaultGLProgram(p, kShaderType_3DSkinPositionNormalTex);
     _programs.insert(std::make_pair(GLProgram::SHADER_3D_SKINPOSITION_NORMAL_TEXTURE, p));
@@ -466,13 +471,19 @@ void GLProgramCache::loadDefaultGLProgram(GLProgram *p, int type)
         case kShaderType_3DPositionNormal:
             {
                 std::string def = getShaderMacrosForLight();
-                p->initWithByteArrays((def + std::string(cc3D_PositionNormalTex_vert)).c_str(), (def + std::string(cc3D_ColorNormal_frag)).c_str());
+                p->initWithByteArrays((def + std::string(cc3D_PositionNormal_vert)).c_str(), (def + std::string(cc3D_ColorNormal_frag)).c_str());
             }
             break;
         case kShaderType_3DPositionNormalTex:
             {
                 std::string def = getShaderMacrosForLight();
                 p->initWithByteArrays((def + std::string(cc3D_PositionNormalTex_vert)).c_str(), (def + std::string(cc3D_ColorNormalTex_frag)).c_str());
+            }
+            break;
+        case kShaderType_3DSkinPositionNormal:
+            {
+                std::string def = getShaderMacrosForLight();
+                p->initWithByteArrays((def + std::string(cc3D_SkinPositionNormal_vert)).c_str(), (def + std::string(cc3D_ColorNormal_frag)).c_str());
             }
             break;
         case kShaderType_3DSkinPositionNormalTex:

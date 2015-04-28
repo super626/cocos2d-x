@@ -445,7 +445,7 @@ void Sprite3D::genGLProgramState(bool useLight)
             if (hasSkin)
             {
                 if (hasNormal && _shaderUsingLight)
-                    shader = GLProgram::SHADER_3D_SKINPOSITION_NORMAL_TEXTURE;// fix me
+                    shader = GLProgram::SHADER_3D_SKINPOSITION_NORMAL;
                 else
                     shader = GLProgram::SHADER_3D_SKINPOSITION;
             }

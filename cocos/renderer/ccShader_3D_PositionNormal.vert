@@ -1,5 +1,5 @@
 
-const char* cc3D_PositionNormalTex_vert = STRINGIFY(
+const char* cc3D_PositionNormal_vert = STRINGIFY(
 
 \n#if (MAX_POINT_LIGHT_NUM > 0)\n
 uniform vec3 u_PointLightSourcePosition[MAX_POINT_LIGHT_NUM];
@@ -9,9 +9,7 @@ uniform vec3 u_SpotLightSourcePosition[MAX_SPOT_LIGHT_NUM];
 \n#endif\n
 
 attribute vec4 a_position;
-attribute vec2 a_texCoord;
 attribute vec3 a_normal;
-varying vec2 TextureCoordOut;
 
 \n#if MAX_POINT_LIGHT_NUM\n
 varying vec3 v_vertexToPointLightDirection[MAX_POINT_LIGHT_NUM];
@@ -44,13 +42,11 @@ void main(void)
     v_normal = CC_NormalMatrix * a_normal;
 \n#endif\n
 
-    TextureCoordOut = a_texCoord;
-    TextureCoordOut.y = 1.0 - TextureCoordOut.y;
     gl_Position = CC_PMatrix * ePosition;
 }
 );
 
-const char* cc3D_SkinPositionNormalTex_vert = STRINGIFY(
+const char* cc3D_SkinPositionNormal_vert = STRINGIFY(
 
 \n#if (MAX_POINT_LIGHT_NUM > 0)\n
 uniform vec3 u_PointLightSourcePosition[MAX_POINT_LIGHT_NUM];
@@ -64,16 +60,11 @@ attribute vec3 a_position;
 attribute vec4 a_blendWeight;
 attribute vec4 a_blendIndex;
 
-attribute vec2 a_texCoord;
-
 attribute vec3 a_normal;
 
 const int SKINNING_JOINT_COUNT = 60;
 // Uniforms
 uniform vec4 u_matrixPalette[SKINNING_JOINT_COUNT * 3];
-
-// Varyings
-varying vec2 TextureCoordOut;
 
 \n#if MAX_POINT_LIGHT_NUM\n
 varying vec3 v_vertexToPointLightDirection[MAX_POINT_LIGHT_NUM];
@@ -159,8 +150,6 @@ void main()
     v_normal = CC_NormalMatrix * normal;
 \n#endif\n
 
-    TextureCoordOut = a_texCoord;
-    TextureCoordOut.y = 1.0 - TextureCoordOut.y;
     gl_Position = CC_PMatrix * ePosition;
 }
 
