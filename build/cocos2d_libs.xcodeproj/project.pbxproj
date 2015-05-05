@@ -3576,6 +3576,8 @@
 		52B47A2B1A5349A3004E4C60 /* HttpClient-apple.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "HttpClient-apple.mm"; sourceTree = "<group>"; };
 		52B47A2C1A5349A3004E4C60 /* HttpCookie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HttpCookie.cpp; sourceTree = "<group>"; };
 		52B47A2D1A5349A3004E4C60 /* HttpCookie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HttpCookie.h; sourceTree = "<group>"; };
+		5E65C2B61AF8C96A0083DF87 /* ccShader_3D_PositionNormal.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ccShader_3D_PositionNormal.vert; sourceTree = "<group>"; };
+		5E65C2B71AF8CAA00083DF87 /* ccShader_3D_Position.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ccShader_3D_Position.vert; sourceTree = "<group>"; };
 		5E9F61221A3FFE3D0038DE01 /* CCFrustum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCFrustum.cpp; sourceTree = "<group>"; };
 		5E9F61231A3FFE3D0038DE01 /* CCFrustum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCFrustum.h; sourceTree = "<group>"; };
 		5E9F61241A3FFE3D0038DE01 /* CCPlane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCPlane.cpp; sourceTree = "<group>"; };
@@ -5881,6 +5883,7 @@
 				B603F1B21AC8F1FD00A9579C /* ccShader_3D_Terrain.vert */,
 				B6D38B941AC3B45600043997 /* ccShader_3D_Particle.frag */,
 				B6D38B951AC3B45600043997 /* ccShader_3D_Particle.vert */,
+				5E65C2B71AF8CAA00083DF87 /* ccShader_3D_Position.vert */,
 				B6D38B961AC3B45600043997 /* ccShader_3D_Skybox.frag */,
 				B6D38B971AC3B45600043997 /* ccShader_3D_Skybox.vert */,
 				B20564AA1A6E5744001C1B6E /* ccShader_PositionColorTextureAsPointsize.vert */,
@@ -5888,6 +5891,7 @@
 				B67C624419D4186F00F11FC6 /* ccShader_3D_ColorNormalTex.frag */,
 				B67C624519D4186F00F11FC6 /* ccShader_3D_PositionNormalTex.vert */,
 				B29594AF1926D5D9003EEF37 /* ccShader_3D_Color.frag */,
+				5E65C2B61AF8C96A0083DF87 /* ccShader_3D_PositionNormal.vert */,
 				B29594B01926D5D9003EEF37 /* ccShader_3D_ColorTex.frag */,
 				B29594B11926D5D9003EEF37 /* ccShader_3D_PositionTex.vert */,
 				5034CA60191D91CF00CE6051 /* ccShader_PositionTextureColor.vert */,
