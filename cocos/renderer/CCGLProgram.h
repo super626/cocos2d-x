@@ -190,7 +190,15 @@ public:
     /**Built in shader used for 3D, support Position vertex attribute, with color specified by a uniform.*/
     static const char* SHADER_3D_POSITION;
     
+    /**
+     Built in shader used for 3D, support Position (Skeletal animation by hardware skin) with color specified by a uniform.
+     */
     static const char* SHADER_3D_SKINPOSITION;
+    
+    /**
+     Built in shader used for 3D, support Position(skeletal animation by hardware skin), Normal vertex attribute,
+     used in lighting. with color specified by a uniform.
+     */
     static const char* SHADER_3D_SKINPOSITION_NORMAL;
     
     /**Built in shader used for 3D, support Position and Texture vertex attribute, with color specified by a uniform.*/
