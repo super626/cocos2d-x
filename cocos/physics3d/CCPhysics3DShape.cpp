@@ -47,6 +47,9 @@ Physics3DShape::Physics3DShape()
 Physics3DShape::~Physics3DShape()
 {
 #if (CC_ENABLE_BULLET_INTEGRATION)
+    auto btms = dynamic_cast<btBvhTriangleMeshShape *>(_btShape);
+    if (btms) delete btms->getMeshInterface();
+
     CC_SAFE_DELETE(_btShape);
     CC_SAFE_DELETE_ARRAY(_heightfieldData);
     for (auto iter : _compoundChildShapes){
