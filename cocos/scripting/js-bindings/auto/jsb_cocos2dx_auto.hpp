@@ -1,3 +1,4 @@
+#include "base/ccConfig.h"
 #ifndef __cocos2dx_h__
 #define __cocos2dx_h__
 
@@ -251,6 +252,7 @@ void js_register_cocos2dx_Scene(JSContext *cx, JS::HandleObject global);
 void register_all_cocos2dx(JSContext* cx, JS::HandleObject obj);
 bool js_cocos2dx_Scene_setCameraOrderDirty(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Scene_render(JSContext *cx, uint32_t argc, jsval *vp);
+bool js_cocos2dx_Scene_stepPhysicsAndNavigation(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Scene_onProjectionChanged(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Scene_initWithSize(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Scene_getDefaultCamera(JSContext *cx, uint32_t argc, jsval *vp);
@@ -3359,16 +3361,20 @@ void js_register_cocos2dx_Camera(JSContext *cx, JS::HandleObject global);
 void register_all_cocos2dx(JSContext* cx, JS::HandleObject obj);
 bool js_cocos2dx_Camera_getDepth(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_getViewProjectionMatrix(JSContext *cx, uint32_t argc, jsval *vp);
+bool js_cocos2dx_Camera_applyViewport(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_lookAt(JSContext *cx, uint32_t argc, jsval *vp);
+bool js_cocos2dx_Camera_apply(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_getProjectionMatrix(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_getDepthInView(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_clearBackground(JSContext *cx, uint32_t argc, jsval *vp);
-bool js_cocos2dx_Camera_setDepth(JSContext *cx, uint32_t argc, jsval *vp);
+bool js_cocos2dx_Camera_setAdditionalProjection(JSContext *cx, uint32_t argc, jsval *vp);
+bool js_cocos2dx_Camera_setViewport(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_initDefault(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_getCameraFlag(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_getType(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_initOrthographic(JSContext *cx, uint32_t argc, jsval *vp);
-bool js_cocos2dx_Camera_setAdditionalProjection(JSContext *cx, uint32_t argc, jsval *vp);
+bool js_cocos2dx_Camera_getRenderOrder(JSContext *cx, uint32_t argc, jsval *vp);
+bool js_cocos2dx_Camera_setDepth(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_setScene(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_projectGL(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_getViewMatrix(JSContext *cx, uint32_t argc, jsval *vp);
@@ -3376,12 +3382,16 @@ bool js_cocos2dx_Camera_getNearPlane(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_project(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_setCameraFlag(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_getFarPlane(JSContext *cx, uint32_t argc, jsval *vp);
+bool js_cocos2dx_Camera_applyFrameBufferObject(JSContext *cx, uint32_t argc, jsval *vp);
+bool js_cocos2dx_Camera_setFrameBufferObject(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_initPerspective(JSContext *cx, uint32_t argc, jsval *vp);
+bool js_cocos2dx_Camera_createOrthographic(JSContext *cx, uint32_t argc, jsval *vp);
+bool js_cocos2dx_Camera_getVisitingCamera(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_create(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_createPerspective(JSContext *cx, uint32_t argc, jsval *vp);
-bool js_cocos2dx_Camera_createOrthographic(JSContext *cx, uint32_t argc, jsval *vp);
+bool js_cocos2dx_Camera_getDefaultViewport(JSContext *cx, uint32_t argc, jsval *vp);
+bool js_cocos2dx_Camera_setDefaultViewport(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_getDefaultCamera(JSContext *cx, uint32_t argc, jsval *vp);
-bool js_cocos2dx_Camera_getVisitingCamera(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_Camera_Camera(JSContext *cx, uint32_t argc, jsval *vp);
 
 extern JSClass  *jsb_cocos2d_GridBase_class;
@@ -3986,5 +3996,5 @@ bool js_cocos2dx_SpritePolygonCache_removeSpritePolygonCache(JSContext *cx, uint
 bool js_cocos2dx_SpritePolygonCache_destroyInstance(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_SpritePolygonCache_printInfo(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_cocos2dx_SpritePolygonCache_getInstance(JSContext *cx, uint32_t argc, jsval *vp);
-#endif
 
+#endif // __cocos2dx_h__

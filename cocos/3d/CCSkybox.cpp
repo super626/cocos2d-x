@@ -30,6 +30,7 @@
 #include "renderer/CCGLProgramCache.h"
 #include "renderer/CCGLProgramState.h"
 #include "renderer/CCRenderer.h"
+#include "renderer/CCRenderState.h"
 #include "3d/CCSkybox.h"
 #include "3d/CCTextureCube.h"
 
@@ -42,16 +43,11 @@ Skybox::Skybox()
     , _vertexBuffer(0)
     , _indexBuffer(0)
     ,_texture(nullptr)
-    , _stateBlock(nullptr)
 {
-    _stateBlock = RenderState::StateBlock::create();
-    CC_SAFE_RETAIN(_stateBlock);
 }
 
 Skybox::~Skybox()
 {
-    CC_SAFE_RELEASE(_stateBlock);
-
     glDeleteBuffers(1, &_vertexBuffer);
     glDeleteBuffers(1, &_indexBuffer);
 
@@ -90,11 +86,7 @@ bool Skybox::init()
     initBuffers();
 
     CHECK_GL_ERROR_DEBUG();
-    _stateBlock->setDepthWrite(true);
-    _stateBlock->setDepthTest(true);
-    _stateBlock->setDepthFunction(RenderState::DEPTH_LEQUAL);
-    _stateBlock->setCullFace(true);
-    _stateBlock->setCullFaceSide(RenderState::CULL_FACE_SIDE_BACK);
+
     return true;
 }
 
@@ -187,6 +179,27 @@ void Skybox::onDraw(const Mat4& transform, uint32_t flags)
     float scalf = (camera->getFarPlane() + camera->getNearPlane()) / 2;
     state->setUniformFloat("u_scalef", scalf);
     
+    GLboolean depthFlag = glIsEnabled(GL_DEPTH_TEST);
+    GLint depthFunc;
+    glGetIntegerv(GL_DEPTH_FUNC, &depthFunc);
+
+    glEnable(GL_DEPTH_TEST);
+    RenderState::StateBlock::_defaultState->setDepthTest(true);
+
+    glDepthFunc(GL_LEQUAL);
+    RenderState::StateBlock::_defaultState->setDepthFunction(RenderState::DEPTH_LEQUAL);
+
+
+    GLboolean cullFlag = glIsEnabled(GL_CULL_FACE);
+    GLint cullMode;
+    glGetIntegerv(GL_CULL_FACE_MODE, &cullMode);
+
+    glEnable(GL_CULL_FACE);
+    RenderState::StateBlock::_defaultState->setCullFace(true);
+
+    glCullFace(GL_BACK);
+    RenderState::StateBlock::_defaultState->setCullFaceSide(RenderState::CULL_FACE_SIDE_BACK);
+
     if (Configuration::getInstance()->supportsShareableVAO())
     {
         GL::bindVAO(_vao);
@@ -200,7 +213,7 @@ void Skybox::onDraw(const Mat4& transform, uint32_t flags)
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
     }
-    _stateBlock->bind();
+
     glDrawElements(GL_TRIANGLES, (GLsizei)36, GL_UNSIGNED_BYTE, nullptr);
 
     if (Configuration::getInstance()->supportsShareableVAO())
@@ -214,6 +227,14 @@ void Skybox::onDraw(const Mat4& transform, uint32_t flags)
     }
 
     CC_INCREMENT_GL_DRAWN_BATCHES_AND_VERTICES(1, 8);
+
+    glCullFace(cullMode);
+    if (!cullFlag)
+        glDisable(GL_CULL_FACE);
+
+    glDepthFunc(depthFunc);
+    if (!depthFlag)
+        glDisable(GL_DEPTH_TEST);
 
     CHECK_GL_ERROR_DEBUG();
 }
