@@ -28,7 +28,6 @@
 #include "base/ccTypes.h"
 #include "platform/CCPlatformMacros.h"
 #include "renderer/CCCustomCommand.h"
-#include "renderer/CCRenderState.h"
 #include "2d/CCNode.h"
 
 NS_CC_BEGIN
@@ -107,8 +106,6 @@ protected:
     GLuint      _indexBuffer;
 
     CustomCommand _customCommand;
-
-    RenderState::StateBlock* _stateBlock;
 
     TextureCube*  _texture;
 private:
