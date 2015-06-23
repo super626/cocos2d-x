@@ -176,6 +176,8 @@ public:
     
     /**draw*/
     virtual void draw(Renderer *renderer, const Mat4 &transform, uint32_t flags) override;
+    
+    void setForce2DQueue(bool force2DQueue) { _force2DQueue = force2DQueue; }
 
 CC_CONSTRUCTOR_ACCESS:
     
@@ -234,6 +236,8 @@ protected:
     unsigned int                 _lightMask;
     bool                         _shaderUsingLight; // is current shader using light ?
     bool                         _forceDepthWrite; // Always write to depth buffer
+    
+    bool                         _force2DQueue;
     
     struct AsyncLoadParam
     {

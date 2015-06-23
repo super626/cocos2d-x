@@ -245,6 +245,7 @@ Sprite3D::Sprite3D()
 , _lightMask(-1)
 , _shaderUsingLight(false)
 , _forceDepthWrite(false)
+, _force2DQueue(false)
 {
 }
 
@@ -785,6 +786,7 @@ void Sprite3D::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
             meshCommand.setDepthWriteEnabled(true);
         }
         meshCommand.setTransparent(isTransparent);
+        meshCommand.set3D(!_force2DQueue);
         renderer->addCommand(&meshCommand);
     }
 }

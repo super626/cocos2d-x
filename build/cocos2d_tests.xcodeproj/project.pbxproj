@@ -834,6 +834,8 @@
 		B63993321A49359F00B07923 /* Particle3D in Resources */ = {isa = PBXBuildFile; fileRef = B63993301A49359F00B07923 /* Particle3D */; };
 		B6C039D919C95D83007207DC /* LightTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6C039D719C95D83007207DC /* LightTest.cpp */; };
 		B6C039DA19C95D83007207DC /* LightTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6C039D719C95D83007207DC /* LightTest.cpp */; };
+		B6DD9E8C1B3959E300014CC3 /* Bug-ClippingNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6DD9E8A1B3959E300014CC3 /* Bug-ClippingNode.cpp */; };
+		B6DD9E8D1B3959E300014CC3 /* Bug-ClippingNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6DD9E8A1B3959E300014CC3 /* Bug-ClippingNode.cpp */; };
 		C04F935A1941B05400E9FEAB /* TileMapTest2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C04F93581941B05400E9FEAB /* TileMapTest2.cpp */; };
 		C04F935B1941B05400E9FEAB /* TileMapTest2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C04F93581941B05400E9FEAB /* TileMapTest2.cpp */; };
 		C08689C118D370C90093E810 /* background.caf in Resources */ = {isa = PBXBuildFile; fileRef = C08689C018D370C90093E810 /* background.caf */; };
@@ -1776,6 +1778,8 @@
 		B63993301A49359F00B07923 /* Particle3D */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Particle3D; path = "../tests/cpp-tests/Resources/Particle3D"; sourceTree = "<group>"; };
 		B6C039D719C95D83007207DC /* LightTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LightTest.cpp; path = LightTest/LightTest.cpp; sourceTree = "<group>"; };
 		B6C039D819C95D83007207DC /* LightTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LightTest.h; path = LightTest/LightTest.h; sourceTree = "<group>"; };
+		B6DD9E8A1B3959E300014CC3 /* Bug-ClippingNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "Bug-ClippingNode.cpp"; sourceTree = "<group>"; };
+		B6DD9E8B1B3959E300014CC3 /* Bug-ClippingNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bug-ClippingNode.h"; sourceTree = "<group>"; };
 		C04F93581941B05400E9FEAB /* TileMapTest2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TileMapTest2.cpp; sourceTree = "<group>"; };
 		C04F93591941B05400E9FEAB /* TileMapTest2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileMapTest2.h; sourceTree = "<group>"; };
 		C08689C018D370C90093E810 /* background.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = background.caf; path = "../tests/cpp-tests/Resources/background.caf"; sourceTree = "<group>"; };
@@ -2397,6 +2401,8 @@
 		1AC3597618CECF0B00F37B72 /* BugsTest */ = {
 			isa = PBXGroup;
 			children = (
+				B6DD9E8A1B3959E300014CC3 /* Bug-ClippingNode.cpp */,
+				B6DD9E8B1B3959E300014CC3 /* Bug-ClippingNode.h */,
 				1AC3597718CECF0B00F37B72 /* Bug-1159.cpp */,
 				1AC3597818CECF0B00F37B72 /* Bug-1159.h */,
 				1AC3597918CECF0B00F37B72 /* Bug-1174.cpp */,
@@ -4865,6 +4871,7 @@
 				1AC35B4918CECF0C00F37B72 /* Bug-914.cpp in Sources */,
 				1AC35B6318CECF0C00F37B72 /* EffectsAdvancedTest.cpp in Sources */,
 				B639932E1A490EC700B07923 /* Particle3DTest.cpp in Sources */,
+				B6DD9E8C1B3959E300014CC3 /* Bug-ClippingNode.cpp in Sources */,
 				1AC35C5F18CECF0C00F37B72 /* Paddle.cpp in Sources */,
 				1AC35BDB18CECF0C00F37B72 /* SceneEditorTest.cpp in Sources */,
 				1AC35B4B18CECF0C00F37B72 /* BugsTest.cpp in Sources */,
@@ -5169,6 +5176,7 @@
 				29080D90191B595E0066F8DF /* CocoStudioGUITest.cpp in Sources */,
 				1AC35C3E18CECF0C00F37B72 /* PhysicsTest.cpp in Sources */,
 				3825CC4A1A2C982A00C92EA8 /* CustomRootNode.cpp in Sources */,
+				B6DD9E8D1B3959E300014CC3 /* Bug-ClippingNode.cpp in Sources */,
 				29080DC6191B595E0066F8DF /* UIScene_Editor.cpp in Sources */,
 				B6337DF81ABA9B44005AEF24 /* PerformanceParticle3DTest.cpp in Sources */,
 				29080DB2191B595E0066F8DF /* UILayoutTest.cpp in Sources */,
