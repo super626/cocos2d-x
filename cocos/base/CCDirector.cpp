@@ -942,6 +942,7 @@ void Director::reset()
     
     stopAnimation();
     
+    CC_SAFE_RELEASE_NULL(_notificationNode);
     CC_SAFE_RELEASE_NULL(_FPSLabel);
     CC_SAFE_RELEASE_NULL(_drawnBatchesLabel);
     CC_SAFE_RELEASE_NULL(_drawnVerticesLabel);
@@ -1006,6 +1007,9 @@ void Director::restartDirector()
 {
     reset();
     
+    // RenderState need to be reinitialized
+    RenderState::initialize();
+
     // Texture cache need to be reinitialized
     initTextureCache();
     
