@@ -189,6 +189,7 @@ public:
      */
     void calculateAABB();
     
+    void setNodeTransform(const Mat4 & mat);
 
 CC_CONSTRUCTOR_ACCESS:
 
@@ -198,7 +199,7 @@ CC_CONSTRUCTOR_ACCESS:
 protected:
     void setLightUniforms(Pass* pass, Scene* scene, const Vec4& color, unsigned int lightmask);
     void bindMeshCommand();
-
+    Mat4 _nodeTransform;
     Texture2D*          _texture;  //texture that submesh is using
     MeshSkin*           _skin;     //skin
     bool                _visible; // is the submesh visible

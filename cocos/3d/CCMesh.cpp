@@ -127,6 +127,7 @@ Mesh::Mesh()
 , _blend(BlendFunc::ALPHA_NON_PREMULTIPLIED)
 , _visibleChanged(nullptr)
 , _blendDirty(true)
+, _nodeTransform(Mat4::IDENTITY)
 {
     
 }
@@ -342,7 +343,7 @@ void Mesh::draw(Renderer* renderer, float globalZOrder, const Mat4& transform, u
                       getPrimitiveType(),
                       getIndexFormat(),
                       getIndexCount(),
-                      transform,
+                      transform*_nodeTransform,
                       flags);
 
 
@@ -455,6 +456,11 @@ void Mesh::calculateAABB()
             }
         }
     }
+}
+
+void cocos2d::Mesh::setNodeTransform(const Mat4 & mat)
+{
+    _nodeTransform = mat;
 }
 
 void Mesh::bindMeshCommand()

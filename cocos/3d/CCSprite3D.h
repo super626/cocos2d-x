@@ -221,7 +221,7 @@ CC_CONSTRUCTOR_ACCESS:
     /**generate default GLProgramState*/
     void genGLProgramState(bool useLight = false);
 
-    void createNode(NodeData* nodedata, Node* root, const MaterialDatas& matrialdatas, bool singleSprite);
+    void createNode(NodeData* nodedata, Node* root, const MaterialDatas& matrialdatas, bool singleSprite,Mat4 parentNodeTransform);
     void createAttachSprite3DNode(NodeData* nodedata,const MaterialDatas& matrialdatas);
     Sprite3D* createSprite3DNode(NodeData* nodedata,ModelData* modeldata,const MaterialDatas& matrialdatas);
 
