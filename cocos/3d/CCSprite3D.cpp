@@ -190,7 +190,7 @@ bool Sprite3D::loadFromCache(const std::string& path)
         {
             if(it)
             {
-                createNode(it, this, *(spritedata->materialdatas), spritedata->nodedatas->nodes.size() == 1);
+                createNode(it, this, *(spritedata->materialdatas), spritedata->nodedatas->nodes.size() == 1,Mat4::IDENTITY);
             }
         }
         
@@ -328,7 +328,7 @@ bool Sprite3D::initFrom(const NodeDatas& nodeDatas, const MeshDatas& meshdatas, 
     {
         if(it)
         {
-            createNode(it, this, materialdatas, nodeDatas.nodes.size() == 1);
+            createNode(it, this, materialdatas, nodeDatas.nodes.size() == 1,Mat4::IDENTITY);
         }
     }
     for(const auto& it : nodeDatas.skeleton)
@@ -473,8 +473,9 @@ void Sprite3D::genGLProgramState(bool useLight)
     }
 }
 
-void Sprite3D::createNode(NodeData* nodedata, Node* root, const MaterialDatas& materialdatas, bool singleSprite)
+void Sprite3D::createNode(NodeData* nodedata, Node* root, const MaterialDatas& materialdatas, bool singleSprite, Mat4 parentNodeTransform)
 {
+    Mat4 nodeTransForm = parentNodeTransform;
     Node* node=nullptr;
     for(const auto& it : nodedata->modelNodeDatas)
     {
@@ -534,7 +535,11 @@ void Sprite3D::createNode(NodeData* nodedata, Node* root, const MaterialDatas& m
                     setScaleX(scale.x);
                     setScaleY(scale.y);
                     setScaleZ(scale.z);
-                    
+                    if (!_skeleton || it->bones.size()==0)
+                    {
+                        nodeTransForm = nodeTransForm * nodedata->transform;
+                        mesh->setNodeTransform(nodeTransForm);
+                    }
                 }
             }
             else
@@ -577,7 +582,7 @@ void Sprite3D::createNode(NodeData* nodedata, Node* root, const MaterialDatas& m
     }
     for(const auto& it : nodedata->children)
     {
-        createNode(it,node, materialdatas, nodedata->children.size() == 1);
+        createNode(it, node, materialdatas, nodedata->children.size() == 1, nodeTransForm);
     }
 }
 
