@@ -917,6 +917,8 @@
 		B61E90CC1B12B74B00BE69EA /* NavMesh in Resources */ = {isa = PBXBuildFile; fileRef = B61E90CA1B12B74B00BE69EA /* NavMesh */; };
 		B6337DF71ABA9B44005AEF24 /* PerformanceParticle3DTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6337DF51ABA9B44005AEF24 /* PerformanceParticle3DTest.cpp */; };
 		B6337DF81ABA9B44005AEF24 /* PerformanceParticle3DTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6337DF51ABA9B44005AEF24 /* PerformanceParticle3DTest.cpp */; };
+		B63522591B79E002000F1C37 /* MotionStreak3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63522571B79E002000F1C37 /* MotionStreak3D.cpp */; };
+		B635225A1B79E002000F1C37 /* MotionStreak3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63522571B79E002000F1C37 /* MotionStreak3D.cpp */; };
 		B639932E1A490EC700B07923 /* Particle3DTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B639932C1A490EC700B07923 /* Particle3DTest.cpp */; };
 		B639932F1A490EC700B07923 /* Particle3DTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B639932C1A490EC700B07923 /* Particle3DTest.cpp */; };
 		B63993311A49359F00B07923 /* Particle3D in Resources */ = {isa = PBXBuildFile; fileRef = B63993301A49359F00B07923 /* Particle3D */; };
@@ -1990,6 +1992,8 @@
 		B61E90CA1B12B74B00BE69EA /* NavMesh */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NavMesh; path = "../tests/cpp-tests/Resources/NavMesh"; sourceTree = "<group>"; };
 		B6337DF51ABA9B44005AEF24 /* PerformanceParticle3DTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceParticle3DTest.cpp; sourceTree = "<group>"; };
 		B6337DF61ABA9B44005AEF24 /* PerformanceParticle3DTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceParticle3DTest.h; sourceTree = "<group>"; };
+		B63522571B79E002000F1C37 /* MotionStreak3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MotionStreak3D.cpp; path = Sprite3DTest/MotionStreak3D.cpp; sourceTree = "<group>"; };
+		B63522581B79E002000F1C37 /* MotionStreak3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MotionStreak3D.h; path = Sprite3DTest/MotionStreak3D.h; sourceTree = "<group>"; };
 		B639932C1A490EC700B07923 /* Particle3DTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Particle3DTest.cpp; path = Particle3DTest/Particle3DTest.cpp; sourceTree = "<group>"; };
 		B639932D1A490EC700B07923 /* Particle3DTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Particle3DTest.h; path = Particle3DTest/Particle3DTest.h; sourceTree = "<group>"; };
 		B63993301A49359F00B07923 /* Particle3D */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Particle3D; path = "../tests/cpp-tests/Resources/Particle3D"; sourceTree = "<group>"; };
@@ -4326,6 +4330,8 @@
 		3E92EA7D1921A0C60094CD21 /* Sprite3DTest */ = {
 			isa = PBXGroup;
 			children = (
+				B63522571B79E002000F1C37 /* MotionStreak3D.cpp */,
+				B63522581B79E002000F1C37 /* MotionStreak3D.h */,
 				5EBEECAE1995247000429821 /* DrawNode3D.cpp */,
 				5EBEECAF1995247000429821 /* DrawNode3D.h */,
 				3E92EA801921A1400094CD21 /* Sprite3DTest.cpp */,
@@ -5619,6 +5625,7 @@
 				1AC35C3B18CECF0C00F37B72 /* PerformanceTouchesTest.cpp in Sources */,
 				29080D8F191B595E0066F8DF /* CocoStudioGUITest.cpp in Sources */,
 				1AC35B3D18CECF0C00F37B72 /* Bug-422.cpp in Sources */,
+				B63522591B79E002000F1C37 /* MotionStreak3D.cpp in Sources */,
 				1AC35BF518CECF0C00F37B72 /* HttpClientTest.cpp in Sources */,
 				1AC35B4F18CECF0C00F37B72 /* ClickAndMoveTest.cpp in Sources */,
 				29080DCF191B595E0066F8DF /* UISliderTest.cpp in Sources */,
@@ -5705,6 +5712,7 @@
 				1AC35C5218CECF0C00F37B72 /* testBasic.cpp in Sources */,
 				1AC35B7A18CECF0C00F37B72 /* EnemyController.cpp in Sources */,
 				29080DE6191B595E0066F8DF /* UIWidgetAddNodeTest_Editor.cpp in Sources */,
+				B635225A1B79E002000F1C37 /* MotionStreak3D.cpp in Sources */,
 				1AC35B6C18CECF0C00F37B72 /* CocosBuilderTest.cpp in Sources */,
 				29080DDE191B595E0066F8DF /* UITextFieldTest_Editor.cpp in Sources */,
 				1AC35B4218CECF0C00F37B72 /* QuestionContainerSprite.cpp in Sources */,
