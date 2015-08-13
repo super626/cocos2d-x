@@ -957,4 +957,134 @@ PUSphereRender* PUSphereRender::clone()
     return render;
 }
 
+std::map<std::string, std::function< PUParticle3DCustomRender*() > > PUParticle3DCustomRender::_renderRegistry;
+
+PUParticle3DCustomRender* PUParticle3DCustomRender::create(const std::string &renderName, const std::string &texFile /*= ""*/)
+{
+    auto iter = _renderRegistry.find(renderName);
+    if (iter == _renderRegistry.end()) return nullptr;
+
+    auto ret = iter->second();
+    if (ret && ret->initRender(texFile))
+    {
+        ret->_renderName = renderName;
+        ret->autorelease();
+    }
+    else
+    {
+        CC_SAFE_DELETE(ret);
+    }
+    return ret;
+}
+
+void cocos2d::PUParticle3DCustomRender::registerCustomRender(const std::string &renderName, const std::function< PUParticle3DCustomRender*()> &createFunc)
+{
+    _renderRegistry[renderName] = createFunc;
+}
+
+void PUParticle3DCustomRender::copyAttributesTo(PUParticle3DCustomRender *render)
+{
+    PURender::copyAttributesTo(render);
+    render->_paramValues = _paramValues;
+}
+
+void PUParticle3DCustomRender::addParamValue(const std::string &key, const Value &value)
+{
+    _paramValues[key] = value;
+}
+
+PUParticle3DCustomRender::~PUParticle3DCustomRender()
+{
+
+}
+
+PUParticle3DCustomRender::PUParticle3DCustomRender()
+    : _sizePerVertex(4)
+    , _sizePerIndex(6)
+    , _isInit(false)
+{
+
+}
+
+PUParticle3DCustomRender* PUParticle3DCustomRender::clone()
+{
+    auto render = PUParticle3DCustomRender::create(_renderName, _texFile);
+    copyAttributesTo(render);
+    return render;
+}
+
+void PUParticle3DCustomRender::render(Renderer* renderer, const Mat4 &transform, ParticleSystem3D* particleSystem)
+{
+    //batch and generate draw
+    const ParticlePool &particlePool = particleSystem->getParticlePool();
+    if (!_isVisible || particlePool.empty())
+        return;
+
+    if (_vertexBuffer == nullptr){
+        GLsizei stride = sizeof(VertexInfo);
+        _vertexBuffer = VertexBuffer::create(stride, 4 * particleSystem->getParticleQuota());
+        if (_vertexBuffer == nullptr)
+        {
+            CCLOG("PUParticle3DCustomRender::render create vertex buffer failed");
+            return;
+        }
+        _vertexBuffer->retain();
+    }
+
+    if (_indexBuffer == nullptr){
+        _indexBuffer = IndexBuffer::create(IndexBuffer::IndexType::INDEX_TYPE_SHORT_16, 6 * particleSystem->getParticleQuota());
+        if (_indexBuffer == nullptr)
+        {
+            CCLOG("PUParticle3DCustomRender::render create index buffer failed");
+            return;
+        }
+        _indexBuffer->retain();
+    }
+    const ParticlePool::PoolList &activeParticleList = particlePool.getActiveDataList();
+    unsigned int neededVertexSize = activeParticleList.size() * _sizePerVertex;
+    unsigned int neededIndexSize = activeParticleList.size() * _sizePerIndex;
+    if (_vertices.size() < neededVertexSize)
+    {
+        _vertices.resize(neededVertexSize);
+        _indices.resize(neededIndexSize);
+    }
+
+    if (!_isInit){
+        initRenderParticles();
+        _isInit = true;
+    }
+
+    preRenderParticles(particleSystem);
+    for (auto iter : activeParticleList)
+    {
+        auto particle = static_cast<PUParticle3D *>(iter);
+        renderParticle(particleSystem, particle);
+    }
+    postRenderParticles(particleSystem);
+
+    if (!_vertices.empty() && !_indices.empty()){
+        _vertexBuffer->updateVertices(&_vertices[0], neededVertexSize/* * sizeof(_posuvcolors[0])*/, 0);
+        _indexBuffer->updateIndices(&_indices[0], neededIndexSize/* * sizeof(unsigned short)*/, 0);
+
+        _stateBlock->setBlendFunc(particleSystem->getBlendFunc());
+
+        GLuint texId = (_texture ? _texture->getName() : 0);
+        _meshCommand->init(0,
+            texId,
+            _glProgramState,
+            _stateBlock,
+            _vertexBuffer->getVBO(),
+            _indexBuffer->getVBO(),
+            GL_TRIANGLES,
+            GL_UNSIGNED_SHORT,
+            neededIndexSize,
+            transform,
+            Node::FLAGS_RENDER_AS_3D);
+        _meshCommand->setSkipBatching(true);
+        _meshCommand->setTransparent(true);
+        _glProgramState->setUniformVec4("u_color", Vec4(1, 1, 1, 1));
+        renderer->addCommand(_meshCommand);
+    }
+}
+
 NS_CC_END

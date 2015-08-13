@@ -66,6 +66,13 @@ void PURendererTranslator::translate(PUScriptCompiler* compiler, PUAbstractNode 
     //    compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, obj->file, obj->line);
     //    return;
     //}
+
+    // The first value is the name
+    std::string name;
+    if (!obj->values.empty())
+    {
+        getString(*obj->values.front(), &name);
+    }
     
     if (parent && parent->context)
     {
@@ -592,6 +599,39 @@ void PURendererTranslator::translate(PUScriptCompiler* compiler, PUAbstractNode 
                             {
                                 static_cast<PURibbonTrailRender *>(_renderer)->setColorChange(val);
                             }
+                        }
+                    }
+                }
+            }
+        }
+        else if (type == "Custom"){
+            if (material)
+                _renderer = PUParticle3DCustomRender::create(name, texFolder + material->textureFile);
+            else
+                _renderer = PUParticle3DCustomRender::create(name);
+
+            for (PUAbstractNodeList::iterator i = obj->children.begin(); i != obj->children.end(); ++i)
+            {
+                if ((*i)->type == ANT_PROPERTY)
+                {
+                    PUPropertyAbstractNode* prop = reinterpret_cast<PUPropertyAbstractNode*>((*i));
+
+                    if (!prop->values.empty()){
+                        std::string val;
+                        if (prop->values.size() == 1){
+                            if (getString(*prop->values.front(), &val)){
+                                static_cast<PUParticle3DCustomRender *>(_renderer)->addParamValue(prop->name, Value(val));
+                            }
+                        }
+                        else
+                        {
+                            ValueVector vv;
+                            for (auto iter : prop->values){
+                                if (getString(*iter, &val)){
+                                    vv.push_back(Value(val));
+                                }
+                            }
+                            static_cast<PUParticle3DCustomRender *>(_renderer)->addParamValue(prop->name, Value(vv));
                         }
                     }
                 }
