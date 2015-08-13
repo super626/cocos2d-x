@@ -581,11 +581,9 @@ bool Particle3DCustomDemo::init()
 {
     if (!Particle3DTestDemo::init())
         return false;
-
     PUParticle3DCustomRender::registerCustomRender("Surface", []()->PUParticle3DCustomRender*{
         return new SurfaceRender;
     });
-
     this->runAction(RepeatForever::create(Sequence::create(CallFunc::create([=]{
         auto rootps = PUParticleSystem3D::create("custom.pu");
         rootps->setCameraMask((unsigned short)CameraFlag::USER1);
