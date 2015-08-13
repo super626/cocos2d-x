@@ -388,6 +388,8 @@ void MotionStreak3D::onDraw(const Mat4 &transform, uint32_t flags)
     
     glDisable(GL_CULL_FACE);
     RenderState::StateBlock::_defaultState->setCullFace(false);
+    glEnable(GL_DEPTH_TEST);
+    RenderState::StateBlock::_defaultState->setDepthTest(true);
 
     glVertexAttribPointer(GLProgram::VERTEX_ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 0, _vertices);
     glVertexAttribPointer(GLProgram::VERTEX_ATTRIB_TEX_COORD, 2, GL_FLOAT, GL_FALSE, 0, _texCoords);
