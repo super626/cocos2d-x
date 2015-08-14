@@ -192,6 +192,8 @@ public:
     virtual PUParticle3DModelRender* clone() override;
     void copyAttributesTo(PUParticle3DModelRender *render);
 
+    void setMaterialFile(const std::string &matFile) { _matFile = matFile; };
+
 CC_CONSTRUCTOR_ACCESS:
     PUParticle3DModelRender();
     virtual ~PUParticle3DModelRender();
@@ -201,6 +203,7 @@ protected:
     std::vector<Sprite3D *> _spriteList;
     std::string _modelFile;
     std::string _texFile;
+    std::string _matFile;
     Vec3 _spriteSize;
 };
 

@@ -29,6 +29,7 @@
 #include "extensions/Particle3D/PU/CCPUUtil.h"
 #include "renderer/CCMeshCommand.h"
 #include "renderer/CCRenderer.h"
+#include "renderer/CCMaterial.h"
 #include "renderer/CCTextureCache.h"
 #include "renderer/CCGLProgramState.h"
 #include "renderer/CCGLProgramCache.h"
@@ -457,6 +458,9 @@ void PUParticle3DModelRender::render( Renderer* renderer, const Mat4 &transform,
             sprite->setTexture(_texFile);
             sprite->setBlendFunc(particleSystem->getBlendFunc());
             sprite->setCullFaceEnabled(false);
+            if (!_matFile.empty()){
+                sprite->setMaterial(Material::createWithFilename(_matFile));
+            }
             sprite->retain();
             _spriteList.push_back(sprite);
         }

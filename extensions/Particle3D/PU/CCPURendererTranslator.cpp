@@ -262,17 +262,22 @@ void PURendererTranslator::translate(PUScriptCompiler* compiler, PUAbstractNode 
                     if (prop->name == token[TOKEN_MESH_NAME])
                     {
                         // Property: mesh_name
-                        if (passValidateProperty(compiler, prop, token[TOKEN_MESH_NAME], VAL_STRING))
-                        {
+                        if (!prop->values.empty()){
                             std::string val;
-                            if(getString(*prop->values.front(), &val))
+                            if (getString(*prop->values.front(), &val))
                             {
                                 std::string::size_type pos = val.find_last_of(".");
                                 val = val.substr(0, pos + 1) + std::string("c3b");
-                                if (material) 
+                                if (material)
                                     _renderer = PUParticle3DModelRender::create(val, texFolder + material->textureFile);
                                 else
                                     _renderer = PUParticle3DModelRender::create(val);
+                            }
+
+                            if (1 < prop->values.size()){
+                                if (getString(*prop->values.back(), &val)){
+                                    static_cast<PUParticle3DModelRender *>(_renderer)->setMaterialFile(val);
+                                }
                             }
                         }
                     }
