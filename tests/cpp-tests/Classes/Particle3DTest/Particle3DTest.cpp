@@ -26,6 +26,7 @@
 #include "Particle3DTest.h"
 #include "Particle3D/CCParticleSystem3D.h"
 #include "Particle3D/PU/CCPUParticleSystem3D.h"
+#include "Particle3D/PU/CCPURender.h"
 
 USING_NS_CC;
 
@@ -48,6 +49,7 @@ Particle3DTests::Particle3DTests()
     ADD_TEST_CASE(Particle3DRibbonTrailDemo);
     ADD_TEST_CASE(Particle3DWeaponTrailDemo);
     ADD_TEST_CASE(Particle3DWithSprite3DDemo);
+    ADD_TEST_CASE(Particle3DCustomDemo);
 }
 
 std::string Particle3DTestDemo::title() const 
@@ -120,20 +122,21 @@ Particle3DTestDemo::Particle3DTestDemo( void )
 
 void Particle3DTestDemo::update( float delta )
 {
-    ParticleSystem3D *ps = static_cast<ParticleSystem3D *>(this->getChildByTag(PARTICLE_SYSTEM_TAG));
-    if (ps){
-        unsigned int count = 0;
-        auto children = ps->getChildren();
-        for (auto iter : children){
-            ParticleSystem3D *child = dynamic_cast<ParticleSystem3D *>(iter);
-            if (child){
-                count += child->getAliveParticleCount();
+    for (auto ps : this->getChildren()){
+        if (ps->getTag() == PARTICLE_SYSTEM_TAG){
+            unsigned int count = 0;
+            auto children = ps->getChildren();
+            for (auto iter : children){
+                ParticleSystem3D *child = dynamic_cast<ParticleSystem3D *>(iter);
+                if (child){
+                    count += child->getAliveParticleCount();
+                }
             }
-        }
 
-        char str[128];
-        sprintf(str, "Particle Count: %d", count);
-        _particleLab->setString(str);
+            char str[128];
+            sprintf(str, "Particle Count: %d", count);
+            _particleLab->setString(str);
+        }
     }
 }
 
@@ -474,6 +477,126 @@ bool Particle3DWithSprite3DDemo::init()
     rootps->setCameraMask((unsigned short)CameraFlag::USER1);
     rootps->startParticleSystem();
     this->addChild(rootps, 0, PARTICLE_SYSTEM_TAG);
+
+    return true;
+}
+
+class SurfaceRender : public PUParticle3DCustomRender
+{
+public:
+    SurfaceRender(){}
+    virtual ~SurfaceRender(){}
+
+    virtual void initRenderParticles(){
+        auto vv = _paramValues["surface_dir_local_vector"].asValueVector();
+        _surfaceDir = Vec3(vv[0].asFloat(), vv[1].asFloat(), vv[2].asFloat());
+        _surfaceDir.normalize();
+
+        vv = _paramValues["surface_up_local_vector"].asValueVector();
+        _surfaceUp = Vec3(vv[0].asFloat(), vv[1].asFloat(), vv[2].asFloat());
+        _surfaceUp.normalize();
+        _stateBlock->setCullFace(false);
+    }
+
+    virtual void preRenderParticles(ParticleSystem3D* particleSystem){
+        _currentIndex = 0;
+        _currentVertexIndex = 0;
+
+        auto pusys = static_cast<PUParticleSystem3D *>(particleSystem);
+        Quaternion rot = pusys->getDerivedOrientation();
+        _surfaceWorldDir = rot * _surfaceDir;
+        _surfaceWorldUp = rot * _surfaceUp;
+    }
+
+    virtual void renderParticle(ParticleSystem3D* particleSystem, const PUParticle3D *particle){
+        Vec3 up = _surfaceWorldUp;
+        up.normalize();
+        Vec3 right;
+        Vec3::cross(up, _surfaceWorldDir, &right);
+
+        Vec3 halfwidth = particle->width * 0.5f * right;
+        Vec3 halfheight = particle->height * 0.5f * up;
+        Vec3 position = particle->position;
+
+        float costheta = cosf(-particle->zRotation);
+        float sintheta = sinf(-particle->zRotation);
+        Vec2 texOffset = 0.5f * (particle->lb_uv + particle->rt_uv);
+        Vec2 val;
+        val.set((particle->lb_uv.x - texOffset.x), (particle->lb_uv.y - texOffset.y));
+        val.set(val.x * costheta - val.y * sintheta, val.x * sintheta + val.y * costheta);
+        fillVertex(_currentVertexIndex, (position + (-halfwidth - halfheight)), particle->color, val + texOffset);
+
+        val.set(particle->rt_uv.x - texOffset.x, particle->lb_uv.y - texOffset.y);
+        val.set(val.x * costheta - val.y * sintheta, val.x * sintheta + val.y * costheta);
+        fillVertex(_currentVertexIndex + 1, (position + (halfwidth - halfheight)), particle->color, val + texOffset);
+
+        val.set(particle->lb_uv.x - texOffset.x, particle->rt_uv.y - texOffset.y);
+        val.set(val.x * costheta - val.y * sintheta, val.x * sintheta + val.y * costheta);
+        fillVertex(_currentVertexIndex + 2, (position + (-halfwidth + halfheight)), particle->color, val + texOffset);
+
+        val.set(particle->rt_uv.x - texOffset.x, particle->rt_uv.y - texOffset.y);
+        val.set(val.x * costheta - val.y * sintheta, val.x * sintheta + val.y * costheta);
+        fillVertex(_currentVertexIndex + 3, (position + (halfwidth + halfheight)), particle->color, val + texOffset);
+
+        fillTriangle(_currentIndex, _currentVertexIndex, _currentVertexIndex + 1, _currentVertexIndex + 3);
+        fillTriangle(_currentIndex + 3, _currentVertexIndex, _currentVertexIndex + 3, _currentVertexIndex + 2);
+
+        _currentIndex += 6;
+        _currentVertexIndex += 4;
+    }
+
+    virtual void postRenderParticles(ParticleSystem3D* particleSystem){
+        return;
+    }
+
+private:
+
+    void fillVertex(unsigned short index, const Vec3 &pos, const Vec4 &color, const Vec2 &uv){
+        _vertices[index].position = pos;
+        _vertices[index].color = color;
+        _vertices[index].uv = uv;
+    }
+    void fillTriangle(unsigned short index, unsigned short v0, unsigned short v1, unsigned short v2){
+        _indices[index] = v0;
+        _indices[index + 1] = v1;
+        _indices[index + 2] = v2;
+    }
+
+private:
+
+    Vec3 _surfaceDir;
+    Vec3 _surfaceUp;
+    Vec3 _surfaceWorldDir;
+    Vec3 _surfaceWorldUp;
+    unsigned int _currentIndex;
+    unsigned int _currentVertexIndex;
+};
+
+std::string Particle3DCustomDemo::subtitle() const
+{
+    return "Particle3DCustomRenderDemo";
+}
+
+bool Particle3DCustomDemo::init()
+{
+    if (!Particle3DTestDemo::init())
+        return false;
+    PUParticle3DCustomRender::registerCustomRender("Surface", []()->PUParticle3DCustomRender*{
+        return new SurfaceRender;
+    });
+    this->runAction(RepeatForever::create(Sequence::create(CallFunc::create([=]{
+        auto rootps = PUParticleSystem3D::create("custom.pu");
+        rootps->setCameraMask((unsigned short)CameraFlag::USER1);
+        rootps->startParticleSystem();
+        Quaternion rot(Vec3::UNIT_Z, cocos2d::random(-M_PI_4, M_PI_4));
+        rootps->setRotationQuat(rot);
+        Vec3 endPos(0.0f, 100.0f, 0.0f);
+        endPos = rot * endPos;
+        rootps->runAction(Sequence::create(MoveBy::create(5.0f, endPos), CallFunc::create([=]{
+            rootps->removeFromParent(); 
+        }), nullptr));
+        this->addChild(rootps, 0, PARTICLE_SYSTEM_TAG);
+    }), DelayTime::create(1.0f), nullptr)));
 
     return true;
 }

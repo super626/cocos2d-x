@@ -1,0 +1,28 @@
+system custom
+{
+    technique 
+    {
+        keep_local                              true
+        visual_particle_quota                   1
+        material                                ParticleUniverse/Beam_1
+        default_particle_width                  1
+        default_particle_height                 5.56455
+        default_particle_depth                  5.56455
+        renderer                                Custom Surface
+        {
+            surface_dir_local_vector                    0 0 1
+            surface_up_local_vector                     0 1 0
+        }
+        emitter                                 Point 
+        {
+            angle                               0
+            time_to_live                        dyn_random
+            {
+                min                             1
+                max                             3
+            }
+            velocity                            0.01
+            force_emission                      true
+        }
+    }
+}

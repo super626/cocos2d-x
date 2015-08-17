@@ -29,6 +29,7 @@
 #include <vector>
 
 #include "base/CCRef.h"
+#include "base/CCValue.h"
 #include "math/CCMath.h"
 #include "extensions/Particle3D/CCParticle3DRender.h"
 #include "renderer/CCRenderState.h"
@@ -66,6 +67,15 @@ class CC_DLL PUParticle3DEntityRender : public PURender
 public:
     void copyAttributesTo(PUParticle3DEntityRender *render);
 
+public:
+
+    struct VertexInfo
+    {
+        Vec3 position;
+        Vec2 uv;
+        Vec4 color;
+    };
+
 CC_CONSTRUCTOR_ACCESS:
     PUParticle3DEntityRender();
     virtual ~PUParticle3DEntityRender();
@@ -76,12 +86,6 @@ protected:
 
 protected:
 
-    struct VertexInfo
-    {
-        Vec3 position;
-        Vec2 uv;
-        Vec4 color;
-    };
     MeshCommand* _meshCommand;
     RenderState::StateBlock* _stateBlock;
     Texture2D*             _texture;
@@ -244,6 +248,44 @@ protected:
     unsigned short _numberOfSegments;
     std::vector<VertexInfo> _vertexTemplate;
 };
+
+class CC_DLL PUParticle3DCustomRender : public PUParticle3DEntityRender
+{
+public:
+
+    static PUParticle3DCustomRender* create(const std::string &renderName, const std::string &texFile = "");
+    //call this function before create
+    static void registerCustomRender(const std::string &renderName, const std::function< PUParticle3DCustomRender*() > &createFunc);
+
+    virtual void render(Renderer* renderer, const Mat4 &transform, ParticleSystem3D* particleSystem) override;
+
+    virtual PUParticle3DCustomRender* clone() override;
+    void copyAttributesTo(PUParticle3DCustomRender *render);
+
+    void addParamValue(const std::string &key, const Value &value);
+    const ValueMap& getParamValues() const { return _paramValues; }
+
+CC_CONSTRUCTOR_ACCESS:
+    PUParticle3DCustomRender();
+    virtual ~PUParticle3DCustomRender();
+
+protected:
+
+    virtual void initRenderParticles() = 0;
+    virtual void preRenderParticles(ParticleSystem3D* particleSystem) = 0;
+    virtual void renderParticle(ParticleSystem3D* particleSystem, const PUParticle3D *particle) = 0;
+    virtual void postRenderParticles(ParticleSystem3D* particleSystem) = 0;
+
+protected:
+
+    ValueMap _paramValues;
+    std::string _renderName;
+    bool _isInit;
+    unsigned int _sizePerVertex;
+    unsigned int _sizePerIndex;
+    static std::map<std::string, std::function< PUParticle3DCustomRender*() > > _renderRegistry;
+};
+
 
 NS_CC_END
 #endif
