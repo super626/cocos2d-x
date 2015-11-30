@@ -29,6 +29,9 @@
 
 NS_CC_BEGIN
 
+class ShadowMap;
+class Texture2D;
+
 enum class LightType
 {
     DIRECTIONAL = 0,
@@ -57,6 +60,12 @@ enum class LightFlag
     LIGHT15 = 1 << 15,
 };
 
+enum class ShadowType
+{
+    NO_SHADOW,
+    SHADOWMAP,
+};
+
 /**
 @js NA
 */
@@ -83,6 +92,14 @@ public:
      */
     void setEnabled(bool enabled) { _enabled = enabled; }
     bool isEnabled() const { return _enabled; }
+    /** set shadow type */
+    virtual void setShadowType(ShadowType shadowType);
+    /** get shadow type */
+    ShadowType getShadowType() const { return _shadowType; }
+    /**get shadow map depth texture, for spot light and directional light*/
+    virtual Texture2D* getShadowMapDepth() { return nullptr; }
+    /**get shadow map depth cube texture, for point light*/
+//    virtual TextureCube* getShadowMapDepthCube() { return nullptr; }
     
     //override
     virtual void onEnter() override;
@@ -99,6 +116,7 @@ protected:
     float       _intensity;
     LightFlag   _lightFlag;
     bool        _enabled;
+    ShadowType  _shadowType;
 };
 
 /**
@@ -254,6 +272,12 @@ public:
     
     /** get cos outAngle */
     float getCosOuterAngle() const { return _cosOuterAngle; }
+    
+    /** set shadow type */
+    virtual void setShadowType(ShadowType shadowType) override { _shadowType = shadowType; }
+    
+    /***/
+//    virtual Texture2D* getShadowMapDepth() override;
     
 CC_CONSTRUCTOR_ACCESS:
     SpotLight();

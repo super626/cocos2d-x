@@ -919,14 +919,15 @@ std::string Sprite3DWithSkinTest::subtitle() const
 
 void Sprite3DWithSkinTest::addNewSpriteWithCoords(Vec2 p)
 {
-    std::string fileName = "Sprite3DTest/orc.c3b";
+    std::string fileName = "Sprite3DTest/dayuren/Monster_Slardar_skin.c3b";
     auto sprite = Sprite3D::create(fileName);
-    sprite->setScale(3);
+//    sprite->setScale(3);
     sprite->setRotation3D(Vec3(0,180,0));
     sprite->setPosition( Vec2( p.x, p.y) );
     addChild(sprite);
     _sprits.push_back(sprite);
     
+    fileName = "Sprite3DTest/dayuren/Monster_Slardar_idle.c3b";
     auto animation = Animation3D::create(fileName);
     if (animation)
     {

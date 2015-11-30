@@ -46,6 +46,7 @@ BaseLight::BaseLight()
 : _intensity(1.0f)
 , _lightFlag(LightFlag::LIGHT0)
 , _enabled(true)
+, _shadowType(ShadowType::NO_SHADOW)
 {
     
 }
@@ -54,6 +55,10 @@ BaseLight::~BaseLight()
     
 }
 
+void BaseLight::setShadowType(ShadowType shadowType)
+{
+    CCASSERT(0, "not implement");
+}
 
 ////////////////////////////////////////////////////////////////////
 DirectionLight* DirectionLight::create(const Vec3 &direction, const Color3B &color)
