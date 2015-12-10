@@ -2092,6 +2092,10 @@
 		B60C5BD519AC68B10056FBDE /* CCBillBoard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B60C5BD219AC68B10056FBDE /* CCBillBoard.cpp */; };
 		B60C5BD619AC68B10056FBDE /* CCBillBoard.h in Headers */ = {isa = PBXBuildFile; fileRef = B60C5BD319AC68B10056FBDE /* CCBillBoard.h */; };
 		B60C5BD719AC68B10056FBDE /* CCBillBoard.h in Headers */ = {isa = PBXBuildFile; fileRef = B60C5BD319AC68B10056FBDE /* CCBillBoard.h */; };
+		B63134621C190F8100E36336 /* CCShadowMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63134601C190F8100E36336 /* CCShadowMap.cpp */; };
+		B63134631C190F8100E36336 /* CCShadowMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63134601C190F8100E36336 /* CCShadowMap.cpp */; };
+		B63134641C190F8100E36336 /* CCShadowMap.h in Headers */ = {isa = PBXBuildFile; fileRef = B63134611C190F8100E36336 /* CCShadowMap.h */; };
+		B63134651C190F8100E36336 /* CCShadowMap.h in Headers */ = {isa = PBXBuildFile; fileRef = B63134611C190F8100E36336 /* CCShadowMap.h */; };
 		B63990CC1A490AFE00B07923 /* CCAsyncTaskPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63990CA1A490AFE00B07923 /* CCAsyncTaskPool.cpp */; };
 		B63990CD1A490AFE00B07923 /* CCAsyncTaskPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63990CA1A490AFE00B07923 /* CCAsyncTaskPool.cpp */; };
 		B63990CE1A490AFE00B07923 /* CCAsyncTaskPool.h in Headers */ = {isa = PBXBuildFile; fileRef = B63990CB1A490AFE00B07923 /* CCAsyncTaskPool.h */; };
@@ -2720,10 +2724,6 @@
 		B68779051A8CA82E00643ABF /* CCParticleSystem3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B68778F61A8CA82E00643ABF /* CCParticleSystem3D.cpp */; };
 		B68779061A8CA82E00643ABF /* CCParticleSystem3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B68778F71A8CA82E00643ABF /* CCParticleSystem3D.h */; };
 		B68779071A8CA82E00643ABF /* CCParticleSystem3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B68778F71A8CA82E00643ABF /* CCParticleSystem3D.h */; };
-		B6C0EB501C06B9D100FED062 /* CCShadowMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6C0EB4E1C06B9D100FED062 /* CCShadowMap.cpp */; };
-		B6C0EB511C06B9D100FED062 /* CCShadowMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6C0EB4E1C06B9D100FED062 /* CCShadowMap.cpp */; };
-		B6C0EB521C06B9D100FED062 /* CCShadowMap.h in Headers */ = {isa = PBXBuildFile; fileRef = B6C0EB4F1C06B9D100FED062 /* CCShadowMap.h */; };
-		B6C0EB531C06B9D100FED062 /* CCShadowMap.h in Headers */ = {isa = PBXBuildFile; fileRef = B6C0EB4F1C06B9D100FED062 /* CCShadowMap.h */; };
 		B6CAAFE21AF9A9E100B9B856 /* CCPhysics3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6CAAFD21AF9A9E100B9B856 /* CCPhysics3D.cpp */; };
 		B6CAAFE31AF9A9E100B9B856 /* CCPhysics3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6CAAFD21AF9A9E100B9B856 /* CCPhysics3D.cpp */; };
 		B6CAAFE41AF9A9E100B9B856 /* CCPhysics3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B6CAAFD31AF9A9E100B9B856 /* CCPhysics3D.h */; };
@@ -4825,6 +4825,8 @@
 		B603F1B21AC8F1FD00A9579C /* ccShader_3D_Terrain.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ccShader_3D_Terrain.vert; sourceTree = "<group>"; };
 		B60C5BD219AC68B10056FBDE /* CCBillBoard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCBillBoard.cpp; sourceTree = "<group>"; };
 		B60C5BD319AC68B10056FBDE /* CCBillBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCBillBoard.h; sourceTree = "<group>"; };
+		B63134601C190F8100E36336 /* CCShadowMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCShadowMap.cpp; sourceTree = "<group>"; };
+		B63134611C190F8100E36336 /* CCShadowMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCShadowMap.h; sourceTree = "<group>"; };
 		B63990CA1A490AFE00B07923 /* CCAsyncTaskPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCAsyncTaskPool.cpp; path = ../base/CCAsyncTaskPool.cpp; sourceTree = "<group>"; };
 		B63990CB1A490AFE00B07923 /* CCAsyncTaskPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCAsyncTaskPool.h; path = ../base/CCAsyncTaskPool.h; sourceTree = "<group>"; };
 		B665E0CC1AA80A6500DDB1C5 /* CCPUAffector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCPUAffector.cpp; path = Particle3D/PU/CCPUAffector.cpp; sourceTree = "<group>"; };
@@ -5142,8 +5144,6 @@
 		B68778F51A8CA82E00643ABF /* CCParticle3DRender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCParticle3DRender.h; path = Particle3D/CCParticle3DRender.h; sourceTree = "<group>"; };
 		B68778F61A8CA82E00643ABF /* CCParticleSystem3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCParticleSystem3D.cpp; path = Particle3D/CCParticleSystem3D.cpp; sourceTree = "<group>"; };
 		B68778F71A8CA82E00643ABF /* CCParticleSystem3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCParticleSystem3D.h; path = Particle3D/CCParticleSystem3D.h; sourceTree = "<group>"; };
-		B6C0EB4E1C06B9D100FED062 /* CCShadowMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCShadowMap.cpp; sourceTree = "<group>"; };
-		B6C0EB4F1C06B9D100FED062 /* CCShadowMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCShadowMap.h; sourceTree = "<group>"; };
 		B6CAAFD21AF9A9E100B9B856 /* CCPhysics3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCPhysics3D.cpp; path = ../cocos/physics3d/CCPhysics3D.cpp; sourceTree = "<group>"; };
 		B6CAAFD31AF9A9E100B9B856 /* CCPhysics3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCPhysics3D.h; path = ../cocos/physics3d/CCPhysics3D.h; sourceTree = "<group>"; };
 		B6CAAFD41AF9A9E100B9B856 /* CCPhysics3DComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCPhysics3DComponent.cpp; path = ../cocos/physics3d/CCPhysics3DComponent.cpp; sourceTree = "<group>"; };
@@ -7513,6 +7513,8 @@
 		500DC89819105D41007B91BF /* renderer */ = {
 			isa = PBXGroup;
 			children = (
+				B63134601C190F8100E36336 /* CCShadowMap.cpp */,
+				B63134611C190F8100E36336 /* CCShadowMap.h */,
 				5034CA5D191D591900CE6051 /* shaders */,
 				A045F6D41BA81577005076C7 /* CCTextureCube.cpp */,
 				A045F6D51BA81577005076C7 /* CCTextureCube.h */,
@@ -7957,8 +7959,6 @@
 		B29594B81926D61F003EEF37 /* 3d */ = {
 			isa = PBXGroup;
 			children = (
-				B6C0EB4E1C06B9D100FED062 /* CCShadowMap.cpp */,
-				B6C0EB4F1C06B9D100FED062 /* CCShadowMap.h */,
 				3E2A09C01BAA91B70086B878 /* CCMotionStreak3D.cpp */,
 				3E2A09C11BAA91B70086B878 /* CCMotionStreak3D.h */,
 				B603F1A61AC8EA0900A9579C /* CCTerrain.cpp */,
@@ -9684,7 +9684,7 @@
 				50ABBED51925AB6F00A911A9 /* utlist.h in Headers */,
 				1A5702F4180BCE750088DEC7 /* CCTMXObjectGroup.h in Headers */,
 				B6CAB1EF1AF9AA1A00B9B856 /* btBroadphaseProxy.h in Headers */,
-				B6C0EB521C06B9D100FED062 /* CCShadowMap.h in Headers */,
+				B63134641C190F8100E36336 /* CCShadowMap.h in Headers */,
 				43015DC11B60DF4000E75161 /* CCComExtensionData.h in Headers */,
 				B6CAB3871AF9AA1A00B9B856 /* btPersistentManifold.h in Headers */,
 				50ABBDAF1925AB4100A911A9 /* CCRenderer.h in Headers */,
@@ -10584,7 +10584,7 @@
 				B6CAB42C1AF9AA1A00B9B856 /* btRaycastVehicle.h in Headers */,
 				15AE198619AAD36400C27E9E /* WidgetReader.h in Headers */,
 				1A570224180BCC1A0088DEC7 /* CCParticleBatchNode.h in Headers */,
-				B6C0EB531C06B9D100FED062 /* CCShadowMap.h in Headers */,
+				B63134651C190F8100E36336 /* CCShadowMap.h in Headers */,
 				B6CAB32C1AF9AA1A00B9B856 /* btGImpactCollisionAlgorithm.h in Headers */,
 				15FB20961AE7C57D00C31518 /* cdt.h in Headers */,
 				15AE1AC919AAD40300C27E9E /* b2Joint.h in Headers */,
@@ -11278,7 +11278,7 @@
 				15AE191B19AAD35000C27E9E /* CCTransformHelp.cpp in Sources */,
 				15AE190319AAD35000C27E9E /* CCComRender.cpp in Sources */,
 				1A57006D180BC5A10088DEC7 /* CCActionEase.cpp in Sources */,
-				B6C0EB501C06B9D100FED062 /* CCShadowMap.cpp in Sources */,
+				B63134621C190F8100E36336 /* CCShadowMap.cpp in Sources */,
 				15AE1A5019AAD40300C27E9E /* b2BlockAllocator.cpp in Sources */,
 				B665E20E1AA80A6500DDB1C5 /* CCPUBaseForceAffector.cpp in Sources */,
 				B6CAB25D1AF9AA1A00B9B856 /* btInternalEdgeUtility.cpp in Sources */,
@@ -12085,7 +12085,7 @@
 				B665E2671AA80A6500DDB1C5 /* CCPUDoExpireEventHandlerTranslator.cpp in Sources */,
 				B6CAB4AA1AF9AA1A00B9B856 /* SpuCollisionObjectWrapper.cpp in Sources */,
 				B6CAAFFF1AF9A9E100B9B856 /* CCPhysicsSprite3D.cpp in Sources */,
-				B6C0EB511C06B9D100FED062 /* CCShadowMap.cpp in Sources */,
+				B63134631C190F8100E36336 /* CCShadowMap.cpp in Sources */,
 				15AE196119AAD35100C27E9E /* CCSSceneReader.cpp in Sources */,
 				1A570072180BC5A10088DEC7 /* CCActionGrid.cpp in Sources */,
 				15AE1ABC19AAD40300C27E9E /* b2PolygonAndCircleContact.cpp in Sources */,

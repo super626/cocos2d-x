@@ -57,6 +57,7 @@ enum {
     kShaderType_LabelOutline,
     kShaderType_3DPosition,
     kShaderType_3DPositionTex,
+    kShaderType_3DSkinPosition,
     kShaderType_3DSkinPositionTex,
     kShaderType_3DPositionNormal,
     kShaderType_3DPositionNormalTex,
@@ -230,6 +231,10 @@ void GLProgramCache::loadDefaultGLPrograms()
     p = new (std::nothrow) GLProgram();
     loadDefaultGLProgram(p, kShaderType_3DPositionTex);
     _programs.insert( std::make_pair(GLProgram::SHADER_3D_POSITION_TEXTURE, p) );
+    
+    p = new (std::nothrow) GLProgram();
+    loadDefaultGLProgram(p, kShaderType_3DSkinPosition);
+    _programs.insert(std::make_pair(GLProgram::SHADER_3D_SKINPOSITION, p));
 
     p = new (std::nothrow) GLProgram();
     loadDefaultGLProgram(p, kShaderType_3DSkinPositionTex);
@@ -367,6 +372,10 @@ void GLProgramCache::reloadDefaultGLPrograms()
     p = getGLProgram(GLProgram::SHADER_3D_POSITION_TEXTURE);
     p->reset();
     loadDefaultGLProgram(p, kShaderType_3DPositionTex);
+    
+    p = getGLProgram(GLProgram::SHADER_3D_SKINPOSITION);
+    p->reset();
+    loadDefaultGLProgram(p, kShaderType_3DSkinPosition);
 
     p = getGLProgram(GLProgram::SHADER_3D_SKINPOSITION_TEXTURE);
     p->reset();
@@ -481,6 +490,9 @@ void GLProgramCache::loadDefaultGLProgram(GLProgram *p, int type)
             break;
         case kShaderType_3DPositionTex:
             p->initWithByteArrays(cc3D_PositionTex_vert, cc3D_ColorTex_frag);
+            break;
+        case kShaderType_3DSkinPosition:
+            p->initWithByteArrays(cc3D_SkinPositionTex_vert, cc3D_Color_frag);
             break;
         case kShaderType_3DSkinPositionTex:
             p->initWithByteArrays(cc3D_SkinPositionTex_vert, cc3D_ColorTex_frag);

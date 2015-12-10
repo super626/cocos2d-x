@@ -45,6 +45,7 @@ class EventListenerCustom;
 class QuadCommand;
 class TrianglesCommand;
 class MeshCommand;
+class ShadowMap;
 
 /** Class that knows how to sort `RenderCommand` objects.
  Since the commands that have `z == 0` are "pushed back" in
@@ -68,7 +69,9 @@ public:
         GLOBALZ_ZERO = 3,
         /**Objects with globalZ bigger than 0.*/
         GLOBALZ_POS = 4,
-        QUEUE_COUNT = 5,
+        /** Objects cast shadow */
+        CAST_SHADOW = 5,
+        QUEUE_COUNT = 6,
     };
 
 public:
@@ -145,6 +148,9 @@ public:
 
     /** Adds a `RenderComamnd` into the renderer specifying a particular render queue ID */
     void addCommand(RenderCommand* command, int renderQueue);
+    
+    /** Add a `MeshCommand` to shadow cast queue */
+    void addShadowCastCommand(MeshCommand* command);
 
     /** Pushes a group into the render queue */
     void pushGroup(int renderQueueID);
@@ -189,6 +195,9 @@ public:
 
     /** returns whether or not a rectangle is visible or not */
     bool checkVisibility(const Mat4& transform, const Size& size);
+    
+    /**get shadow map*/
+    ShadowMap* getShadowMap() const { return _shadowMap; }
 
 protected:
 
@@ -256,6 +265,8 @@ protected:
     bool _isDepthTestFor2D;
     
     GroupCommandManager* _groupCommandManager;
+    
+    ShadowMap*           _shadowMap; //shadow map
     
 #if CC_ENABLE_CACHE_TEXTURE_DATA
     EventListenerCustom* _cacheTextureListener;

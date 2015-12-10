@@ -22,18 +22,72 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "3d/CCShadowMap.h"
+#ifndef __CC_SHADOWMAP_H__
+#define __CC_SHADOWMAP_H__
+
+#include "base/ccMacros.h"
+#include "base/CCRef.h"
+#include "math/CCMath.h"
+#include "renderer/CCFrameBuffer.h"
 
 NS_CC_BEGIN
 
-ShadowMap::ShadowMap()
-{
-    
-}
+/**
+ * @addtogroup _3d
+ * @{
+ */
 
-ShadowMap::~ShadowMap()
+class BaseLight;
+
+/**
+ * Shadow map
+ */
+class CC_DLL ShadowMap : public Ref
 {
+
+public:
     
-}
+    static ShadowMap* create(int width, int height);
+    
+    /**bind shadow map before visit 3d queue*/
+    void bind();
+    /**unbind shadow map after visit 3d queue*/
+    void unBind();
+    
+    /**
+     * Constructor.
+     *
+     */
+    ShadowMap();
+    
+    ~ShadowMap();
+    
+    bool init(int width, int height);
+    
+    GLuint getTextureName() const { return _shaodowmapTexture; }
+    
+    unsigned int getShadowMapWidth() const;
+    
+    unsigned int getShadowMapHeight() const;
+    
+    const Mat4& getLightViewProjectionMat();
+
+protected:
+    
+    
+    experimental::FrameBuffer* _frameBuffer;
+    GLuint                     _shaodowmapTexture;
+    GLint                      _viewport[4];//old viewport
+    BaseLight*                 _shadowLight; //light cast shadow
+    Mat4                       _projectionMat;
+    Mat4                       _lightViewMat;
+    Mat4                       _lightWorldMat;
+    Mat4                       _lightViewProjectionMat;
+};
+
+// end of 3d group
+/// @}
 
 NS_CC_END
+
+#endif

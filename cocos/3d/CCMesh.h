@@ -169,7 +169,9 @@ public:
     /** Returns the Material being used by the Mesh */
     Material* getMaterial() const;
 
-    void draw(Renderer* renderer, float globalZ, const Mat4& transform, uint32_t flags, unsigned int lightMask, const Vec4& color, bool forceDepthWrite);
+    void draw(Renderer* renderer, float globalZ, const Mat4& transform, uint32_t flags, unsigned int lightMask, const Vec4& color, bool forceDepthWrite, bool isCastShadow = false, bool isReceiveShadow = false);
+    
+    void castShadow(Renderer* renderer, float globalZ, const Mat4& transform, uint32_t flags);
 
     /** 
      * Get the MeshCommand.
@@ -219,6 +221,9 @@ protected:
     Material*           _material;
     AABB                _aabb;
     std::function<void()> _visibleChanged;
+    
+    Material*            _castShadowMaterial; //material for cast shadow
+    MeshCommand*         _castShadowMeshCommand; //mesh command for cast shadow
     
     ///light parameters
     std::vector<Vec3> _dirLightUniformColorValues;

@@ -452,12 +452,13 @@ void Sprite3D::setMaterial(Material *material, int meshIndex)
     CCASSERT(material, "Invalid Material");
     CCASSERT(meshIndex == -1 || (meshIndex >=0 && meshIndex < _meshes.size()), "Invalid meshIndex");
 
-
     if (meshIndex == -1)
     {
+        int idx = 0;
         for (auto mesh: _meshes)
         {
-            mesh->setMaterial(material);
+            mesh->setMaterial(idx == 0 ? material : material->clone());
+            idx++;
         }
     }
     else

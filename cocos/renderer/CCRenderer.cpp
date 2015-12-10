@@ -39,6 +39,7 @@
 #include "renderer/CCPass.h"
 #include "renderer/CCRenderState.h"
 #include "renderer/ccGLStateCache.h"
+#include "renderer/CCShadowMap.h"
 
 #include "base/CCConfiguration.h"
 #include "base/CCDirector.h"
@@ -209,6 +210,7 @@ Renderer::Renderer()
 ,_glViewAssigned(false)
 ,_isRendering(false)
 ,_isDepthTestFor2D(false)
+,_shadowMap(nullptr)
 #if CC_ENABLE_CACHE_TEXTURE_DATA
 ,_cacheTextureListener(nullptr)
 #endif
@@ -239,6 +241,9 @@ Renderer::~Renderer()
         glDeleteVertexArrays(1, &_quadVAO);
         GL::bindVAO(0);
     }
+    
+    CC_SAFE_RELEASE(_shadowMap);
+    
 #if CC_ENABLE_CACHE_TEXTURE_DATA
     Director::getInstance()->getEventDispatcher()->removeEventListener(_cacheTextureListener);
 #endif
@@ -393,6 +398,11 @@ void Renderer::addCommand(RenderCommand* command, int renderQueue)
     _renderGroups[renderQueue].push_back(command);
 }
 
+void Renderer::addShadowCastCommand(MeshCommand* command)
+{
+    _renderGroups[0].getSubQueue(RenderQueue::CAST_SHADOW).push_back(command);
+}
+
 void Renderer::pushGroup(int renderQueueID)
 {
     CCASSERT(!_isRendering, "Cannot change render queue while rendering");
@@ -532,6 +542,30 @@ void Renderer::processRenderCommand(RenderCommand* command)
 void Renderer::visitRenderQueue(RenderQueue& queue)
 {
     queue.saveRenderState();
+    
+    //
+    //Process Objects Cast shadow
+    //
+    const auto& castShadowQueue = queue.getSubQueue(RenderQueue::CAST_SHADOW);
+    if (castShadowQueue.size() > 0)
+    {
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(true);
+        glDisable(GL_BLEND);
+        RenderState::StateBlock::_defaultState->setDepthTest(true);
+        RenderState::StateBlock::_defaultState->setDepthWrite(true);
+        RenderState::StateBlock::_defaultState->setBlend(false);
+        
+        if (_shadowMap == nullptr)
+            _shadowMap = ShadowMap::create(512, 512);
+        _shadowMap->bind();
+        for (auto it = castShadowQueue.cbegin(); it != castShadowQueue.cend(); ++it)
+        {
+            processRenderCommand(*it);
+        }
+        flush();
+        _shadowMap->unBind();
+    }
     
     //
     //Process Global-Z < 0 Objects

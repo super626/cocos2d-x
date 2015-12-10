@@ -26,18 +26,21 @@
 #include "3d/CCMeshSkin.h"
 #include "3d/CCSkeleton3D.h"
 #include "3d/CCMeshVertexIndexData.h"
+#include "3d/CCSprite3DMaterial.h"
 #include "2d/CCLight.h"
 #include "2d/CCScene.h"
 #include "base/CCEventDispatcher.h"
 #include "base/CCDirector.h"
 #include "base/CCConfiguration.h"
 #include "renderer/CCTextureCache.h"
+#include "renderer/CCGLProgramCache.h"
 #include "renderer/CCGLProgramState.h"
 #include "renderer/CCMaterial.h"
 #include "renderer/CCTechnique.h"
 #include "renderer/CCPass.h"
 #include "renderer/CCRenderer.h"
 #include "renderer/CCVertexAttribBinding.h"
+#include "renderer/CCShadowMap.h"
 #include "math/Mat4.h"
 
 using namespace std;
@@ -117,6 +120,8 @@ Mesh::Mesh()
 , _visibleChanged(nullptr)
 , _blendDirty(true)
 , _force2DQueue(false)
+, _castShadowMeshCommand(nullptr)
+, _castShadowMaterial(nullptr)
 {
     
 }
@@ -127,6 +132,8 @@ Mesh::~Mesh()
     CC_SAFE_RELEASE(_meshIndexData);
     CC_SAFE_RELEASE(_material);
     CC_SAFE_RELEASE(_glProgramState);
+    CC_SAFE_DELETE(_castShadowMeshCommand);
+    CC_SAFE_RELEASE(_castShadowMaterial);
 }
 
 GLuint Mesh::getVertexBuffer() const
@@ -325,7 +332,7 @@ Material* Mesh::getMaterial() const
     return _material;
 }
 
-void Mesh::draw(Renderer* renderer, float globalZOrder, const Mat4& transform, uint32_t flags, unsigned int lightMask, const Vec4& color, bool forceDepthWrite)
+void Mesh::draw(Renderer* renderer, float globalZOrder, const Mat4& transform, uint32_t flags, unsigned int lightMask, const Vec4& color, bool forceDepthWrite, bool isCastShadow, bool isReceiveShadow)
 {
     if (! isVisible())
         return;
@@ -369,12 +376,34 @@ void Mesh::draw(Renderer* renderer, float globalZOrder, const Mat4& transform, u
 
         if (_skin)
             programState->setUniformVec4v("u_matrixPalette", (GLsizei)_skin->getMatrixPaletteSize(), _skin->getMatrixPalette());
+        
+        if (isReceiveShadow && renderer->getShadowMap())
+        {
+            //set uniform sampler to receive shadow
+            programState->setUniformTexture("u_shadowTex", renderer->getShadowMap()->getTextureName());
+            // We need to calculate the texture projection matrix. This matrix takes the pixels from world space to previously rendered light projection space
+            //where we can look up values from our saved depth buffer. The matrix is constructed from the light view and projection matrices as used for the previous render and
+            //then multiplied by the inverse of the current view matrix.
+            auto world = Director::getInstance()->getRunningScene()->getShadowLight()->getNodeToWorldTransform();
+            static Mat4 bias(0.5f, 0.0f, 0.0f, 0.5f,
+                             0.0f, 0.5f, 0.0f, 0.5f,
+                             0.0f, 0.0f, 0.5f, 0.5f,
+                             0.0f, 0.0f, 0.0f, 1.0f);
+            auto texMat  = bias * renderer->getShadowMap()->getLightViewProjectionMat() * world;
+            programState->setUniformMat4("u_shadowTexMat", texMat);
+        }
 
         if (scene && scene->getLights().size() > 0)
             setLightUniforms(pass, scene, color, lightMask);
     }
 
     renderer->addCommand(&_meshCommand);
+    
+    if (isCastShadow && scene && ((unsigned int)scene->getShadowLight()->getLightFlag() & lightMask))
+    {
+        //cast shaodow here
+        castShadow(renderer, globalZ, transform, flags);
+    }
 }
 
 void Mesh::setSkin(MeshSkin* skin)
@@ -657,4 +686,50 @@ GLuint Mesh::getIndexBuffer() const
 {
     return _meshIndexData->getIndexBuffer()->getVBO();
 }
+
+void Mesh::castShadow(Renderer* renderer, float globalZ, const Mat4& transform, uint32_t flags)
+{
+    if (_castShadowMeshCommand == nullptr)
+    {
+        _castShadowMeshCommand = new(std::nothrow) MeshCommand();
+        _castShadowMeshCommand->setSkipBatching(false);
+        _castShadowMeshCommand->setTransparent(false);
+        _castShadowMeshCommand->set3D(true);
+        
+    }
+    if (_castShadowMaterial == nullptr)
+    {
+        auto shader = GLProgramCache::getInstance()->getGLProgram(GLProgram::SHADER_3D_SKINPOSITION);
+        auto state = GLProgramState::create(shader);
+        _castShadowMaterial = Material::createWithGLStateProgram(state);
+        _castShadowMaterial->getStateBlock()->setBlend(false);
+        _castShadowMaterial->getStateBlock()->setDepthTest(true);
+        _castShadowMaterial->getStateBlock()->setDepthWrite(true);
+        
+        //bind cast material
+        if (_castShadowMaterial)
+        {
+            for (auto technique: _castShadowMaterial->getTechniques())
+            {
+                for (auto pass: technique->getPasses())
+                {
+                    auto vertexAttribBinding = VertexAttribBinding::create(_meshIndexData, pass->getGLProgramState());
+                    pass->setVertexAttribBinding(vertexAttribBinding);
+                }
+            }
+        }
+    }
+    _castShadowMeshCommand->init(globalZ,
+                      _castShadowMaterial,
+                      getVertexBuffer(),
+                      getIndexBuffer(),
+                      getPrimitiveType(),
+                      getIndexFormat(),
+                      getIndexCount(),
+                      transform,
+                      flags);
+    
+    renderer->addShadowCastCommand(_castShadowMeshCommand); //
+}
+
 NS_CC_END

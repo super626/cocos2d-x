@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include "2d/CCScene.h"
 #include "base/CCDirector.h"
 #include "2d/CCCamera.h"
+#include "2d/CCLight.h"
 #include "base/CCEventDispatcher.h"
 #include "base/CCEventListenerCustom.h"
 #include "renderer/CCRenderer.h"
@@ -75,6 +76,8 @@ Scene::Scene()
     _event->retain();
     
     Camera::_visitingCamera = nullptr;
+    
+    _shadowLight = nullptr;
 }
 
 Scene::~Scene()
@@ -174,6 +177,13 @@ const std::vector<Camera*>& Scene::getCameras()
         _cameraOrderDirty = false;
     }
     return _cameras;
+}
+
+void Scene::setShadowLight(BaseLight* light)
+{
+    CC_SAFE_RETAIN(light);
+    CC_SAFE_RELEASE(_shadowLight);
+    _shadowLight = light;
 }
 
 void Scene::render(Renderer* renderer)
