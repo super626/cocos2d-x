@@ -695,37 +695,37 @@ std::string TMXTilesetTest::title() const
 //------------------------------------------------------------------
 TMXOrthoObjectsTest::TMXOrthoObjectsTest()
 {
-    auto map = TMXTiledMap::create("TileMaps/ortho-objects.tmx");
+    auto map = TMXTiledMap::create("TileMaps/map/111.tmx");
     addChild(map, -1, kTagTileMap);
     
-    Size CC_UNUSED s = map->getContentSize();
-    CCLOG("ContentSize: %f, %f", s.width,s.height);
-    
-    auto group = map->getObjectGroup("Object Group 1");
-    auto& objects = group->getObjects();
-
-    Value objectsVal = Value(objects);
-    CCLOG("%s", objectsVal.getDescription().c_str());
-
-    auto drawNode = DrawNode::create();
-    
-    for (auto& obj : objects)
-    {
-        ValueMap& dict = obj.asValueMap();
-        
-        float x = dict["x"].asFloat();
-        float y = dict["y"].asFloat();
-        float width = dict["width"].asFloat();
-        float height = dict["height"].asFloat();
-        
-        Color4F color(1.0, 1.0, 1.0, 1.0);
-        
-        drawNode->drawLine( Vec2(x, y), Vec2((x+width), y), color );
-        drawNode->drawLine( Vec2((x+width), y), Vec2((x+width), (y+height)), color );
-        drawNode->drawLine( Vec2((x+width), (y+height)), Vec2(x, (y+height)), color );
-        drawNode->drawLine( Vec2(x, (y+height)), Vec2(x, y), color );
-    }
-    map->addChild(drawNode);
+//    Size CC_UNUSED s = map->getContentSize();
+//    CCLOG("ContentSize: %f, %f", s.width,s.height);
+//    
+//    auto group = map->getObjectGroup("Object Group 1");
+//    auto& objects = group->getObjects();
+//
+//    Value objectsVal = Value(objects);
+//    CCLOG("%s", objectsVal.getDescription().c_str());
+//
+//    auto drawNode = DrawNode::create();
+//    
+//    for (auto& obj : objects)
+//    {
+//        ValueMap& dict = obj.asValueMap();
+//        
+//        float x = dict["x"].asFloat();
+//        float y = dict["y"].asFloat();
+//        float width = dict["width"].asFloat();
+//        float height = dict["height"].asFloat();
+//        
+//        Color4F color(1.0, 1.0, 1.0, 1.0);
+//        
+//        drawNode->drawLine( Vec2(x, y), Vec2((x+width), y), color );
+//        drawNode->drawLine( Vec2((x+width), y), Vec2((x+width), (y+height)), color );
+//        drawNode->drawLine( Vec2((x+width), (y+height)), Vec2(x, (y+height)), color );
+//        drawNode->drawLine( Vec2(x, (y+height)), Vec2(x, y), color );
+//    }
+//    map->addChild(drawNode);
 }
 
 std::string TMXOrthoObjectsTest::title() const
