@@ -28,6 +28,8 @@
 #include <string>
 #include <unordered_map>
 #include "base/ccTypes.h"
+#include "base/CCEventListenerCustom.h"
+#include "base/CCEventDispatcher.h"
 #include "renderer/CCMaterial.h"
 
 NS_CC_BEGIN
@@ -38,6 +40,7 @@ NS_CC_BEGIN
  */
 
 class Texture2D;
+class GLProgram;
 
 /**
  * @brief Sprite3DMaterial: Material for Sprite3D.
@@ -74,7 +77,7 @@ public:
      * @param skinned Has skin?
      * @return Created material
      */
-    static Sprite3DMaterial* createBuiltInMaterial(MaterialType type, bool skinned);
+    static Sprite3DMaterial* createBuiltInMaterial(MaterialType type, bool skinned, bool receiveShadow = false);
     
     /**
      * Create material with file name, it creates material from cache if it is previously loaded
@@ -112,7 +115,17 @@ public:
     
 protected:
     
+    static GLProgram* getGLProgram(MaterialType type, bool skinned, const std::string& def);
+    
+    static std::string macrosValsToString(const std::map<std::string, int>& macrosVals);
+    
+    std::map<std::string, int> _macrosVals; //shader macros for built in shaders
+    std::string                _materialKey; // material key, built in material: MaterialType + # + macros string;
+    
     MaterialType _type;
+    
+
+    
     static std::unordered_map<std::string, Sprite3DMaterial*> _materials; //cached material
     static Sprite3DMaterial* _unLitMaterial;
     static Sprite3DMaterial* _unLitNoTexMaterial;
@@ -158,6 +171,9 @@ CC_CONSTRUCTOR_ACCESS:
     ~Sprite3DMaterialCache();
     
 protected:
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
+    EventListenerCustom* _backToForegroundListener;
+#endif
     static Sprite3DMaterialCache* _cacheInstance;//instance
     std::unordered_map<std::string, Texture2D*> _materials; //cached material
     

@@ -52,7 +52,7 @@
 
 NS_CC_BEGIN
 
-static Sprite3DMaterial* getSprite3DMaterialForAttribs(MeshVertexData* meshVertexData, bool usesLight);
+static Sprite3DMaterial* getSprite3DMaterialForAttribs(MeshVertexData* meshVertexData, bool usesLight, bool receiveShadow);
 
 Sprite3D* Sprite3D::create()
 {
@@ -484,7 +484,7 @@ void Sprite3D::genMaterial(bool useLight)
     std::unordered_map<const MeshVertexData*, Sprite3DMaterial*> materials;
     for(auto meshVertexData : _meshVertexDatas)
     {
-        auto material = getSprite3DMaterialForAttribs(meshVertexData, useLight);
+        auto material = getSprite3DMaterialForAttribs(meshVertexData, useLight, _receiveShadow);
         materials[meshVertexData] = material;
     }
     
@@ -976,7 +976,7 @@ Sprite3DCache::~Sprite3DCache()
 //
 // MARK: Helpers
 //
-static Sprite3DMaterial* getSprite3DMaterialForAttribs(MeshVertexData* meshVertexData, bool usesLight)
+static Sprite3DMaterial* getSprite3DMaterialForAttribs(MeshVertexData* meshVertexData, bool usesLight, bool receiveShadow)
 {
     bool textured = meshVertexData->hasVertexAttrib(GLProgram::VERTEX_ATTRIB_TEX_COORD);
     bool hasSkin = meshVertexData->hasVertexAttrib(GLProgram::VERTEX_ATTRIB_BLEND_INDEX)
@@ -992,7 +992,7 @@ static Sprite3DMaterial* getSprite3DMaterialForAttribs(MeshVertexData* meshVerte
         type = hasNormal && usesLight ? Sprite3DMaterial::MaterialType::DIFFUSE_NOTEX : Sprite3DMaterial::MaterialType::UNLIT_NOTEX;
     }
     
-    return Sprite3DMaterial::createBuiltInMaterial(type, hasSkin);
+    return Sprite3DMaterial::createBuiltInMaterial(type, hasSkin, receiveShadow);
 }
 
 NS_CC_END

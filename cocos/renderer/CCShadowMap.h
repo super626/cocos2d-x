@@ -33,7 +33,7 @@
 NS_CC_BEGIN
 
 /**
- * @addtogroup _3d
+ * @addtogroup _renderer
  * @{
  */
 
@@ -85,7 +85,7 @@ protected:
     Mat4                       _lightViewProjectionMat;
 };
 
-// end of 3d group
+// end of renderer group
 /// @}
 
 NS_CC_END

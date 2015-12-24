@@ -153,44 +153,39 @@ Material* Sprite3DMaterial::clone() const
     return material;
 }
 
-Sprite3DMaterial* Sprite3DMaterial::createBuiltInMaterial(MaterialType type, bool skinned)
+Sprite3DMaterial* Sprite3DMaterial::createBuiltInMaterial(MaterialType type, bool skinned, bool receiveShadow)
 {
     /////
-    if (_diffuseMaterial == nullptr)
-        createBuiltInMaterial();
+    static std::map<std::string, int> macros;
+    if (skinned)
+        macros["SKINNED"] = 1;
+    if (receiveShadow)
+        macros["RECEIVE_SHADOW"] = 1;
     
-    Sprite3DMaterial* material = nullptr;
-    switch (type) {
-        case Sprite3DMaterial::MaterialType::UNLIT:
-            material = skinned ? _unLitMaterialSkin : _unLitMaterial;
-            break;
-            
-        case Sprite3DMaterial::MaterialType::UNLIT_NOTEX:
-            material = _unLitNoTexMaterial;
-            break;
-            
-        case Sprite3DMaterial::MaterialType::VERTEX_LIT:
-            CCASSERT(0, "not implement");
-            break;
-            
-        case Sprite3DMaterial::MaterialType::DIFFUSE:
-            material = skinned ? _diffuseMaterialSkin : _diffuseMaterial;
-            break;
-            
-        case Sprite3DMaterial::MaterialType::DIFFUSE_NOTEX:
-            material = _diffuseNoTexMaterial;
-            break;
-            
-        case Sprite3DMaterial::MaterialType::BUMPED_DIFFUSE:
-            CCASSERT(0, "not implement");
-            break;
-            
-        default:
-            break;
+    std::string def = macrosValsToString(macros);
+    char str[10];
+    sprintf(str, "%d#", (int)type);
+    
+    std::string key = std::string(str) + def;
+    auto it = _materials.find(key);
+    if (it != _materials.end())
+    {
+        return (Sprite3DMaterial*)it->second->clone();
     }
-    if (material)
-        return (Sprite3DMaterial*)material->clone();
     
+    // create new built in material
+    auto glProgram = getGLProgram(type, skinned, def);
+    auto glProgramState = GLProgramState::create(glProgram);
+    if (glProgramState)
+    {
+        auto material = new (std::nothrow) Sprite3DMaterial();
+        material->initWithGLProgramState(glProgramState);
+        
+        //add to cache
+        _materials[key] = material;
+        
+        return (Sprite3DMaterial*)material->clone();
+    }
     return nullptr;
 }
 
@@ -231,11 +226,71 @@ Sprite3DMaterial* Sprite3DMaterial::createWithGLStateProgram(GLProgramState* pro
     return nullptr;
 }
 
+std::string Sprite3DMaterial::macrosValsToString(const std::map<std::string, int>& macrosVals)
+{
+    std::string def = "";
+    char str[10];
+    for(auto it : macrosVals)
+    {
+        sprintf(str, " %d \n", it.second);
+        def += "\n#define " + it.first + str;
+    }
+    return def;
+}
+
+GLProgram* Sprite3DMaterial::getGLProgram(MaterialType type, bool skinned, const std::string& def)
+{
+    std::string shaderKey;
+    switch (type) {
+        case Sprite3DMaterial::MaterialType::UNLIT:
+            shaderKey = skinned ? GLProgram::SHADER_3D_SKINPOSITION_TEXTURE : GLProgram::SHADER_3D_POSITION_TEXTURE;
+            break;
+            
+        case Sprite3DMaterial::MaterialType::UNLIT_NOTEX:
+            shaderKey = GLProgram::SHADER_3D_POSITION;
+            break;
+            
+        case Sprite3DMaterial::MaterialType::VERTEX_LIT:
+            CCASSERT(0, "not implement");
+            break;
+            
+        case Sprite3DMaterial::MaterialType::DIFFUSE:
+            shaderKey = skinned ? GLProgram::SHADER_3D_SKINPOSITION_NORMAL_TEXTURE : GLProgram::SHADER_3D_POSITION_NORMAL_TEXTURE;
+            break;
+            
+        case Sprite3DMaterial::MaterialType::DIFFUSE_NOTEX:
+            shaderKey = GLProgram::SHADER_3D_POSITION_NORMAL;
+            break;
+            
+        case Sprite3DMaterial::MaterialType::BUMPED_DIFFUSE:
+            CCASSERT(0, "not implement");
+            break;
+            
+        default:
+            break;
+    }
+    
+    auto glProgram = GLProgramCache::getInstance()->getGLProgram(shaderKey + def);
+    if (glProgram == nullptr)
+    {
+        //TODO: create a new one FIX ME
+    }
+    return glProgram;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Sprite3DMaterialCache::Sprite3DMaterialCache()
 {
-    
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
+    _backToForegroundListener = EventListenerCustom::create(EVENT_RENDERER_RECREATED,
+                                                            [this](EventCustom*)
+                                                            {
+                                                                
+                                                            }
+                                                            );
+    Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(_backToForegroundListener, -1);
+#endif
 }
 
 Sprite3DMaterialCache::~Sprite3DMaterialCache()

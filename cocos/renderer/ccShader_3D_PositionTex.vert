@@ -5,12 +5,24 @@ attribute vec4 a_position;
 attribute vec2 a_texCoord;
 
 varying vec2 TextureCoordOut;
+                                              
+#ifdef RECEIVE_SHADOW
+uniform highp mat4 TexProjectionMatrix;
+uniform highp mat4 ModelViewMatrix;
+
+varying highp vec4 vProjCoord;
+#endif
 
 void main(void)
 {
     gl_Position = CC_MVPMatrix * a_position;
     TextureCoordOut = a_texCoord;
     TextureCoordOut.y = 1.0 - TextureCoordOut.y;
+    
+#ifdef RECEIVE_SHADOW
+    highp vec4 modelViewPos = ModelViewMatrix * vec4(inVertex, 1.0);
+    vProjCoord = TexProjectionMatrix * modelViewPos;
+#endif
 }
 );
 
