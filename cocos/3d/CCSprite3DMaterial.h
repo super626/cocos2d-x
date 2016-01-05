@@ -27,6 +27,7 @@
 
 #include <string>
 #include <unordered_map>
+#include "platform/CCGL.h"
 #include "base/ccTypes.h"
 #include "base/CCEventListenerCustom.h"
 #include "base/CCEventDispatcher.h"
@@ -116,6 +117,9 @@ public:
 protected:
     
     static GLProgram* getGLProgram(MaterialType type, bool skinned, const std::string& def);
+    
+    
+    static bool getShaders(MaterialType type, bool skinned, const GLchar* &vertShader, const GLchar* &fragShader);
     
     static std::string macrosValsToString(const std::map<std::string, int>& macrosVals);
     

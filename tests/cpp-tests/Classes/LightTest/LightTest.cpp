@@ -5,6 +5,7 @@ USING_NS_CC;
 LightTests::LightTests()
 {
     ADD_TEST_CASE(LightTest);
+    ADD_TEST_CASE(ShadowMapTest);
 }
 
 LightTest::LightTest()
@@ -279,4 +280,46 @@ void LightTest::SwitchLight( Ref* sender, LightType lightType )
     default:
         break;
     }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+ShadowMapTest::ShadowMapTest()
+{
+    auto s = Director::getInstance()->getWinSize();
+    auto camera = Camera::createPerspective(60, (GLfloat)s.width/s.height, 1.0f, 1000.0f);
+    camera->setCameraFlag(CameraFlag::USER1);
+    camera->setPosition3D(Vec3(0.0, 100, 100));
+    camera->lookAt(Vec3(0.0, 0.0, 0.0), Vec3(0.0, 1.0, 0.0));
+    addChild(camera);
+    
+    auto sprite = Sprite3D::create("Sprite3DTest/plane.c3t");
+    addChild(sprite);
+    sprite->setReceiveShadow(true);
+    sprite->setPosition3D(Vec3(0, 0, 0));
+    sprite->setRotation3D(Vec3(90, 0 ,0));
+    sprite->setCameraMask(2);
+    
+    sprite = Sprite3D::create("Sprite3DTest/orc.c3b");
+    sprite->setPosition3D(Vec3(0, 0, 0));
+    sprite->setCameraMask(2);
+    addChild(sprite);
+    
+    auto scene = Director::getInstance()->getRunningScene();
+    
+    auto spot = SpotLight::create(Vec3(-1.0f, -1.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Color3B(200, 200, 200), 0.0, 0.5, 10000.0f);
+    spot->setLightFlag(LightFlag::LIGHT0);
+    sprite->setLightMask((unsigned int)LightFlag::LIGHT0);
+    sprite->setCastShadow(true);
+    
+    scene->setShadowLight(spot);
+}
+
+ShadowMapTest::~ShadowMapTest()
+{
+    
+}
+
+std::string ShadowMapTest::title() const
+{
+    return "ShadowMap Test";
 }

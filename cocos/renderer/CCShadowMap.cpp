@@ -79,26 +79,32 @@ bool ShadowMap::init(int width, int height)
     if (_frameBuffer)
     {
         CC_SAFE_RELEASE(_frameBuffer);
-        glDeleteTextures(1, &_shaodowmapTexture);
+//        glDeleteTextures(1, &_shaodowmapTexture);
     }
     
     _frameBuffer = experimental::FrameBuffer::create(1, width, height);
     _frameBuffer->retain();
     
-    glGenTextures(1, &_shaodowmapTexture);
-    glBindTexture(GL_TEXTURE_2D, _shaodowmapTexture);
+    auto rt = experimental::RenderTarget::create(width, height);
+    auto rtDS = experimental::RenderTargetDepthStencil::create(width, height);
+    _frameBuffer->attachRenderTarget(rt);
+    _frameBuffer->attachDepthStencilTarget(rtDS);
     
-    // Create the depth texture.
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr);
-    
-    // Set the textures parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    
-    _frameBuffer->applyFBO();
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shaodowmapTexture, 0);
+//    glGenTextures(1, &_shaodowmapTexture);
+//    glBindTexture(GL_TEXTURE_2D, _shaodowmapTexture);
+//    
+//    // Create the depth texture.
+//    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr);
+//    
+//    // Set the textures parameters
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//    
+//    _frameBuffer->applyFBO();
+//    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shaodowmapTexture, 0);
+//    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
         CCLOG("ERROR: Frame buffer not set up correctly");
@@ -109,6 +115,11 @@ bool ShadowMap::init(int width, int height)
     _frameBuffer->applyDefaultFBO();
     
     return true;
+}
+
+GLuint ShadowMap::getTextureName() const
+{
+    return _frameBuffer->getDepthStencilTarget()->getBuffer();
 }
 
 void ShadowMap::bind()

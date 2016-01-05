@@ -8,21 +8,21 @@ varying vec2 TextureCoordOut;
 \n#endif\n
 uniform vec4 u_color;
                                            
-#ifdef RECEIVE_SHADOW
-uniform highp sampler2D u_Shadow;
+\n#ifdef RECEIVE_SHADOW\n
+uniform highp sampler2D u_shadow;
 varying highp vec4      vProjCoord;
-#endif
+\n#endif\n
 
 void main(void)
 {
-#ifdef RECEIVE_SHADOW
-    highp float comp = (vProjCoord.z / vProjCoord.w) - 0.03;
-    highp float depth = texture2DProj(u_Shadow, vProjCoord).r;
-    lowp float shadowVal = comp <= depth ? 1.0 : fAmbient;
+\n#ifdef RECEIVE_SHADOW\n
+    highp float comp = (vProjCoord.z) - 0.03;
+    highp float depth = texture2DProj(u_shadow, vProjCoord).r;
+    lowp float shadowVal = comp <= depth ? 1.0 : 0.4;
     gl_FragColor = texture2D(CC_Texture0, TextureCoordOut) * u_color * shadowVal;
-#else
+\n#else\n
     gl_FragColor = texture2D(CC_Texture0, TextureCoordOut) * u_color;
-#endif
+\n#endif\n
     
     
 }

@@ -380,7 +380,7 @@ void Mesh::draw(Renderer* renderer, float globalZOrder, const Mat4& transform, u
         if (isReceiveShadow && renderer->getShadowMap())
         {
             //set uniform sampler to receive shadow
-            programState->setUniformTexture("u_shadowTex", renderer->getShadowMap()->getTextureName());
+            programState->setUniformTexture("u_shadow", renderer->getShadowMap()->getTextureName());
             // We need to calculate the texture projection matrix. This matrix takes the pixels from world space to previously rendered light projection space
             //where we can look up values from our saved depth buffer. The matrix is constructed from the light view and projection matrices as used for the previous render and
             //then multiplied by the inverse of the current view matrix.
@@ -390,7 +390,7 @@ void Mesh::draw(Renderer* renderer, float globalZOrder, const Mat4& transform, u
                              0.0f, 0.0f, 0.5f, 0.5f,
                              0.0f, 0.0f, 0.0f, 1.0f);
             auto texMat  = bias * renderer->getShadowMap()->getLightViewProjectionMat() * world;
-            programState->setUniformMat4("u_shadowTexMat", texMat);
+            programState->setUniformMat4("u_shadowTexProjMat", texMat);
         }
 
         if (scene && scene->getLights().size() > 0)
@@ -399,7 +399,7 @@ void Mesh::draw(Renderer* renderer, float globalZOrder, const Mat4& transform, u
 
     renderer->addCommand(&_meshCommand);
     
-    if (isCastShadow && scene && ((unsigned int)scene->getShadowLight()->getLightFlag() & lightMask))
+    if (isCastShadow && scene && scene->getShadowLight() && scene->getShadowLight() && ((unsigned int)scene->getShadowLight()->getLightFlag() & lightMask))
     {
         //cast shaodow here
         castShadow(renderer, globalZ, transform, flags);
@@ -718,6 +718,7 @@ void Mesh::castShadow(Renderer* renderer, float globalZ, const Mat4& transform, 
                 }
             }
         }
+        _castShadowMaterial->retain();
     }
     _castShadowMeshCommand->init(globalZ,
                       _castShadowMaterial,

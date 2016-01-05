@@ -50,6 +50,8 @@ THE SOFTWARE.
 
 NS_CC_BEGIN
 
+BaseLight *              Scene::_shadowLight = nullptr;
+
 Scene::Scene()
 {
 #if CC_USE_3D_PHYSICS && CC_ENABLE_BULLET_INTEGRATION
@@ -77,7 +79,6 @@ Scene::Scene()
     
     Camera::_visitingCamera = nullptr;
     
-    _shadowLight = nullptr;
 }
 
 Scene::~Scene()

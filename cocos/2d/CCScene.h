@@ -105,9 +105,9 @@ public:
      */
     const std::vector<BaseLight*>& getLights() const { return _lights; }
     
-    BaseLight* getShadowLight() const { return _shadowLight; }
+    static BaseLight* getShadowLight()  { return _shadowLight; }
     
-    void setShadowLight(BaseLight* light);
+    static void setShadowLight(BaseLight* light);
     
     /** Render the scene.
      * @param renderer The renderer use to render the scene.
@@ -143,7 +143,7 @@ protected:
     EventListenerCustom*       _event;
 
     std::vector<BaseLight *> _lights;
-    BaseLight *              _shadowLight;
+    static BaseLight *              _shadowLight;
     
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(Scene);

@@ -60,5 +60,15 @@ private:
     cocos2d::Label* _spotLightLabel;
 };
 
+class ShadowMapTest : public TestCase
+{
+public:
+    CREATE_FUNC(ShadowMapTest);
+    ShadowMapTest();
+    virtual ~ShadowMapTest();
+    
+    virtual std::string title() const override;
+};
+
 #endif
 

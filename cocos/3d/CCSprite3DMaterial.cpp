@@ -29,6 +29,7 @@
 #include "renderer/CCGLProgramCache.h"
 #include "renderer/CCGLProgramState.h"
 #include "renderer/CCGLProgramStateCache.h"
+#include "renderer/ccShaders.h"
 #include "base/CCDirector.h"
 #include "base/CCEventType.h"
 
@@ -157,10 +158,8 @@ Sprite3DMaterial* Sprite3DMaterial::createBuiltInMaterial(MaterialType type, boo
 {
     /////
     static std::map<std::string, int> macros;
-    if (skinned)
-        macros["SKINNED"] = 1;
-    if (receiveShadow)
-        macros["RECEIVE_SHADOW"] = 1;
+    macros["SKINNED"] = (skinned ? 1 : 0);
+    macros["RECEIVE_SHADOW"] = (receiveShadow ? 1 : 0);
     
     std::string def = macrosValsToString(macros);
     char str[10];
@@ -174,6 +173,9 @@ Sprite3DMaterial* Sprite3DMaterial::createBuiltInMaterial(MaterialType type, boo
     }
     
     // create new built in material
+    if (skinned)
+        macros["SKINNED"] = 0;
+    def = macrosValsToString(macros);
     auto glProgram = getGLProgram(type, skinned, def);
     auto glProgramState = GLProgramState::create(glProgram);
     if (glProgramState)
@@ -232,6 +234,9 @@ std::string Sprite3DMaterial::macrosValsToString(const std::map<std::string, int
     char str[10];
     for(auto it : macrosVals)
     {
+        if (it.second == 0)
+            continue;
+        
         sprintf(str, " %d \n", it.second);
         def += "\n#define " + it.first + str;
     }
@@ -273,9 +278,70 @@ GLProgram* Sprite3DMaterial::getGLProgram(MaterialType type, bool skinned, const
     auto glProgram = GLProgramCache::getInstance()->getGLProgram(shaderKey + def);
     if (glProgram == nullptr)
     {
-        //TODO: create a new one FIX ME
+        //TODO: create a new one
+        const GLchar* vertshader;
+        const GLchar* fragshader;
+        getShaders(type, skinned, vertshader, fragshader);
+        glProgram = GLProgram::createWithByteArrays((def + std::string(vertshader)).c_str(), (def + std::string(fragshader)).c_str());
+        
+        //add to cache, should move to GLProgramCache
+        GLProgramCache::getInstance()->addGLProgram(glProgram, shaderKey + def);
     }
     return glProgram;
+}
+
+bool Sprite3DMaterial::getShaders(MaterialType type, bool skinned, const GLchar* &vertShader, const GLchar* &fragShader)
+{
+    vertShader = nullptr;
+    fragShader = nullptr;
+    switch (type) {
+        case Sprite3DMaterial::MaterialType::UNLIT:
+            if (skinned)
+            {
+                vertShader = cc3D_SkinPositionTex_vert;
+                fragShader = cc3D_ColorTex_frag;
+            }
+            else
+            {
+                vertShader = cc3D_PositionTex_vert;
+                fragShader = cc3D_ColorTex_frag;
+            }
+            
+            break;
+            
+        case Sprite3DMaterial::MaterialType::UNLIT_NOTEX:
+            if (skinned)
+            {
+                vertShader = cc3D_SkinPositionTex_vert;
+                fragShader = cc3D_Color_frag;
+            }
+            else
+            {
+                vertShader = cc3D_PositionTex_vert;
+                fragShader = cc3D_Color_frag;
+            }
+            break;
+            
+        case Sprite3DMaterial::MaterialType::VERTEX_LIT:
+            CCASSERT(0, "not implement");
+            break;
+            
+        case Sprite3DMaterial::MaterialType::DIFFUSE:
+            CCASSERT(0, "");
+            break;
+            
+        case Sprite3DMaterial::MaterialType::DIFFUSE_NOTEX:
+            CCASSERT(0, "");
+            break;
+            
+        case Sprite3DMaterial::MaterialType::BUMPED_DIFFUSE:
+            CCASSERT(0, "not implement");
+            break;
+            
+        default:
+            break;
+    }
+    return vertShader && fragShader;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -205,7 +205,7 @@ public:
     /** is cast shadow */
     bool isCastShadow() const { return _castShadow; }
     /** set receive shadow */
-    void setReceiveShadow(bool receiveShadow) { _receiveShadow = receiveShadow; }
+    void setReceiveShadow(bool receiveShadow);
     /** is receive shadow */
     bool isReceiveShadow() const { return _receiveShadow; }
 

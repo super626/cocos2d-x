@@ -557,7 +557,10 @@ void Renderer::visitRenderQueue(RenderQueue& queue)
         RenderState::StateBlock::_defaultState->setBlend(false);
         
         if (_shadowMap == nullptr)
+        {
             _shadowMap = ShadowMap::create(512, 512);
+            _shadowMap->retain();
+        }
         _shadowMap->bind();
         for (auto it = castShadowQueue.cbegin(); it != castShadowQueue.cend(); ++it)
         {

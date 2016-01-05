@@ -64,7 +64,7 @@ public:
     
     bool init(int width, int height);
     
-    GLuint getTextureName() const { return _shaodowmapTexture; }
+    GLuint getTextureName() const;
     
     unsigned int getShadowMapWidth() const;
     

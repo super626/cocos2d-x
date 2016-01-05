@@ -6,12 +6,11 @@ attribute vec2 a_texCoord;
 
 varying vec2 TextureCoordOut;
                                               
-#ifdef RECEIVE_SHADOW
-uniform highp mat4 TexProjectionMatrix;
-uniform highp mat4 ModelViewMatrix;
+\n#ifdef RECEIVE_SHADOW\n
+uniform highp mat4 u_shadowTexProjMat;
 
 varying highp vec4 vProjCoord;
-#endif
+\n#endif\n
 
 void main(void)
 {
@@ -19,10 +18,10 @@ void main(void)
     TextureCoordOut = a_texCoord;
     TextureCoordOut.y = 1.0 - TextureCoordOut.y;
     
-#ifdef RECEIVE_SHADOW
-    highp vec4 modelViewPos = ModelViewMatrix * vec4(inVertex, 1.0);
-    vProjCoord = TexProjectionMatrix * modelViewPos;
-#endif
+\n#ifdef RECEIVE_SHADOW\n
+    highp vec4 modelViewPos = CC_MVMatrix * a_position;
+    vProjCoord = u_shadowTexProjMat * modelViewPos;
+\n#endif\n
 }
 );
 

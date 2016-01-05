@@ -770,7 +770,7 @@ void Sprite3D::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
                    flags,
                    _lightMask,
                    Vec4(color.r, color.g, color.b, color.a),
-                   _forceDepthWrite);
+                   _forceDepthWrite, _castShadow, _receiveShadow);
 
     }
 }
@@ -907,6 +907,15 @@ void Sprite3D::setForce2DQueue(bool force2D)
 {
     for (const auto &mesh : _meshes) {
         mesh->setForce2DQueue(force2D);
+    }
+}
+
+void Sprite3D::setReceiveShadow(bool receiveShadow)
+{
+    if (_receiveShadow != receiveShadow)
+    {
+        _receiveShadow = receiveShadow;
+        genMaterial(_shaderUsingLight);
     }
 }
 
